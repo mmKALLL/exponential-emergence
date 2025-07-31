@@ -12,6 +12,7 @@ export function GameScreen() {
   const visibleActionCards = useUpdate(() => Game.visibleActionCards);
   const generation = useUpdate(() => Game.state.generation);
   const currentLevel = useUpdate(() => Game.state.currentLevel);
+  const lifespanLeft = useUpdate(() => Game.state.lifespanLeft);
   return (
     <>
       <p className="">
@@ -29,9 +30,7 @@ export function GameScreen() {
           </span>
         )}
       </h1>
-      <h1 className="text-1.5xl">
-        Lifespan: {Game.state.lifespanLeft.toFixed(1)}s
-      </h1>
+      <h1 className="text-1.5xl">Lifespan: {lifespanLeft.toFixed(1)}s</h1>
       <p className="text-md">
         {resources.map(({ name, amount }) => (
           <span key={name} className="px-2">
