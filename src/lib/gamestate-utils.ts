@@ -37,7 +37,7 @@ export const initialGameState: GameState = {
       },
       goals: [
         {
-          requiredAmount: 10,
+          requiredAmount: 5,
           resourceName: 'food',
           onComplete: (gs) => {
             gs.levels.amoeba.actionCards['Generate energy'].displayed = true

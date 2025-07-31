@@ -35,7 +35,7 @@ export type Resources = {
 export type Goal<T extends LevelName = LevelName> = {
   requiredAmount: number
   resourceName: keyof Resources[T]
-  onComplete: (gs: GameState) => GameState
+  onComplete: (gs: GameState) => GameState // Be careful to make this idempotent, since reducers may be called more than once with the same parameters
 }
 
 export type LevelName = 'amoeba'

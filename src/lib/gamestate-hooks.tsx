@@ -116,14 +116,14 @@ function actionLens(gs: GameState, updatedAction: Action): GameState {
   }
 }
 
-function goalLens(gs: GameState, updatedGoal: Goal): GameState {
+function goalsLens(gs: GameState, updatedGoals: Goal[]): GameState {
   return {
     ...gs,
     levels: {
       ...gs.levels,
       [gs.currentLevel]: {
         ...gs.levels[gs.currentLevel],
-        goals: [updatedGoal, ...gs.levels[gs.currentLevel].goals.slice(1)],
+        goals: updatedGoals,
       },
     },
   }
@@ -131,13 +131,20 @@ function goalLens(gs: GameState, updatedGoal: Goal): GameState {
 
 function handleGoalCompletion(gs: GameState): GameState {
   let updatedGs = { ...gs }
-  const updatedGoal = { ...gs.levels[gs.currentLevel].goals[0] }
-  const currentAmount = gs.levels[gs.currentLevel].resources[updatedGoal.resourceName]
-  if (currentAmount >= updatedGoal.requiredAmount) {
-    updatedGs = updatedGoal.onComplete(updatedGs)
-    updatedGs.levels[updatedGs.currentLevel].goals = updatedGs.levels[updatedGs.currentLevel].goals.slice(1)
+  let updatedGoals = [...gs.levels[gs.currentLevel].goals]
+  const currentGoal = updatedGoals[0]
+
+  if (!currentGoal) {
+    return updatedGs // All goals already achieved
   }
-  return goalLens(updatedGs, updatedGoal)
+
+  const currentAmount = gs.levels[gs.currentLevel].resources[currentGoal.resourceName]
+
+  if (currentAmount >= currentGoal.requiredAmount) {
+    updatedGs = currentGoal.onComplete(updatedGs)
+    updatedGoals = updatedGs.levels[updatedGs.currentLevel].goals.slice(1)
+  }
+  return goalsLens(updatedGs, updatedGoals)
 }
 
 function updateActionHistories(gs: GameState): GameState {

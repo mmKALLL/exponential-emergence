@@ -1,6 +1,6 @@
 import { useGameState } from '@/lib/gamestate-hooks'
 import { ActionCard } from '../action-card'
-import type { Action } from '@/lib/types'
+import type { Action, Goal } from '@/lib/types'
 import { useEffect } from 'react'
 import { capitalize, levelLabel } from '@/lib/utils'
 
@@ -16,9 +16,9 @@ export function GameScreen() {
     return () => clearInterval(interval)
   }, [])
 
-  const currentGoal = gs.levels[gs.currentLevel].goals[0]
-  const currentGoalAmount = gs.levels[gs.currentLevel].resources[currentGoal.resourceName] || 0
-  const currentGoalMaximum = currentGoal.requiredAmount
+  const currentGoal = gs.levels[gs.currentLevel].goals[0] as Goal | undefined // Inference doesn't work correctly here
+  const currentGoalAmount = currentGoal ? gs.levels[gs.currentLevel].resources[currentGoal.resourceName] : null
+  const currentGoalMaximum = currentGoal?.requiredAmount ?? 0
 
   return (
     <>
@@ -31,7 +31,7 @@ export function GameScreen() {
             Next goal: {currentGoalAmount}/{currentGoalMaximum} {currentGoal.resourceName}
           </>
         ) : (
-          <>All {levelLabel(gs.currentLevel)} goals completed!</>
+          <span className="text-green-500">All {levelLabel(gs.currentLevel)} goals completed!</span>
         )}
       </h1>
       <h1 className="text-1.5xl">Lifespan: {gs.lifespanLeft.toFixed(1)}s</h1>
