@@ -37,7 +37,7 @@ const defaultChartConfig = {
   },
 } satisfies ChartConfig
 
-export function ProgressChart({ className, height, config, data }: { className?: string; height?: number; config?: ChartConfig; data?: Record<string, any>[] }) {
+export function ProgressChartExample({ className, height, config, data }: { className?: string; height?: number; config?: ChartConfig; data?: Record<string, any>[] }) {
   return (
     <Card className={className}>
       <CardHeader>

@@ -2,7 +2,7 @@ import { useGameState } from '@/lib/gamestate-hooks'
 import { ActionCard } from '../action-card'
 import type { Action } from '@/lib/types'
 import { useEffect } from 'react'
-import { levelLabel } from '@/lib/utils'
+import { capitalize, levelLabel } from '@/lib/utils'
 
 export function GameScreen() {
   const { gs, dispatch } = useGameState()
@@ -34,7 +34,14 @@ export function GameScreen() {
           <>All {levelLabel(gs.currentLevel)} goals completed!</>
         )}
       </h1>
-      <h1 className="text-1.5xl font-bold">Lifespan: {gs.lifespanLeft.toFixed(1)}s</h1>
+      <h1 className="text-1.5xl">Lifespan: {gs.lifespanLeft.toFixed(1)}s</h1>
+      <p className="text-md">
+        {Object.entries(gs.levels[gs.currentLevel].resources).map(([name, amount]) => (
+          <span key={name} className="px-2">
+            {capitalize(name)}: {amount}
+          </span>
+        ))}
+      </p>
       <div className="flex gap-4 flex-wrap justify-start">
         {Object.values(gs.levels[gs.currentLevel]?.actionCards)
           .filter((action: Action) => action.displayed)

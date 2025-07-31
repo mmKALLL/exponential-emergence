@@ -1,11 +1,11 @@
 import { Button } from '../ui/button'
-import { ProgressChart } from '../ui/progress-chart'
 import { Progress } from '../ui/progress'
 import { Card } from '../ui/card'
 import { type JSX } from 'react'
 import type { Action, UnlockedDisplaySections } from '@/lib/types'
 import { TooltipWrapper } from '../ui/tooltip-button'
 import { maxTime } from '@/lib/utils'
+import { ActionMiniChart } from './action-mini-chart'
 
 export function ActionCard({
   action,
@@ -45,7 +45,7 @@ export function ActionCard({
           </div>
         </>
       )}
-      <ProgressChart height={30} />
+      <ActionMiniChart height={30} valueHistory={valueHistory} bestValueHistory={bestValueHistory} />
     </Card>
   )
 }

@@ -18,13 +18,16 @@ export function RebirthScreen(): JSX.Element {
         Rebirth as Amoeba
       </Button>
       <Button disabled variant="outline" className="w-80 select-none" onClick={() => {}}>
-        Not yet unlocked
+        Reach 3 divisions to unlock
       </Button>
       <Button disabled variant="outline" className="w-80 select-none" onClick={() => {}}>
-        Not yet unlocked
+        Reach 1000 cells to unlock
       </Button>
       <Button disabled variant="outline" className="w-80 select-none" onClick={() => {}}>
-        Not yet unlocked
+        Reach 1ml volume to unlock
+      </Button>
+      <Button disabled variant="outline" className="w-80 select-none" onClick={() => {}}>
+        Reach 10k eggs to unlock
       </Button>
     </div>
   )

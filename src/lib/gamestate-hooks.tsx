@@ -69,8 +69,7 @@ export function reduceAction(gs: GameState, action: Action): GameState {
   return action.effect({ ...gs })
 }
 
-function canApplyAction(gs: GameState, action: Action): boolean {
-  // Implement your logic to determine if the action can be applied to the game state
+function canApplyAction(_gs: GameState, _action: Action): boolean {
   // TODO: Check action.enabledCondition against gs; or try applying the action and see if all resources are non-negative?
   return true
 }
@@ -91,20 +90,20 @@ function progressFrame(gs: GameState): GameState {
     const updatedAction = { ...updatedGs.levels[updatedGs.currentLevel].actionCards[updatedGs.currentActionName] }
     if (updatedAction) {
       updatedAction.progress += TICK_LENGTH
-      updatedAction.valueHistory = [...updatedAction.valueHistory, updatedAction.currentValue]
-
-      if (updatedAction.progress >= maxTime(updatedAction)) {
+      if (updatedAction.progress >= maxTime(updatedAction) && canApplyAction(updatedGs, updatedAction)) {
         updatedGs = reduceAction(updatedGs, updatedAction)
         updatedAction.progress = 0
         updatedAction.currentValue += 1
-        updatedAction.currentSpeed = Math.min(updatedAction.currentSpeed + 0.1, 3)
-        updatedAction.permanentSpeed = Math.min(updatedAction.permanentSpeed + 0.02, 2)
+        updatedAction.currentSpeed = Math.min(updatedAction.currentSpeed + 0.2, 4)
+        updatedAction.permanentSpeed = Math.min(updatedAction.permanentSpeed + 0.02, 2.5)
       }
 
       updatedGs = actionLens(updatedGs, updatedAction)
     }
   }
 
+  // Update action and goal data
+  updatedGs = updateActionHistories(updatedGs)
   updatedGs = handleGoalCompletion(updatedGs)
 
   return updatedGs
@@ -139,6 +138,18 @@ function handleGoalCompletion(gs: GameState): GameState {
     updatedGs.levels[updatedGs.currentLevel].goals = updatedGs.levels[updatedGs.currentLevel].goals.slice(1)
   }
   return goalLens(updatedGs, updatedGoal)
+}
+
+function updateActionHistories(gs: GameState): GameState {
+  let updatedGs = { ...gs }
+  Object.values(updatedGs.levels[updatedGs.currentLevel].actionCards).forEach((action) => {
+    const updatedAction = {
+      ...action,
+      valueHistory: [...action.valueHistory, action.currentValue],
+    }
+    updatedGs = actionLens(updatedGs, updatedAction)
+  })
+  return updatedGs
 }
 
 function handleGameOver(gs: GameState): GameState {

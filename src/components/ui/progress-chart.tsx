@@ -2,23 +2,23 @@
 
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
 
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { type ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 
 export const description = 'An area chart with a legend'
 
 const defaultChartData = [
-  { time: '1s', desktop: 186, mobile: 80, nada: 123 },
-  { time: '2s', desktop: 305, mobile: 200, nada: 156 },
-  { time: '3s', desktop: 237, mobile: 120, nada: 289 },
-  { time: '4s', desktop: 223, mobile: 190, nada: 101 },
-  { time: '5s', desktop: 209, mobile: 130, nada: 112 },
-  { time: '6s', desktop: 214, mobile: 140, nada: 131 },
-  { time: '7s', desktop: 200, mobile: 150, nada: 145 },
-  { time: '8s', desktop: 180, mobile: 160, nada: 160 },
-  { time: '9s', desktop: 170, mobile: 170, nada: 170 },
-  { time: '10s', desktop: undefined, mobile: undefined, nada: undefined },
-  { time: '10s', desktop: undefined, mobile: undefined, nada: undefined },
-  { time: '10s', desktop: undefined, mobile: undefined, nada: undefined },
+  { key: '1s', desktop: 186, mobile: 80, nada: 123 },
+  { key: '2s', desktop: 305, mobile: 200, nada: 156 },
+  { key: '3s', desktop: 237, mobile: 120, nada: 289 },
+  { key: '4s', desktop: 223, mobile: 190, nada: 101 },
+  { key: '5s', desktop: 209, mobile: 130, nada: 112 },
+  { key: '6s', desktop: 214, mobile: 140, nada: 131 },
+  { key: '7s', desktop: 200, mobile: 150, nada: 145 },
+  { key: '8s', desktop: 180, mobile: 160, nada: 160 },
+  { key: '9s', desktop: 170, mobile: 170, nada: 170 },
+  { key: '10s', desktop: undefined, mobile: undefined, nada: undefined },
+  { key: '10s', desktop: undefined, mobile: undefined, nada: undefined },
+  { key: '10s', desktop: undefined, mobile: undefined, nada: undefined },
 ]
 
 const defaultChartConfig = {
@@ -41,25 +41,20 @@ export function ProgressChart({ className, height, config, data }: { className?:
     <ChartContainer config={config ?? defaultChartConfig} className={`h-${height ?? 36} w-full ${className}`}>
       <AreaChart accessibilityLayer data={data ?? defaultChartData}>
         <CartesianGrid vertical={false} />
-        <XAxis dataKey="time" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.slice(0, 3)} />
+        <XAxis dataKey="time" tickLine={false} axisLine={true} tickMargin={8} tickFormatter={(value) => value} dx={8} interval="equidistantPreserveStart" />
         <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
-        <defs>
-          <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="var(--color-desktop)" stopOpacity={0.8} />
-            <stop offset="95%" stopColor="var(--color-desktop)" stopOpacity={0.1} />
-          </linearGradient>
-          <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="var(--color-mobile)" stopOpacity={0.8} />
-            <stop offset="95%" stopColor="var(--color-mobile)" stopOpacity={0.1} />
-          </linearGradient>
-          <linearGradient id="fillNada" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="var(--color-nada)" stopOpacity={0.8} />
-            <stop offset="95%" stopColor="var(--color-nada)" stopOpacity={0.1} />
-          </linearGradient>
-        </defs>
-        <Area dataKey="mobile" type="natural" fill="url(#fillMobile)" fillOpacity={0.5} stroke="var(--color-mobile)" stackId="a" />
-        <Area dataKey="desktop" type="natural" fill="url(#fillDesktop)" fillOpacity={0.5} stroke="var(--color-desktop)" stackId="b" />
-        <Area dataKey="nada" type="natural" fill="url(#fillNada)" fillOpacity={0.5} stroke="var(--color-nada)" stackId="c" />
+        {Object.entries(config ?? defaultChartConfig).map(([key, item]) => (
+          <defs key={item.label}>
+            <linearGradient id={`fill-${key}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={item.color} stopOpacity={0.8} />
+              <stop offset="95%" stopColor={item.color} stopOpacity={0.1} />
+            </linearGradient>
+          </defs>
+        ))}
+        {Object.entries(config ?? defaultChartConfig).map(([key]) => (
+          <Area dataKey={key} type="linear" fill={`url(#fill-${key})`} fillOpacity={0.5} stroke={`var(--color-${key})`} stackId={key} />
+        ))}
+        <ChartLegend content={<ChartLegendContent />} />
       </AreaChart>
     </ChartContainer>
   )
