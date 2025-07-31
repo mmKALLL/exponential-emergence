@@ -7,7 +7,7 @@ export function RebirthScreen(): JSX.Element {
   const { gs, dispatch } = useGameState()
 
   return (
-    <div className="main-container flex flex-col items-center p-4 gap-4">
+    <div className="main-container flex flex-col items-center pt-16 p-4 gap-4">
       <h1 className="text-3xl font-bold font-serif">YOU DIED</h1>
       <p className="text-lg mb-8 mt-7">
         Such is the cycle of life. However, don't fret!
