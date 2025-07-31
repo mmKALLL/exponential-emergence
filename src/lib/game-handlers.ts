@@ -2,7 +2,7 @@ import { initialGameState } from "./gamestate-utils";
 import { TICK_LENGTH, type Action, type LevelName } from "./types";
 import { maxTime } from "./utils";
 
-export const gs = { ...initialGameState };
+const gs = { ...initialGameState };
 
 function handleGameOver() {
   gs.currentScreen = "rebirth";
