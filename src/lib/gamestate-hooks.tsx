@@ -87,16 +87,28 @@ function progressFrame(gs: GameState): GameState {
 
   // Update action progress if an action is active
   if (updatedGs.currentActionName) {
-    const updatedAction = updatedGs.levels[updatedGs.currentLevel].actionCards[updatedGs.currentActionName]
+    const updatedAction = { ...updatedGs.levels[updatedGs.currentLevel].actionCards[updatedGs.currentActionName] }
     if (updatedAction) {
       updatedAction.progress += updatedAction.currentSpeed * updatedAction.permanentSpeed * TICK_LENGTH
       if (updatedAction.progress >= updatedAction.baseTime) {
         updatedGs = reduceAction(updatedGs, updatedAction)
+        updatedAction.progress = 0
+        updatedAction.currentValue += 1 // Increment current value on completion
+        updatedAction.currentSpeed += 0.1
+        updatedAction.permanentSpeed += 0.01
       }
-      updatedGs.levels[updatedGs.currentLevel].actionCards[updatedAction.name] = updatedAction
+      updatedGs = actionLens(updatedGs, updatedAction)
     }
   }
+
   return updatedGs
+}
+
+function actionLens(gs: GameState, updatedAction: Action): GameState {
+  return {
+    ...gs,
+    levels: { ...gs.levels, [gs.currentLevel]: { ...gs.levels[gs.currentLevel], actionCards: { ...gs.levels[gs.currentLevel].actionCards, [updatedAction.name]: updatedAction } } },
+  }
 }
 
 function handleGameOver(gs: GameState): GameState {

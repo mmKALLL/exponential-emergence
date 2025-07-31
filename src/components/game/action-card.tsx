@@ -26,7 +26,7 @@ export function ActionCard({
       <TooltipWrapper
         component={
           <Button onClick={onToggle} variant="outline">
-            {isActive ? `Stop action (${(baseTime - progress).toFixed(1)})` : `${name}`}
+            {isActive ? `Stop action (${(baseTime - progress).toFixed(1)})` : `${name} (${(baseTime - progress).toFixed(1)})`}
           </Button>
         }
         content={description}
