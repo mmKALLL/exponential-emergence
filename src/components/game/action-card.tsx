@@ -45,7 +45,7 @@ export function ActionCard({
           </div>
         </>
       )}
-      <ActionMiniChart height={30} valueHistory={valueHistory} bestValueHistory={bestValueHistory} />
+      <ActionMiniChart height={30} valueHistory={valueHistory} bestValueHistory={bestValueHistory} showLegend={unlockedDisplaySections.bestValue} />
     </Card>
   )
 }

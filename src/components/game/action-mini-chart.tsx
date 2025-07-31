@@ -13,7 +13,17 @@ const defaultChartConfig = {
   },
 } satisfies ChartConfig
 
-export function ActionMiniChart({ height, valueHistory, bestValueHistory }: { height?: number; valueHistory: number[]; bestValueHistory: number[] }): JSX.Element {
+export function ActionMiniChart({
+  height,
+  valueHistory,
+  bestValueHistory,
+  showLegend,
+}: {
+  height?: number
+  valueHistory: number[]
+  bestValueHistory: number[]
+  showLegend: boolean
+}): JSX.Element {
   const data = Array(599)
     .fill(0)
     .map((_, i) => ({
@@ -22,5 +32,5 @@ export function ActionMiniChart({ height, valueHistory, bestValueHistory }: { he
       best: bestValueHistory[i] ?? 0,
     }))
 
-  return <ProgressChart className="h-36 w-full" height={height} config={defaultChartConfig} data={data} />
+  return <ProgressChart className="h-36 w-full" height={height ?? 36} config={defaultChartConfig} data={data} showLegend={showLegend} />
 }

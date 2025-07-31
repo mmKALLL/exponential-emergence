@@ -155,7 +155,7 @@ function updateActionHistories(gs: GameState): GameState {
 function handleGameOver(gs: GameState): GameState {
   return {
     ...gs,
-    unlockedDisplaySections: { ...gs.unlockedDisplaySections, speeds: true, valueHistory: true },
+    unlockedDisplaySections: { ...gs.unlockedDisplaySections, speeds: true, valueHistory: true, bestValue: true },
     currentScreen: 'rebirth',
     lifespanLeft: 0,
     currentActionName: null,
