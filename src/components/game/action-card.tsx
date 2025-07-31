@@ -1,32 +1,44 @@
-import { Button } from '../ui/button'
-import { Progress } from '../ui/progress'
-import { Card } from '../ui/card'
-import { type JSX } from 'react'
-import type { Action, UnlockedDisplaySections } from '@/lib/types'
-import { TooltipWrapper } from '../ui/tooltip-button'
-import { maxTime } from '@/lib/utils'
-import { ActionMiniChart } from './action-mini-chart'
+import { Button } from "../ui/button";
+import { Progress } from "../ui/progress";
+import { Card } from "../ui/card";
+import { type JSX } from "react";
+import type { Action } from "@/lib/types";
+import { TooltipWrapper } from "../ui/tooltip-button";
+import { maxTime } from "@/lib/utils";
+import { ActionMiniChart } from "./action-mini-chart";
+import { useUpdate } from "@/hooks/use-update";
+import { Game } from "@/lib/game-handlers";
 
-export function ActionCard({
-  action,
-  isActive,
-  unlockedDisplaySections,
-  onToggle,
-}: {
-  action: Action
-  isActive: boolean
-  unlockedDisplaySections: UnlockedDisplaySections
-  onToggle: () => void
-}): JSX.Element {
-  const { name, description, progress, currentSpeed, permanentSpeed, valueHistory, bestValueHistory } = action
+export function ActionCard({ action }: { action: Action }): JSX.Element {
+  const {
+    name,
+    description,
+    progress,
+    currentSpeed,
+    permanentSpeed,
+    valueHistory,
+    bestValueHistory,
+  } = action;
+
+  const unlockedDisplaySections = useUpdate(
+    () => Game.state.unlockedDisplaySections
+  );
+  const isActive = useUpdate(
+    () => Game.state.currentActionName === action.name
+  );
 
   return (
     <Card className="flex flex-col items-center justify-center p-4 gap-4 w-52">
       <Progress value={(progress / maxTime(action)) * 100} />
       <TooltipWrapper
         component={
-          <Button onClick={onToggle} variant="outline" className="w-44">
-            {isActive ? `Stop action` : name} ({(maxTime(action) - progress).toFixed(1)})
+          <Button
+            onClick={() => Game.toggleAction(action)}
+            variant="outline"
+            className="w-44"
+          >
+            {isActive ? `Stop action` : name} (
+            {(maxTime(action) - progress).toFixed(1)})
           </Button>
         }
         content={description}
@@ -45,7 +57,12 @@ export function ActionCard({
           </div>
         </>
       )}
-      <ActionMiniChart height={30} valueHistory={valueHistory} bestValueHistory={bestValueHistory} showLegend={unlockedDisplaySections.bestValue} />
+      <ActionMiniChart
+        height={30}
+        valueHistory={valueHistory}
+        bestValueHistory={bestValueHistory}
+        showLegend={unlockedDisplaySections.bestValue}
+      />
     </Card>
-  )
+  );
 }
