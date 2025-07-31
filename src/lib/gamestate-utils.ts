@@ -1,11 +1,12 @@
 import { generateAction } from './type-utils'
-import type { Action, GameState } from './types'
+import type { GameState } from './types'
 
 export const initialGameState: GameState = {
   generation: 1,
   currentScreen: 'in-game',
   currentLevel: 'amoeba',
   lifespanLeft: 60,
+  runStarted: false,
   currentActionName: null,
   levels: {
     amoeba: {
@@ -31,12 +32,19 @@ export const initialGameState: GameState = {
             return gs
           },
           '6 sec, -1 food => +1 energy',
-          true
+          false
         ),
       },
       goals: [
-        { requiredAmount: 10, resourceName: 'food' },
-        { requiredAmount: 10, resourceName: 'energy' },
+        {
+          requiredAmount: 10,
+          resourceName: 'food',
+          onComplete: (gs) => {
+            gs.levels.amoeba.actionCards['Generate energy'].displayed = true
+            return gs
+          },
+        },
+        { requiredAmount: 10, resourceName: 'energy', onComplete: (gs) => gs }, // TODO: Unlock next stage
       ],
       initialResources: {
         food: 0,
@@ -51,5 +59,5 @@ export const initialGameState: GameState = {
       },
     },
   },
-  unlockedDisplaySections: { speeds: false, bestValue: false, valueHistory: false },
+  unlockedDisplaySections: { speeds: false, bestValue: false, valueHistory: true },
 }

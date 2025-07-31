@@ -16,3 +16,7 @@ export const levelLabel = (level: LevelName): string => capitalize(level)
 export const levelLabelPrefixed = (level: LevelName): string => {
   return ['a', 'i', 'u', 'e', 'o'].includes(level[0]) ? `an ${capitalize(level)}` : `a ${capitalize(level)}`
 }
+
+export const maxTime = ({ baseTime, currentSpeed, permanentSpeed }: { baseTime: number; currentSpeed: number; permanentSpeed: number }): number => {
+  return baseTime / (currentSpeed * permanentSpeed)
+}

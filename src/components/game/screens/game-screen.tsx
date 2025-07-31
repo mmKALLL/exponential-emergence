@@ -16,12 +16,24 @@ export function GameScreen() {
     return () => clearInterval(interval)
   }, [])
 
+  const currentGoal = gs.levels[gs.currentLevel].goals[0]
+  const currentGoalAmount = gs.levels[gs.currentLevel].resources[currentGoal.resourceName] || 0
+  const currentGoalMaximum = currentGoal.requiredAmount
+
   return (
     <>
       <p className="">
         Generation {gs.generation} - {levelLabel(gs.currentLevel)}
       </p>
-      <h1 className="text-2xl font-bold">Next goal: 0/10 food</h1>
+      <h1 className="text-2xl font-bold">
+        {currentGoal ? (
+          <>
+            Next goal: {currentGoalAmount}/{currentGoalMaximum} {currentGoal.resourceName}
+          </>
+        ) : (
+          <>All {levelLabel(gs.currentLevel)} goals completed!</>
+        )}
+      </h1>
       <h1 className="text-1.5xl font-bold">Lifespan: {gs.lifespanLeft.toFixed(1)}s</h1>
       <div className="flex gap-4 flex-wrap justify-start">
         {Object.values(gs.levels[gs.currentLevel]?.actionCards)

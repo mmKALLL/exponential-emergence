@@ -9,9 +9,9 @@ export type Action = {
   progress: number
   currentSpeed: number
   permanentSpeed: number
-  currentValue: number
-  bestValue: number
-  valueHistory: number[]
+  currentValue: number // number of completions for the action
+  valueHistory: number[] // current value, recorded for each action on each tick
+  bestValue: number // best number of completions across all runs
   bestValueHistory: number[]
   displayed: boolean
   displayCondition?: (gs: GameState) => boolean
@@ -35,7 +35,7 @@ export type Resources = {
 export type Goal<T extends LevelName = LevelName> = {
   requiredAmount: number
   resourceName: keyof Resources[T]
-  allowsEvolution?: boolean
+  onComplete: (gs: GameState) => GameState
 }
 
 export type LevelName = 'amoeba'
@@ -75,6 +75,7 @@ export type GameState = {
   currentLevel: LevelName
   currentActionName: string | null
   lifespanLeft: number
+  runStarted: boolean
   levels: Record<LevelName, Level>
   unlockedDisplaySections: UnlockedDisplaySections
 }

@@ -2,10 +2,10 @@ import { Button } from '../ui/button'
 import { ProgressChart } from '../ui/progress-chart'
 import { Progress } from '../ui/progress'
 import { Card } from '../ui/card'
-import { useGameState } from '@/lib/gamestate-hooks'
 import { type JSX } from 'react'
 import type { Action, UnlockedDisplaySections } from '@/lib/types'
 import { TooltipWrapper } from '../ui/tooltip-button'
+import { maxTime } from '@/lib/utils'
 
 export function ActionCard({
   action,
@@ -18,21 +18,34 @@ export function ActionCard({
   unlockedDisplaySections: UnlockedDisplaySections
   onToggle: () => void
 }): JSX.Element {
-  const { name, description, baseTime, progress, currentSpeed, permanentSpeed, currentValue, bestValue, valueHistory } = action
+  const { name, description, progress, currentSpeed, permanentSpeed, valueHistory, bestValueHistory } = action
 
   return (
-    <Card className="flex flex-col items-center justify-center p-4 gap-4">
-      <Progress value={(progress / baseTime) * 100} className="w-40" />
+    <Card className="flex flex-col items-center justify-center p-4 gap-4 w-52">
+      <Progress value={(progress / maxTime(action)) * 100} />
       <TooltipWrapper
         component={
-          <Button onClick={onToggle} variant="outline">
-            {isActive ? `Stop action (${(baseTime - progress).toFixed(1)})` : `${name} (${(baseTime - progress).toFixed(1)})`}
+          <Button onClick={onToggle} variant="outline" className="w-44">
+            {isActive ? `Stop action` : name} ({(maxTime(action) - progress).toFixed(1)})
           </Button>
         }
         content={description}
       />
-      <Button variant="destructive">Buttons</Button>
-      <ProgressChart className="w-40" height={30} />
+      {unlockedDisplaySections.speeds && (
+        <>
+          <div className="flex flex-col items-center gap-2">
+            <div className="flex place-content-between w-42">
+              <div className="text-sm">Current life speed:</div>
+              <div className="text-sm">{currentSpeed.toFixed(2)}x</div>
+            </div>
+            <div className="flex place-content-between w-42">
+              <div className="text-sm">Permanent speed:</div>
+              <div className="text-sm">{permanentSpeed.toFixed(2)}x</div>
+            </div>
+          </div>
+        </>
+      )}
+      <ProgressChart height={30} />
     </Card>
   )
 }
