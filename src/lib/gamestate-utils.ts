@@ -10,17 +10,19 @@ export const initialGameState: GameState = {
   levels: {
     amoeba: {
       name: 'amoeba',
-      actionCards: [
-        generateAction(
+      unlocked: true,
+      actionCards: {
+        'Catch food': generateAction(
           'Catch food',
-          10,
+          8,
           (gs) => {
             gs.levels[gs.currentLevel].resources.food += 1
             return gs
           },
+          '8 sec => +1 food',
           true
         ),
-        generateAction(
+        'Generate energy': generateAction(
           'Generate energy',
           6,
           (gs) => {
@@ -28,9 +30,10 @@ export const initialGameState: GameState = {
             gs.levels[gs.currentLevel].resources.energy += 1
             return gs
           },
+          '6 sec, -1 food => +1 energy',
           true
         ),
-      ],
+      },
       goals: [
         { requiredAmount: 10, resourceName: 'food' },
         { requiredAmount: 10, resourceName: 'energy' },

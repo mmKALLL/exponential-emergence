@@ -1,16 +1,18 @@
-import { generateAction } from './type-utils'
+export const TICK_LENGTH = 0.1 // seconds
 
 export type Effect = (gs: GameState) => GameState
 
 export type Action = {
   name: string
-  baseTime: number
+  description: string | undefined
+  baseTime: number // in seconds
   progress: number
   currentSpeed: number
   permanentSpeed: number
   currentValue: number
   bestValue: number
   valueHistory: number[]
+  bestValueHistory: number[]
   displayed: boolean
   displayCondition?: (gs: GameState) => boolean
   enabledCondition?: (gs: GameState) => boolean
@@ -51,9 +53,16 @@ export type LevelName = 'amoeba'
 // | 'universe'
 // | 'reality'
 
+export const levelNameOrder: LevelName[] = [
+  'amoeba',
+  // 'multicellular',
+  // 'algae',
+] as const
+
 export type Level<T extends LevelName = LevelName> = {
   name: T
-  actionCards: Action[]
+  unlocked: boolean
+  actionCards: Record<string, Action>
   goals: Goal[]
   initialResources: Record<keyof Resources[T], number>
   resources: Resources[T]
