@@ -7,7 +7,7 @@ const subscribers = new Set<Callback>()
 let gameUILoopStarted = false
 const gameUILoop = () => {
   subscribers.forEach((fn) => fn())
-  setTimeout(gameUILoop, 100)
+  setTimeout(gameUILoop, 50)
 }
 
 const ensureLoopStarted = () => {
