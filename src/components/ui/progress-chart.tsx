@@ -54,8 +54,16 @@ export function ProgressChart({
     <ChartContainer config={config ?? defaultChartConfig} className={`h-${height ?? 36} w-full ${className}`}>
       <AreaChart accessibilityLayer data={data ?? defaultChartData}>
         <CartesianGrid vertical={false} />
-        <XAxis dataKey="time" tickLine={false} axisLine={true} tickMargin={8} tickFormatter={(value) => value} dx={8} interval="equidistantPreserveStart" />
-        <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
+        <XAxis
+          dataKey="time"
+          tickLine={false}
+          axisLine={true}
+          tickMargin={8}
+          tickFormatter={(value) => value}
+          dx={8}
+          interval="equidistantPreserveStart"
+        />
+        {showLegend && <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />}
         {Object.entries(config ?? defaultChartConfig).map(([key, item]) => (
           <defs key={item.label as string}>
             <linearGradient id={`fill-${key}`} x1="0" y1="0" x2="0" y2="1">
