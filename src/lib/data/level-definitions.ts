@@ -34,7 +34,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
         },
       },
       {
-        requiredAmount: 5,
+        requiredAmount: 4,
         resourceName: 'nutrients',
         onComplete: (gs) => {
           gs.levels.amoeba.actions['Generate energy'].displayed = true
@@ -50,7 +50,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
         },
       },
       {
-        requiredAmount: 10,
+        requiredAmount: 12,
         resourceName: 'energy',
         onComplete: (gs) => {
           gs.levels.amoeba.actions['Divide cell'].displayed = true

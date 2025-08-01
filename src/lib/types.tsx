@@ -1,4 +1,5 @@
 export const TICK_LENGTH = 0.1 // seconds
+export const MAX_LIFESPAN = 60 // seconds
 
 export type Effect<T extends LevelName = LevelName> = (res: Resources[T]) => Resources[T]
 
