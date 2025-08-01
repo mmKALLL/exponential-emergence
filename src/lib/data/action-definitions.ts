@@ -45,7 +45,18 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
         return res
       },
       enabledCondition: (res) => res.waste >= 1,
-      description: '4 sec, -1 waste => no waste',
+      description: '4 sec => -1 waste',
+    },
+    {
+      name: 'Divide cell',
+      baseTime: 8,
+      effect: (res) => {
+        res.energy -= 6
+        res.divisions += 1
+        return res
+      },
+      description: '8 sec, -6 energy => +1 division\n‼️ Requires 0 waste',
+      enabledCondition: (res) => res.waste <= 0 && res.energy >= 6,
     },
   ],
 }
