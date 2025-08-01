@@ -12,7 +12,7 @@ export function RebirthScreen(): JSX.Element {
     amoeba: 'Esa fucked up',
     multicellular: 'Reach 3 divisions to unlock',
     algae: 'Reach 1000 cells to unlock',
-    insect: 'Reach 1ml volume to unlock',
+    insect: 'Reach 1 meter length to unlock',
     crustacean: 'Reach 10k eggs to unlock',
   }
 

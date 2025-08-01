@@ -60,7 +60,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
 
   multicellular: {
     name: 'multicellular',
-    unlocked: true, // TODO: Revert after testing is done
+    unlocked: false,
     initialResources: {
       food: 0,
       nutrients: 0,
@@ -91,6 +91,8 @@ export const initialLevelDefinitions: GameState['levels'] = {
     ],
     resourceOutputs: {
       efficiency: 0,
+      nutrients: 0,
+      cells: 0,
     },
     actions: generatedActions.multicellular,
     goals: [
@@ -142,7 +144,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
     name: 'algae',
     unlocked: false,
     initialResources: {
-      size: 0,
+      micrometers: 0,
       branches: 0,
       sunlight: 0,
       chlorophyll: 0,
@@ -150,16 +152,22 @@ export const initialLevelDefinitions: GameState['levels'] = {
       hardness: 0,
     },
     resources: {
-      size: 0,
+      micrometers: 0,
       branches: 0,
       sunlight: 0,
       chlorophyll: 0,
       energy: 0,
       hardness: 0,
     },
+    // TODO: Make sure all of these are in the outputs
+    resourceInputs: [
+      { level: 'multicellular', resourceName: 'cells', description: 'You start with this many micrometers.' },
+      { level: 'multicellular', resourceName: 'nutrients', description: 'You start with this much chlorophyll.' },
+      { level: 'multicellular', resourceName: 'efficiency', description: 'You start with this much energy and sunlight.' },
+    ],
     resourceOutputs: {
       hardness: 0,
-      size: 0,
+      micrometers: 0,
     },
     actions: generatedActions.algae,
     goals: [],
@@ -182,6 +190,11 @@ export const initialLevelDefinitions: GameState['levels'] = {
       pheromones: 0,
       eggs: 0,
     },
+    // TODO: Make sure all of these are in the outputs
+    resourceInputs: [
+      { level: 'multicellular', resourceName: 'food', description: 'Improves movement speed (1/10).' },
+      { level: 'algae', resourceName: 'chlorophyll', description: 'Improves digestion rank (1/100).' },
+    ],
     resourceOutputs: {
       speed: 0,
       perception: 0,
@@ -207,6 +220,14 @@ export const initialLevelDefinitions: GameState['levels'] = {
       intelligence: 0,
       mass: 0,
     },
+    // TODO: Make sure all of these are in the outputs
+    resourceInputs: [
+      { level: 'amoeba', resourceName: 'energy', description: 'Start with this much strength.' },
+      { level: 'insect', resourceName: 'speed', description: 'Start with this much dexterity.' },
+      { level: 'algae', resourceName: 'hardness', description: 'Start with this much vitality.' },
+      { level: 'insect', resourceName: 'perception', description: 'Start with this much intelligence.' },
+      { level: 'multicellular', resourceName: 'cells', description: 'Start with this much mass.' },
+    ],
     resourceOutputs: {
       strength: 0,
       dexterity: 0,
