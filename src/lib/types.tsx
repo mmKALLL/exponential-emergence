@@ -82,7 +82,7 @@ export type Level<T extends LevelName> = {
       | keyof Resources['crustacean']
     description: string
   }[] // List of resources that synergize from previous levels
-  resourceOutputs: Partial<Record<keyof Resources[T], number>> // List of best scores for resources that can be used as synergies in later stages
+  resourceOutputs: Record<string, number> // List of best scores for resources that can be used as synergies in later stages // TODO: Try using Partial<Record<keyof Resources[T], number>> instead; leads to compile error
 }
 
 export type GameState = {

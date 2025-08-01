@@ -12,6 +12,20 @@ function handleGameOver() {
   gs.unlockedDisplaySections.speeds = true
   gs.unlockedDisplaySections.valueHistory = true
   gs.unlockedDisplaySections.bestValue = true
+
+  updateResourceOutputs()
+}
+
+function updateResourceOutputs() {
+  const currentLevel = Game.currentLevel
+  const updatedResourceOutputs = Object.fromEntries(
+    Object.entries(Game.resourceOutputs).map(([resourceName, amount]) => {
+      const newAmount = Math.max(amount, currentLevel.resources[resourceName as keyof Resources[LevelName]] || 0)
+      return [resourceName, newAmount]
+    })
+  )
+
+  gs.levels[gs.currentLevel].resourceOutputs = updatedResourceOutputs
 }
 
 function resetAction(action: Action) {
@@ -79,6 +93,14 @@ export const Game = {
 
   get resources() {
     return Object.entries(Game.currentLevel.resources).map(([name, amount]) => ({ name, amount }))
+  },
+
+  get resourceInputs() {
+    return Game.currentLevel.resourceInputs || []
+  },
+
+  get resourceOutputs() {
+    return Game.currentLevel.resourceOutputs || []
   },
 
   get currentGoal() {
