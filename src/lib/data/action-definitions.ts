@@ -41,7 +41,7 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
         res.waste -= 1
         return res
       },
-      description: '4 sec, -1 waste => no waste',
+      description: '4 sec => -1 waste',
     },
     {
       name: 'Divide cell',
