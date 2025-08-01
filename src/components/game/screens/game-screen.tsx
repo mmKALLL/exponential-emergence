@@ -1,18 +1,17 @@
-import { ActionCard } from "../action-card";
-import type { Action } from "@/lib/types";
-import { capitalize, levelLabel } from "@/lib/utils";
-import { useUpdate } from "@/hooks/use-update";
-import { Game } from "@/lib/game-handlers";
+import { ActionCard } from '../action-card'
+import type { Action } from '@/lib/types'
+import { capitalize, levelLabel } from '@/lib/utils'
+import { useGameState, useUpdate } from '@/hooks/use-update'
+import { Game } from '@/lib/gamestate-logic'
 
 export function GameScreen() {
-  const currentGoal = useUpdate(() => Game.currentGoal);
-  const currentGoalAmount = useUpdate(() => Game.currentGoalAmount);
-  const currentGoalMaximum = useUpdate(() => Game.currentGoalMaximum);
-  const resources = useUpdate(() => Game.resources);
-  const visibleActionCards = useUpdate(() => Game.visibleActionCards);
-  const generation = useUpdate(() => Game.state.generation);
-  const currentLevel = useUpdate(() => Game.state.currentLevel);
-  const lifespanLeft = useUpdate(() => Game.state.lifespanLeft);
+  const currentGoal = useUpdate(() => Game.currentGoal)
+  const currentGoalAmount = useUpdate(() => Game.currentGoalAmount)
+  const currentGoalMaximum = useUpdate(() => Game.currentGoalMaximum)
+  const resources = useUpdate(() => Game.resources)
+  const visibleActionCards = useUpdate(() => Game.visibleActionCards)
+  const { currentLevel, lifespanLeft, generation } = useGameState()
+
   return (
     <>
       <p className="">
@@ -21,13 +20,10 @@ export function GameScreen() {
       <h1 className="text-2xl font-bold">
         {currentGoal ? (
           <>
-            Next goal: {currentGoalAmount}/{currentGoalMaximum}{" "}
-            {currentGoal.resourceName}
+            Next goal: {currentGoalAmount}/{currentGoalMaximum} {currentGoal.resourceName}
           </>
         ) : (
-          <span className="text-green-500">
-            All {levelLabel(currentLevel)} goals completed!
-          </span>
+          <span className="text-green-500">All {levelLabel(currentLevel)} goals completed!</span>
         )}
       </h1>
       <h1 className="text-1.5xl">Lifespan: {lifespanLeft.toFixed(1)}s</h1>
@@ -45,5 +41,5 @@ export function GameScreen() {
       </div>
       {/* <ThemeModeToggle /> */}
     </>
-  );
+  )
 }

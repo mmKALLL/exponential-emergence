@@ -30,9 +30,13 @@ export function useUpdate<T>(callback: () => T) {
     };
     subscribers.add(update);
     return () => {
-      subscribers.delete(update);
-    };
-  }, [callback]);
+      subscribers.delete(update)
+    }
+  }, [callback])
 
-  return value;
+  return value
+}
+
+export function useGameState() {
+  return useUpdate(() => Game.state)
 }
