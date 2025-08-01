@@ -1,5 +1,5 @@
 import type { GameState } from '../types'
-import { createActionGameState } from './action-definitions'
+import { generatedActions } from './action-definitions'
 
 export const initialLevelDefinitions: GameState['levels'] = {
   amoeba: {
@@ -23,7 +23,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
       energy: 0,
       divisions: 0,
     },
-    actions: createActionGameState('amoeba'),
+    actions: generatedActions.amoeba,
     goals: [
       {
         requiredAmount: 5,

@@ -12,8 +12,7 @@ export type ActionConfig = {
   defaultDisplayed?: boolean
 }
 
-export type GameStateAction = {
-  name: string
+export type Action = ActionConfig & {
   progress: number
   currentSpeed: number
   permanentSpeed: number
@@ -23,8 +22,6 @@ export type GameStateAction = {
   bestValueHistory: number[]
   displayed: boolean
 }
-
-export type Action = ActionConfig & GameStateAction
 
 export type UnlockedDisplaySections = {
   speeds: boolean
@@ -69,7 +66,7 @@ export const levelNameOrder: LevelName[] = [
 export type Level<T extends LevelName = LevelName> = {
   name: T
   unlocked: boolean
-  actions: Record<string, GameStateAction>
+  actions: Record<string, Action>
   goals: Goal[]
   initialResources: Record<keyof Resources[T], number>
   resources: Resources[T]

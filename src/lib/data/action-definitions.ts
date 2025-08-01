@@ -1,4 +1,4 @@
-import type { ActionConfig, GameStateAction, LevelName } from '../types'
+import type { Action, ActionConfig, LevelName } from '../types'
 
 export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
   amoeba: [
@@ -61,19 +61,15 @@ export const generatedActions = Object.entries(actionDefinitions).reduce(
     acc[level as LevelName] = actions.reduce(
       (levelAcc, action) => {
         levelAcc[action.name] = {
-          data: action,
-          state: { ...defaultActionGameState(), name: action.name, displayed: action.defaultDisplayed ?? false },
+          ...action,
+          ...defaultActionGameState(),
+          displayed: action.defaultDisplayed ?? false,
         }
         return levelAcc
       },
-      {} as Record<string, { data: ActionConfig; state: GameStateAction }>
+      {} as Record<string, Action>
     )
     return acc
   },
-  {} as { [level in LevelName]: Record<string, { data: ActionConfig; state: GameStateAction }> }
+  {} as { [level in LevelName]: Record<string, Action> }
 )
-
-export const createActionGameState = (levelName: LevelName): Record<string, GameStateAction> => {
-  const actions = generatedActions[levelName]
-  return Object.fromEntries(Object.entries(actions).map(([name, { state }]) => [name, { ...state }]))
-}

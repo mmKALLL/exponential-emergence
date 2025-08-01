@@ -1,6 +1,5 @@
-import { generatedActions } from './data/action-definitions'
 import { initialGameState } from './gamestate-utils'
-import { TICK_LENGTH, type Action, type GameStateAction, type LevelName } from './types'
+import { TICK_LENGTH, type Action, type LevelName } from './types'
 import { maxTime } from './utils'
 
 const gs = { ...initialGameState }
@@ -15,7 +14,7 @@ function handleGameOver() {
   gs.unlockedDisplaySections.bestValue = true
 }
 
-function resetAction(action: GameStateAction) {
+function resetAction(action: Action) {
   const didImproveBest = action.currentValue > action.bestValue
 
   action.progress = 0
@@ -85,10 +84,7 @@ export const Game = {
   },
 
   get actionCards() {
-    return Object.entries(gs.levels[gs.currentLevel].actions).map(([name, action]) => ({
-      ...action,
-      ...generatedActions[gs.currentLevel][name].data,
-    })) as Action[]
+    return Object.values(gs.levels[gs.currentLevel].actions)
   },
 
   get visibleActionCards() {
@@ -97,7 +93,8 @@ export const Game = {
 
   rebirth(newLevelName: LevelName) {
     // Reset all actions, do this before changing the level
-    for (const action of Game.actionCards) {
+    for (const actionName in gs.levels[gs.currentLevel].actions) {
+      const action = gs.levels[gs.currentLevel].actions[actionName]
       resetAction(action)
     }
 
@@ -135,17 +132,11 @@ export const Game = {
     }
 
     if (gs.currentActionName) {
-      const actionState = gs.levels[gs.currentLevel].actions[gs.currentActionName]
-      const actionData = generatedActions[gs.currentLevel][gs.currentActionName].data
-      const action: Action = {
-        ...actionState,
-        ...actionData,
-      }
+      const action = gs.levels[gs.currentLevel].actions[gs.currentActionName]
 
-      if (actionState && actionData) {
-        actionState.progress += TICK_LENGTH
-        console.log(actionState)
-        if (actionState.progress >= maxTime(action)) {
+      if (action) {
+        action.progress += TICK_LENGTH
+        if (action.progress >= maxTime(action)) {
           completeAction(action)
         }
       }
