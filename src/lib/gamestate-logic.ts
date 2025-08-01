@@ -16,13 +16,13 @@ function handleGameOver() {
 
 function resetAction(action: Action) {
   const didImproveBest = action.currentValue > action.bestValue
+  action.bestValue = didImproveBest ? action.currentValue : action.bestValue
+  action.bestValueHistory = didImproveBest ? action.valueHistory : action.bestValueHistory
 
   action.progress = 0
   action.currentSpeed = 1
   action.currentValue = 0
   action.valueHistory = []
-  action.bestValue = didImproveBest ? action.currentValue : action.bestValue
-  action.bestValueHistory = didImproveBest ? action.valueHistory : action.bestValueHistory
 }
 
 function handleGoalCompletion() {
