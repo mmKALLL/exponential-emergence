@@ -1,5 +1,6 @@
 import type { Action, LevelName, Resources } from '../types'
 
+// TODO: Add typing; not as easy as it looks
 export const actionDefinitions = {
   amoeba: [
     {
@@ -34,16 +35,6 @@ export const actionDefinitions = {
       enabledCondition: (res: Resources['amoeba']) => res.nutrients >= 1,
       description: '-1 nutrients => +1 energy',
     },
-    // {
-    //   name: 'Filter waste',
-    //   baseTime: 2,
-    //   effect: (res: Resources['amoeba']) => {
-    //     res.waste -= 1
-    //     return res
-    //   },
-    //   enabledCondition: (res: Resources['amoeba']) => res.waste >= 1,
-    //   description: '-1 waste',
-    // },
     {
       name: 'Divide cell',
       baseTime: 4,
@@ -54,6 +45,66 @@ export const actionDefinitions = {
       },
       description: '-6 energy => +1 division',
       enabledCondition: (res: Resources['amoeba']) => res.energy >= 6,
+    },
+  ],
+
+  multicellular: [
+    {
+      name: 'Catch food',
+      baseTime: 4,
+      effect: (res: Resources['multicellular']) => {
+        res.energy -= 5
+        res.food += 20
+        return res
+      },
+      enabledCondition: (res: Resources['multicellular']) => res.energy >= 5,
+      description: '-5 energy => +20 food',
+      defaultDisplayed: true,
+    },
+    {
+      name: 'Process food',
+      baseTime: 5,
+      effect: (res: Resources['multicellular']) => {
+        res.food -= res.cells
+        res.nutrients += res.cells
+        res.waste += res.cells
+        return res
+      },
+      enabledCondition: (res: Resources['multicellular']) => res.food >= res.cells,
+      description: 'Every cell:\n-1 food => +1 nutrients, +1 waste',
+      defaultDisplayed: true,
+    },
+    {
+      name: 'Filter waste',
+      baseTime: 2,
+      effect: (res: Resources['multicellular']) => {
+        res.waste = Math.max(res.waste - 10, 0)
+        return res
+      },
+      enabledCondition: (res: Resources['multicellular']) => res.waste >= 1,
+      description: '-10 waste',
+    },
+    {
+      name: 'Multiply',
+      baseTime: 4,
+      effect: (res: Resources['multicellular']) => {
+        res.energy -= (10 - res.energyEfficiency) * res.cells
+        res.cells *= 2
+        return res
+      },
+      enabledCondition: (res: Resources['multicellular']) => res.waste <= 0 && res.energy >= (10 - res.energyEfficiency) * res.cells,
+      description: '10 energy per cell => x2 cells\n‼️ Requires 0 waste', // TODO: Dynamic description
+    },
+    {
+      name: 'Specialize',
+      baseTime: 6,
+      effect: (res: Resources['multicellular']) => {
+        res.energy -= 10
+        res.energyEfficiency += 1
+        return res
+      },
+      enabledCondition: (res: Resources['multicellular']) => res.energy >= 10 && res.energyEfficiency < 10 && res.waste <= 0,
+      description: '-10 energy => +1 energy efficiency (max 10)\n‼️ Requires 0 waste',
     },
   ],
 }

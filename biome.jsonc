@@ -13,7 +13,7 @@
     "formatter": {
         "enabled": true,
         "indentStyle": "space",
-        "lineWidth": 110,
+        "lineWidth": 140,
         "indentWidth": 4
     },
     "linter": {
@@ -37,6 +37,9 @@
             "security": {
                 // Security is of no concern in this project, shadcn also uses this
                 "noDangerouslySetInnerHtml": "off"
+            },
+            "complexity": {
+              "useLiteralKeys": "off"
             },
             "suspicious": {
                 "noArrayIndexKey": "off"

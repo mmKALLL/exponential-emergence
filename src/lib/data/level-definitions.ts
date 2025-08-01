@@ -66,7 +66,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
       nutrients: 0,
       waste: 0,
       energy: 0,
-      energyEfficiency: 1,
+      energyEfficiency: 0,
       cells: 0,
     },
     resources: {
@@ -74,7 +74,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
       nutrients: 0,
       waste: 0,
       energy: 0,
-      energyEfficiency: 1,
+      energyEfficiency: 0,
       cells: 0,
     },
     resourceInputs: [
@@ -93,7 +93,41 @@ export const initialLevelDefinitions: GameState['levels'] = {
       energyEfficiency: 0,
     },
     actions: generatedActions.multicellular,
-    goals: [],
+    goals: [
+      {
+        requiredAmount: 20,
+        resourceName: 'nutrients',
+        onComplete: (gs) => {
+          gs.levels.multicellular.actions['Filter waste'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 50,
+        resourceName: 'energy',
+        onComplete: (gs) => {
+          gs.levels.multicellular.actions['Multiply'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 20,
+        resourceName: 'cells',
+        onComplete: (gs) => {
+          gs.levels.multicellular.actions['Specialize'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 1000,
+        resourceName: 'cells',
+        onComplete: (gs) => {
+          // TODO: add algae unlock once multicellular is finished
+          // gs.levels.algae.unlocked = true
+          return gs
+        },
+      },
+    ],
   },
 
   algae: {
