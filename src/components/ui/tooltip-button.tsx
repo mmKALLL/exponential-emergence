@@ -7,8 +7,8 @@ export function TooltipWrapper({ component, content }: { component: JSX.Element;
       <TooltipTrigger asChild>{component}</TooltipTrigger>
       <TooltipContent>
         <p>
-          {content.split('\n').map((line) => (
-            <span>
+          {content.split('\n').map((line, index) => (
+            <span key={index}>
               {line}
               <br />
             </span>

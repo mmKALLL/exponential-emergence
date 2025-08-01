@@ -5,20 +5,39 @@ export const initialLevelDefinitions: GameState['levels'] = {
   amoeba: {
     name: 'amoeba',
     unlocked: true,
+    initialResources: {
+      food: 0,
+      energy: 3,
+      nutrients: 0,
+      waste: 0,
+      divisions: 0,
+    },
+    resources: {
+      food: 0,
+      energy: 3,
+      nutrients: 0,
+      waste: 0,
+      divisions: 0,
+    },
+    resourceOutputs: {
+      energy: 0,
+      divisions: 0,
+    },
     actionCards: {
       'Catch food': generateAction(
         'Catch food',
-        6,
+        8,
         (res) => {
-          res.food += 1
+          res.food += 2
+          res.energy -= 1
           return res
         },
-        '6 sec => +1 food',
+        '8 sec, -1 energy => +2 food',
         true
       ),
       'Absorb food': generateAction(
         'Absorb food',
-        7,
+        6,
         (res) => {
           res.food -= 1
           res.nutrients += 1
@@ -93,23 +112,5 @@ export const initialLevelDefinitions: GameState['levels'] = {
       },
       { requiredAmount: 3, resourceName: 'divisions', onComplete: (gs) => gs }, // TODO: Unlock next stage
     ],
-    initialResources: {
-      food: 0,
-      energy: 0,
-      nutrients: 0,
-      waste: 0,
-      divisions: 0,
-    },
-    resources: {
-      food: 0,
-      energy: 0,
-      nutrients: 0,
-      waste: 0,
-      divisions: 0,
-    },
-    resourceOutputs: {
-      energy: 0,
-      divisions: 0,
-    },
   },
 }
