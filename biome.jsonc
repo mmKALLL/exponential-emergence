@@ -37,6 +37,9 @@
             "security": {
                 // Security is of no concern in this project, shadcn also uses this
                 "noDangerouslySetInnerHtml": "off"
+            },
+            "suspicious": {
+                "noArrayIndexKey": "warn"
             }
         }
     },
