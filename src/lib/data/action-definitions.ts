@@ -51,10 +51,10 @@ export const actionDefinitions = {
   multicellular: [
     {
       name: 'Catch food',
-      baseTime: 4,
+      baseTime: 5,
       effect: (res: Resources['multicellular']) => {
         res.energy -= 5
-        res.food += 20
+        res.food += 25
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.energy >= 5,
@@ -63,7 +63,7 @@ export const actionDefinitions = {
     },
     {
       name: 'Process food',
-      baseTime: 5,
+      baseTime: 4,
       effect: (res: Resources['multicellular']) => {
         res.food -= res.cells
         res.nutrients += res.cells
@@ -108,7 +108,7 @@ export const actionDefinitions = {
     },
     {
       name: 'Specialize',
-      baseTime: 6,
+      baseTime: 4,
       effect: (res: Resources['multicellular']) => {
         res.energy -= 10
         res.efficiency += 1
