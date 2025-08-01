@@ -55,7 +55,7 @@ function canApplyAction(_action: Action) {
 function completeAction(action: Action) {
   if (!canApplyAction(action)) return
 
-  action.effect(gs)
+  action.effect(gs.levels[gs.currentLevel].resources)
   action.progress = 0
   action.currentValue += 1
   action.currentSpeed = Math.min(action.currentSpeed + 0.2, 4)

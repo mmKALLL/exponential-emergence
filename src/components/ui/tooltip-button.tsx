@@ -6,7 +6,14 @@ export function TooltipWrapper({ component, content }: { component: JSX.Element;
     <Tooltip>
       <TooltipTrigger asChild>{component}</TooltipTrigger>
       <TooltipContent>
-        <p>{content}</p>
+        <p>
+          {content.split('\n').map((line) => (
+            <span>
+              {line}
+              <br />
+            </span>
+          ))}
+        </p>
       </TooltipContent>
     </Tooltip>
   ) : (

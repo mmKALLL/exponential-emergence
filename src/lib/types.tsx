@@ -1,6 +1,6 @@
 export const TICK_LENGTH = 0.1 // seconds
 
-export type Effect = (gs: GameState) => GameState
+export type Effect<T extends LevelName = LevelName> = (res: Resources[T]) => Resources[T]
 
 export type Action = {
   name: string
@@ -26,7 +26,7 @@ export type UnlockedDisplaySections = {
 }
 
 export type Resources = {
-  readonly amoeba: { food: number; energy: number }
+  readonly amoeba: { food: number; energy: number; nutrients: number; waste: number; divisions: number }
   readonly multicellular: { cells: number; stone: number }
   readonly algae: { branches: number; sunlight: number }
   readonly insect: { strength: number; speed: number }
@@ -66,7 +66,7 @@ export type Level<T extends LevelName = LevelName> = {
   goals: Goal[]
   initialResources: Record<keyof Resources[T], number>
   resources: Resources[T]
-  resourceOutputs: Partial<Record<keyof Resources[T], number>>
+  resourceOutputs: Partial<Record<keyof Resources[T], number>> // List of best scores for resources that can be used as synergies in later stages
 }
 
 export type GameState = {

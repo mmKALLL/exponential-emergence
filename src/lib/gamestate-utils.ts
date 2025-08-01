@@ -15,24 +15,54 @@ export const initialGameState: GameState = {
       actionCards: {
         'Catch food': generateAction(
           'Catch food',
-          8,
-          (gs) => {
-            gs.levels[gs.currentLevel].resources.food += 1
-            return gs
+          7,
+          (res) => {
+            res.food += 1
+            return res
           },
           '8 sec => +1 food',
           true
         ),
+        'Absorb food': generateAction(
+          'Absorb food',
+          8,
+          (res) => {
+            res.food -= 1
+            res.nutrients += 2
+            res.waste += 1
+            return res
+          },
+          '6 sec, -1 food => +1 nutrients, +1 waste'
+        ),
         'Generate energy': generateAction(
           'Generate energy',
           6,
-          (gs) => {
-            gs.levels[gs.currentLevel].resources.food -= 1
-            gs.levels[gs.currentLevel].resources.energy += 1
-            return gs
+          (res) => {
+            res.food -= 1
+            res.energy += 1
+            return res
           },
-          '6 sec, -1 food => +1 energy',
-          false
+          '6 sec, -1 food => +1 energy'
+        ),
+        'Filter waste': generateAction(
+          'Filter waste',
+          4,
+          (res) => {
+            res.waste -= 1
+            return res
+          },
+          '6 sec, -1 waste'
+        ),
+        'Divide cell': generateAction(
+          'Divide cell',
+          8,
+          // TODO: Make this action require 0 waste
+          (res) => {
+            res.energy -= 10
+            res.divisions += 1
+            return res
+          },
+          '10 sec, -8 energy => +1 division\n‼️ Requires 0 waste'
         ),
       },
       goals: [
@@ -40,22 +70,53 @@ export const initialGameState: GameState = {
           requiredAmount: 5,
           resourceName: 'food',
           onComplete: (gs) => {
+            gs.levels.amoeba.actionCards['Absorb food'].displayed = true
+            return gs
+          },
+        },
+        {
+          requiredAmount: 5,
+          resourceName: 'nutrients',
+          onComplete: (gs) => {
             gs.levels.amoeba.actionCards['Generate energy'].displayed = true
             return gs
           },
         },
-        { requiredAmount: 10, resourceName: 'energy', onComplete: (gs) => gs }, // TODO: Unlock next stage
+        {
+          requiredAmount: 4,
+          resourceName: 'energy',
+          onComplete: (gs) => {
+            gs.levels.amoeba.actionCards['Filter waste'].displayed = true
+            return gs
+          },
+        },
+        {
+          requiredAmount: 10,
+          resourceName: 'energy',
+          onComplete: (gs) => {
+            gs.levels.amoeba.actionCards['Divide cell'].displayed = true
+            return gs
+          },
+        },
+        { requiredAmount: 3, resourceName: 'divisions', onComplete: (gs) => gs }, // TODO: Unlock next stage
       ],
       initialResources: {
         food: 0,
         energy: 0,
+        nutrients: 0,
+        waste: 0,
+        divisions: 0,
       },
       resources: {
         food: 0,
         energy: 0,
+        nutrients: 0,
+        waste: 0,
+        divisions: 0,
       },
       resourceOutputs: {
-        food: 0,
+        energy: 0,
+        divisions: 0,
       },
     },
   },
