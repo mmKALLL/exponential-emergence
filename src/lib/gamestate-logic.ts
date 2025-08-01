@@ -101,6 +101,10 @@ export const Game = {
     return Game.actionCards.filter((action) => action.displayed)
   },
 
+  startGame() {
+    gs.currentScreen = 'in-game'
+  },
+
   rebirth(newLevelName: LevelName) {
     // Reset all actions, do this before changing the level
     for (const actionName in Game.currentLevel.actions) {
