@@ -7,6 +7,7 @@ const gs = { ...initialGameState };
 function handleGameOver() {
   gs.currentScreen = "rebirth";
   gs.lifespanLeft = 0;
+  gs.runStarted = false;
   gs.currentActionName = null;
   gs.unlockedDisplaySections.speeds = true;
   gs.unlockedDisplaySections.valueHistory = true;
