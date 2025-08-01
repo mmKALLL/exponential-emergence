@@ -1,5 +1,5 @@
 import { generateAction } from './type-utils'
-import type { GameState } from './types'
+import { type GameState } from './types'
 
 export const initialGameState: GameState = {
   generation: 1,
@@ -59,5 +59,9 @@ export const initialGameState: GameState = {
       },
     },
   },
-  unlockedDisplaySections: { speeds: false, bestValue: false, valueHistory: true },
+  unlockedDisplaySections: {
+    speeds: false,
+    bestValue: false,
+    valueHistory: true,
+  },
 }
