@@ -11,7 +11,7 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
         return res
       },
       enabledCondition: (res) => res.energy >= 1,
-      description: '8 sec, -1 energy => +2 food',
+      description: '-1 energy => +2 food',
       defaultDisplayed: true,
     },
     {
@@ -24,7 +24,7 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
         return res
       },
       enabledCondition: (res) => res.food >= 1,
-      description: '7 sec, -1 food => +1 nutrients, +1 waste',
+      description: '-1 food => +1 nutrients, +1 waste',
     },
     {
       name: 'Generate energy',
@@ -35,7 +35,7 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
         return res
       },
       enabledCondition: (res) => res.nutrients >= 1,
-      description: '5 sec, -1 nutrients => +1 energy',
+      description: '-1 nutrients => +1 energy',
     },
     {
       name: 'Filter waste',
@@ -45,7 +45,7 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
         return res
       },
       enabledCondition: (res) => res.waste >= 1,
-      description: '4 sec => -1 waste',
+      description: '=> -1 waste',
     },
     {
       name: 'Divide cell',
@@ -55,7 +55,7 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
         res.divisions += 1
         return res
       },
-      description: '8 sec, -6 energy => +1 division\n‼️ Requires 0 waste',
+      description: '-6 energy => +1 division\n‼️ Requires 0 waste',
       enabledCondition: (res) => res.waste <= 0 && res.energy >= 6,
     },
   ],

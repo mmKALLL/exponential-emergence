@@ -14,7 +14,7 @@ export function RebirthScreen(): JSX.Element {
         Such is the cycle of life. However, don't fret!
         <br />
         Your achievements as {levelLabelPrefixed(currentLevel)} will provide bonuses to all your future lives.
-        <p className="text-xs mt-4">Evolution beyond Amoeba is still work in progress... Sorry about that...</p>
+        <div className="text-xs mt-4">Evolution beyond Amoeba is still work in progress... Sorry about that...</div>
       </p>
       <Button variant="outline" className="w-80 select-none" onClick={() => Game.rebirth('amoeba')}>
         Rebirth as Amoeba
