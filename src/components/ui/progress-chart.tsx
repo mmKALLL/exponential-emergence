@@ -1,5 +1,3 @@
-'use client'
-
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
 
 import { type ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
@@ -73,7 +71,15 @@ export function ProgressChart({
           </defs>
         ))}
         {Object.entries(config ?? defaultChartConfig).map(([key]) => (
-          <Area dataKey={key} type="linear" fill={`url(#fill-${key})`} fillOpacity={0.5} stroke={`var(--color-${key})`} stackId={key} />
+          <Area
+            key={key}
+            dataKey={key}
+            type="linear"
+            fill={`url(#fill-${key})`}
+            fillOpacity={0.5}
+            stroke={`var(--color-${key})`}
+            stackId={key}
+          />
         ))}
         {showLegend && <ChartLegend content={<ChartLegendContent />} />}
       </AreaChart>

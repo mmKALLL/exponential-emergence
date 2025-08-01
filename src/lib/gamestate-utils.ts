@@ -1,5 +1,5 @@
 import { initialLevelDefinitions } from './data/level-definitions'
-import { type GameState } from './types'
+import type { GameState } from './types'
 
 export const initialGameState: GameState = {
   generation: 1,
