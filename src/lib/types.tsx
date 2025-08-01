@@ -3,10 +3,17 @@ export const MAX_LIFESPAN = 60 // seconds
 
 export type Effect<T extends LevelName = LevelName> = (res: Resources[T]) => Resources[T]
 
-export type Action = {
+export type ActionConfig = {
   name: string
-  description: string | undefined
+  description?: string
   baseTime: number // in seconds
+  effect: Effect
+  enabledCondition?: (gs: GameState) => boolean
+  displayCondition?: (gs: GameState) => boolean
+  defaultDisplayed?: boolean
+}
+
+export type Action = ActionConfig & {
   progress: number
   currentSpeed: number
   permanentSpeed: number
@@ -15,9 +22,6 @@ export type Action = {
   bestValue: number // best number of completions across all runs
   bestValueHistory: number[]
   displayed: boolean
-  displayCondition?: (gs: GameState) => boolean
-  enabledCondition?: (gs: GameState) => boolean
-  effect: Effect
 }
 
 export type UnlockedDisplaySections = {
@@ -63,7 +67,7 @@ export const levelNameOrder: LevelName[] = [
 export type Level<T extends LevelName = LevelName> = {
   name: T
   unlocked: boolean
-  actionCards: Record<string, Action>
+  actions: Record<string, Action>
   goals: Goal[]
   initialResources: Record<keyof Resources[T], number>
   resources: Resources[T]

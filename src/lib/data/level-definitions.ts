@@ -1,5 +1,5 @@
-import { generateAction } from '../type-utils'
 import type { GameState } from '../types'
+import { generatedActions } from './action-definitions'
 
 export const initialLevelDefinitions: GameState['levels'] = {
   amoeba: {
@@ -23,66 +23,13 @@ export const initialLevelDefinitions: GameState['levels'] = {
       energy: 0,
       divisions: 0,
     },
-    actionCards: {
-      'Catch food': generateAction(
-        'Catch food',
-        8,
-        (res) => {
-          res.food += 2
-          res.energy -= 1
-          return res
-        },
-        '8 sec, -1 energy => +2 food',
-        true
-      ),
-      'Absorb food': generateAction(
-        'Absorb food',
-        6,
-        (res) => {
-          res.food -= 1
-          res.nutrients += 1
-          res.waste += 1
-          return res
-        },
-        '7 sec, -1 food => +1 nutrients, +1 waste'
-      ),
-      'Generate energy': generateAction(
-        'Generate energy',
-        5,
-        (res) => {
-          res.nutrients -= 1
-          res.energy += 1
-          return res
-        },
-        '5 sec, -1 nutrients => +1 energy'
-      ),
-      'Filter waste': generateAction(
-        'Filter waste',
-        4,
-        (res) => {
-          res.waste -= 1
-          return res
-        },
-        '4 sec, -1 waste'
-      ),
-      'Divide cell': generateAction(
-        'Divide cell',
-        8,
-        // TODO: Make this action require 0 waste
-        (res) => {
-          res.energy -= 6
-          res.divisions += 1
-          return res
-        },
-        '8 sec, -6 energy => +1 division\n‼️ Requires 0 waste'
-      ),
-    },
+    actions: generatedActions.amoeba,
     goals: [
       {
         requiredAmount: 5,
         resourceName: 'food',
         onComplete: (gs) => {
-          gs.levels.amoeba.actionCards['Absorb food'].displayed = true
+          gs.levels.amoeba.actions['Absorb food'].displayed = true
           return gs
         },
       },
@@ -90,7 +37,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
         requiredAmount: 4,
         resourceName: 'nutrients',
         onComplete: (gs) => {
-          gs.levels.amoeba.actionCards['Generate energy'].displayed = true
+          gs.levels.amoeba.actions['Generate energy'].displayed = true
           return gs
         },
       },
@@ -98,7 +45,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
         requiredAmount: 4,
         resourceName: 'energy',
         onComplete: (gs) => {
-          gs.levels.amoeba.actionCards['Filter waste'].displayed = true
+          gs.levels.amoeba.actions['Filter waste'].displayed = true
           return gs
         },
       },
@@ -106,7 +53,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
         requiredAmount: 12,
         resourceName: 'energy',
         onComplete: (gs) => {
-          gs.levels.amoeba.actionCards['Divide cell'].displayed = true
+          gs.levels.amoeba.actions['Divide cell'].displayed = true
           return gs
         },
       },

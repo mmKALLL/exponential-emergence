@@ -38,12 +38,12 @@ function handleGoalCompletion() {
 }
 
 function updateActionHistories() {
-  Object.values(gs.levels[gs.currentLevel].actionCards).forEach((action) => {
+  Object.values(gs.levels[gs.currentLevel].actions).forEach((action) => {
     const updatedAction = {
       ...action,
       valueHistory: [...action.valueHistory, action.currentValue],
     }
-    gs.levels[gs.currentLevel].actionCards[action.name] = updatedAction
+    gs.levels[gs.currentLevel].actions[action.name] = updatedAction
   })
 }
 
@@ -84,7 +84,7 @@ export const Game = {
   },
 
   get actionCards() {
-    return Object.values(gs.levels[gs.currentLevel].actionCards)
+    return Object.values(gs.levels[gs.currentLevel].actions)
   },
 
   get visibleActionCards() {
@@ -93,7 +93,8 @@ export const Game = {
 
   rebirth(newLevelName: LevelName) {
     // Reset all actions, do this before changing the level
-    for (const action of Game.actionCards) {
+    for (const actionName in gs.levels[gs.currentLevel].actions) {
+      const action = gs.levels[gs.currentLevel].actions[actionName]
       resetAction(action)
     }
 
@@ -131,7 +132,7 @@ export const Game = {
     }
 
     if (gs.currentActionName) {
-      const action = gs.levels[gs.currentLevel].actionCards[gs.currentActionName]
+      const action = gs.levels[gs.currentLevel].actions[gs.currentActionName]
 
       if (action) {
         action.progress += TICK_LENGTH
