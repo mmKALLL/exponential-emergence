@@ -8,7 +8,7 @@ export function TooltipWrapper({ component, content }: { component: JSX.Element;
       <TooltipContent>
         <p>
           {content.split('\n').map((line) => (
-            <span>
+            <span key={line}>
               {line}
               <br />
             </span>

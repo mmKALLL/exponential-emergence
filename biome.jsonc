@@ -1,0 +1,65 @@
+{
+    "$schema": "https://biomejs.dev/schemas/2.1.3/schema.json",
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true,
+        "defaultBranch": "develop"
+    },
+    "files": {
+        "ignoreUnknown": false,
+        "includes": ["src/**"]
+    },
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "lineWidth": 110,
+        "indentWidth": 4
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true,
+            "a11y": {
+                "useKeyWithClickEvents": "off"
+            },
+            "correctness": {
+                // Error out on unused imports, variables, and function parameters
+                "noUnusedImports": "error",
+                "noUnusedVariables": "error",
+                "noUnusedFunctionParameters": "error",
+                "useExhaustiveDependencies": "warn"
+            },
+            "performance": {
+                // This is for performance, but it's not a big deal
+                "noAccumulatingSpread": "off"
+            },
+            "security": {
+                // Security is of no concern in this project, shadcn also uses this
+                "noDangerouslySetInnerHtml": "off"
+            }
+        }
+    },
+    "css": {
+        // There's currently an issue where these do not work with tailwindcss language mode
+        "linter": {
+            "enabled": false
+        },
+        "formatter": {
+            "enabled": false
+        }
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single",
+            "semicolons": "asNeeded",
+            "bracketSpacing": true,
+            "trailingCommas": "es5",
+            "lineWidth": 140,
+            "indentWidth": 2
+        }
+    },
+    "assist": {
+        "enabled": false
+    }
+}

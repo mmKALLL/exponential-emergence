@@ -1,7 +1,7 @@
 import { Button } from '../ui/button'
 import { Progress } from '../ui/progress'
 import { Card } from '../ui/card'
-import { type JSX } from 'react'
+import type { JSX } from 'react'
 import type { Action } from '@/lib/types'
 import { TooltipWrapper } from '../ui/tooltip-button'
 import { maxTime } from '@/lib/utils'
@@ -27,18 +27,16 @@ export function ActionCard({ action }: { action: Action }): JSX.Element {
         content={description}
       />
       {unlockedDisplaySections.speeds && (
-        <>
-          <div className="flex flex-col items-center gap-2">
-            <div className="flex place-content-between w-42">
-              <div className="text-sm">Current life speed:</div>
-              <div className="text-sm">{currentSpeed.toFixed(2)}x</div>
-            </div>
-            <div className="flex place-content-between w-42">
-              <div className="text-sm">Permanent speed:</div>
-              <div className="text-sm">{permanentSpeed.toFixed(2)}x</div>
-            </div>
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex place-content-between w-42">
+            <div className="text-sm">Current life speed:</div>
+            <div className="text-sm">{currentSpeed.toFixed(2)}x</div>
           </div>
-        </>
+          <div className="flex place-content-between w-42">
+            <div className="text-sm">Permanent speed:</div>
+            <div className="text-sm">{permanentSpeed.toFixed(2)}x</div>
+          </div>
+        </div>
       )}
       <ActionMiniChart
         height={30}

@@ -1,5 +1,3 @@
-'use client'
-
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -37,7 +35,17 @@ const defaultChartConfig = {
   },
 } satisfies ChartConfig
 
-export function ProgressChartExample({ className, height, config, data }: { className?: string; height?: number; config?: ChartConfig; data?: Record<string, any>[] }) {
+export function ProgressChartExample({
+  className,
+  height,
+  config,
+  data,
+}: {
+  className?: string
+  height?: number
+  config?: ChartConfig
+  data?: Record<string, any>[]
+}) {
   return (
     <Card className={className}>
       <CardHeader>

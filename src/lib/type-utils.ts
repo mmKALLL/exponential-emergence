@@ -1,6 +1,12 @@
 import type { Action, Effect } from './types'
 
-export function generateAction(name: string, baseTime: number, effect: Effect, description: string | undefined = undefined, displayed: boolean = false): Action {
+export function generateAction(
+  name: string,
+  baseTime: number,
+  effect: Effect,
+  description: string | undefined = undefined,
+  displayed: boolean = false
+): Action {
   return {
     name,
     description,
