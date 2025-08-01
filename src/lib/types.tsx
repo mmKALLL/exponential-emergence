@@ -31,16 +31,16 @@ export type UnlockedDisplaySections = {
 }
 
 export type Resources = {
-  readonly amoeba: { food: number; energy: number; nutrients: number; divisions: number }
+  readonly amoeba: { food: number; nutrients: number; energy: number; divisions: number }
   readonly multicellular: {
+    energy: number
+    energyEfficiency: number
     food: number
     nutrients: number
     waste: number
-    energy: number
-    energyEfficiency: number
     cells: number
   }
-  readonly algae: { size: number; branches: number; sunlight: number; chlorophyll: number; energy: number; hardness: number }
+  readonly algae: { energy: number; sunlight: number; chlorophyll: number; size: number; branches: number; hardness: number }
   readonly insect: { speed: number; perception: number; digestion: number; pheromones: number; eggs: number }
   readonly crustacean: { strength: number; dexterity: number; vitality: number; intelligence: number; mass: number }
 }

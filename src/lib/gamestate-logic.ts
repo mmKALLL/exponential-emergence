@@ -73,7 +73,7 @@ function completeAction(action: Action) {
   action.progress = 0
   action.currentValue += 1
   action.currentSpeed = Math.min(action.currentSpeed + 0.2, 4)
-  action.permanentSpeed = Math.min(action.permanentSpeed + 0.02, 2.5)
+  action.permanentSpeed = Math.min(action.permanentSpeed + 0.04, 3)
   // If action is no longer allowed after the effect, toggle it off
   if (!canApplyAction(action)) {
     gs.currentActionName = null

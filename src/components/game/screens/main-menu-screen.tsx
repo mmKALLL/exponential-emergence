@@ -7,6 +7,8 @@ export function MainMenuScreen(): JSX.Element {
     <div className="main-container flex flex-col items-center p-4 gap-8 mt-16">
       <h1 className="text-3xl font-bold mb-4">Exponential Emergence</h1>
       <div className="grid grid-cols-[1.5rem_1fr] mb-4">
+        <div className="mb-4">Instructions:</div>
+        <div />
         <div>1.</div>
         <div>Live as an amoeba for 60 seconds. </div>
         <div>2.</div>
@@ -14,7 +16,6 @@ export function MainMenuScreen(): JSX.Element {
         <div>3.</div>
         <div>Finish goals to reach the pinnacle of evolution.</div>
       </div>
-
       <Button size="lg" onClick={() => Game.startGame()}>
         Start Game
       </Button>

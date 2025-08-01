@@ -4,7 +4,7 @@ export const actionDefinitions = {
   amoeba: [
     {
       name: 'Catch food',
-      baseTime: 7,
+      baseTime: 4,
       effect: (res: Resources['amoeba']) => {
         res.food += 1
         return res
@@ -25,7 +25,7 @@ export const actionDefinitions = {
     },
     {
       name: 'Generate energy',
-      baseTime: 4,
+      baseTime: 2,
       effect: (res: Resources['amoeba']) => {
         res.nutrients -= 1
         res.energy += 1
@@ -46,7 +46,7 @@ export const actionDefinitions = {
     // },
     {
       name: 'Divide cell',
-      baseTime: 8,
+      baseTime: 4,
       effect: (res: Resources['amoeba']) => {
         res.energy -= 6
         res.divisions += 1

@@ -19,16 +19,12 @@ export function RebirthScreen(): JSX.Element {
   return (
     <div className="main-container flex flex-col items-center pt-16 p-4 gap-4">
       <h1 className="text-3xl font-bold font-serif">YOU DIED</h1>
-      <p className="text-lg mb-8 mt-7">
+      <div className="text-lg mb-8 mt-7">
         Such is the cycle of life. However, don't fret!
         <br />
         Your achievements as {levelLabelPrefixed(currentLevel)} will provide bonuses to all your future lives.
-        <div className="text-xs mt-4">
-          Evolution beyond Amoeba is still work in progress.
-          <br />
-          The game also doesn't have support for saving... Sorry about that...
-        </div>
-      </p>
+        <div className="text-xs mt-4">The game doesn't have support for saving yet... Sorry about that...</div>
+      </div>
       {typedObjectEntries(lockedTexts).map(([name, lockedText]) =>
         unlockedLevels.includes(name) ? (
           <Button key={name} variant="outline" className="w-80 select-none" onClick={() => Game.rebirth(name)}>

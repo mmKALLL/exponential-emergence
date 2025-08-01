@@ -13,19 +13,18 @@ export function LevelInfoCard() {
 
   return (
     <Card className="flex flex-col gap-4 p-4 items-center w-108">
-      <p className="">
+      <p>
         Generation {generation} - {levelLabel(currentLevel)}
       </p>
       <div className="w-full">
         {currentGoal ? (
           <ProgressItem value={currentGoalAmount || 0} max={currentGoalMaximum}>
-            <h1 className="text-2xl font-bold">
-              {' '}
+            <div className="text-2xl font-bold">
               Next goal: {currentGoalAmount}/{currentGoalMaximum} {currentGoal.resourceName}
-            </h1>
+            </div>
           </ProgressItem>
         ) : (
-          <h1 className="text-2xl font-bold text-green-500">All {levelLabel(currentLevel)} goals completed!</h1>
+          <h1 className="text-2xl font-bold text-green-500 justify-self-center">All {levelLabel(currentLevel)} goals completed!</h1>
         )}
       </div>
 

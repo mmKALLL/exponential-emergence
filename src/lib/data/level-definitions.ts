@@ -40,7 +40,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
         },
       },
       {
-        requiredAmount: 8,
+        requiredAmount: 10,
         resourceName: 'energy',
         onComplete: (gs) => {
           gs.levels.amoeba.actions['Divide cell'].displayed = true
