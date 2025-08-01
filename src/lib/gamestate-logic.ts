@@ -66,6 +66,8 @@ function completeAction(action: Action) {
   }
 }
 
+let lastUpdate = Date.now()
+
 export const Game = {
   get state() {
     return gs
@@ -130,6 +132,9 @@ export const Game = {
   },
 
   gameTick: () => {
+    const now = Date.now()
+    const diff = (now - lastUpdate) / 1000 // Convert milliseconds to seconds
+    lastUpdate = now
     if (gs.currentScreen !== 'in-game' || !gs.runStarted) {
       return
     }
@@ -138,14 +143,14 @@ export const Game = {
       return // No action is currently active
     }
 
-    gs.lifespanLeft -= TICK_LENGTH // Decrease lifespan by 0.1 seconds each tick
+    gs.lifespanLeft -= diff // Decrease lifespan by the time elapsed since the last tick
     if (gs.lifespanLeft <= 0) {
       return handleGameOver()
     }
 
     const action = Game.currentLevel.actions[gs.currentActionName]
     if (action) {
-      action.progress += TICK_LENGTH
+      action.progress += diff
       if (action.progress >= maxTime(action)) {
         completeAction(action)
       }
