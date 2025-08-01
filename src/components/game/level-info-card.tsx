@@ -11,7 +11,6 @@ export function LevelInfoCard() {
   const currentGoalMaximum = useUpdate(() => Game.currentGoalMaximum)
   const resources = useUpdate(() => Game.resources)
   const { currentLevel, lifespanLeft, generation } = useGameState()
-  console.log(currentGoalAmount, currentGoalMaximum, currentGoal)
 
   return (
     <Card className="flex flex-col gap-4 p-4 items-center">

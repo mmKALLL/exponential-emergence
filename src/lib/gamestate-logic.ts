@@ -26,40 +26,44 @@ function resetAction(action: Action) {
 }
 
 function handleGoalCompletion() {
-  const currentGoal = gs.levels[gs.currentLevel].goals[0]
+  const currentGoal = Game.currentLevel.goals[0]
   if (!currentGoal) return // All goals already achieved
 
-  const currentAmount = gs.levels[gs.currentLevel].resources[currentGoal.resourceName]
+  const currentAmount = Game.currentLevel.resources[currentGoal.resourceName]
 
   if (currentAmount >= currentGoal.requiredAmount) {
     currentGoal.onComplete(gs)
-    gs.levels[gs.currentLevel].goals.shift() // Remove the completed goal
+    Game.currentLevel.goals.shift() // Remove the completed goal
   }
 }
 
 function updateActionHistories() {
-  Object.values(gs.levels[gs.currentLevel].actions).forEach((action) => {
+  Object.values(Game.currentLevel.actions).forEach((action) => {
     const updatedAction = {
       ...action,
       valueHistory: [...action.valueHistory, action.currentValue],
     }
-    gs.levels[gs.currentLevel].actions[action.name] = updatedAction
+    Game.currentLevel.actions[action.name] = updatedAction
   })
 }
 
-function canApplyAction(_action: Action) {
-  // TODO: Check action.enabledCondition against gs; or try applying the action and see if all resources are non-negative?
-  return true
+export function canApplyAction(action: Action) {
+  if (!action.enabledCondition) return true // No condition means the action is always allowed
+  return action.enabledCondition(Game.currentLevel.resources)
 }
 
 function completeAction(action: Action) {
   if (!canApplyAction(action)) return
 
-  action.effect(gs.levels[gs.currentLevel].resources)
+  action.effect(Game.currentLevel.resources)
   action.progress = 0
   action.currentValue += 1
   action.currentSpeed = Math.min(action.currentSpeed + 0.2, 4)
   action.permanentSpeed = Math.min(action.permanentSpeed + 0.02, 2.5)
+  // If action is no longer allowed after the effect, toggle it off
+  if (!canApplyAction(action)) {
+    gs.currentActionName = null
+  }
 }
 
 export const Game = {
@@ -67,16 +71,20 @@ export const Game = {
     return gs
   },
 
+  get currentLevel() {
+    return gs.levels[gs.currentLevel]
+  },
+
   get resources() {
-    return Object.entries(gs.levels[gs.currentLevel].resources).map(([name, amount]) => ({ name, amount }))
+    return Object.entries(Game.currentLevel.resources).map(([name, amount]) => ({ name, amount }))
   },
 
   get currentGoal() {
-    return gs.levels[gs.currentLevel].goals[0] || null
+    return Game.currentLevel.goals[0] || null
   },
 
   get currentGoalAmount() {
-    return Game.currentGoal ? gs.levels[gs.currentLevel].resources[Game.currentGoal.resourceName] : null
+    return Game.currentGoal ? Game.currentLevel.resources[Game.currentGoal.resourceName] : null
   },
 
   get currentGoalMaximum() {
@@ -84,7 +92,7 @@ export const Game = {
   },
 
   get actionCards() {
-    return Object.values(gs.levels[gs.currentLevel].actions)
+    return Object.values(Game.currentLevel.actions)
   },
 
   get visibleActionCards() {
@@ -93,14 +101,14 @@ export const Game = {
 
   rebirth(newLevelName: LevelName) {
     // Reset all actions, do this before changing the level
-    for (const actionName in gs.levels[gs.currentLevel].actions) {
-      const action = gs.levels[gs.currentLevel].actions[actionName]
+    for (const actionName in Game.currentLevel.actions) {
+      const action = Game.currentLevel.actions[actionName]
       resetAction(action)
     }
 
     // Reset all resources, do this before changing the level
-    gs.levels[gs.currentLevel].resources = {
-      ...gs.levels[gs.currentLevel].initialResources,
+    Game.currentLevel.resources = {
+      ...Game.currentLevel.initialResources,
     }
 
     gs.currentLevel = newLevelName
@@ -114,7 +122,7 @@ export const Game = {
     gs.runStarted = true
 
     // Only toggle if the action can be applied and is not already active
-    if (!canApplyAction(action) || (action.enabledCondition?.(gs) ?? false)) {
+    if (!canApplyAction(action)) {
       return
     }
 
@@ -126,19 +134,20 @@ export const Game = {
       return
     }
 
+    if (gs.currentActionName === null) {
+      return // No action is currently active
+    }
+
     gs.lifespanLeft -= TICK_LENGTH // Decrease lifespan by 0.1 seconds each tick
     if (gs.lifespanLeft <= 0) {
       return handleGameOver()
     }
 
-    if (gs.currentActionName) {
-      const action = gs.levels[gs.currentLevel].actions[gs.currentActionName]
-
-      if (action) {
-        action.progress += TICK_LENGTH
-        if (action.progress >= maxTime(action)) {
-          completeAction(action)
-        }
+    const action = Game.currentLevel.actions[gs.currentActionName]
+    if (action) {
+      action.progress += TICK_LENGTH
+      if (action.progress >= maxTime(action)) {
+        completeAction(action)
       }
     }
 
