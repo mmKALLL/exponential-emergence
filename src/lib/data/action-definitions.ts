@@ -10,6 +10,7 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
         res.energy -= 1
         return res
       },
+      enabledCondition: (res) => res.energy >= 1,
       description: '8 sec, -1 energy => +2 food',
       defaultDisplayed: true,
     },
@@ -22,6 +23,7 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
         res.waste += 1
         return res
       },
+      enabledCondition: (res) => res.food >= 1,
       description: '7 sec, -1 food => +1 nutrients, +1 waste',
     },
     {
@@ -32,6 +34,7 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
         res.energy += 1
         return res
       },
+      enabledCondition: (res) => res.nutrients >= 1,
       description: '5 sec, -1 nutrients => +1 energy',
     },
     {
@@ -41,6 +44,7 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
         res.waste -= 1
         return res
       },
+      enabledCondition: (res) => res.waste >= 1,
       description: '4 sec, -1 waste => no waste',
     },
   ],

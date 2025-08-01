@@ -8,7 +8,7 @@ export type ActionConfig = {
   description?: string
   baseTime: number // in seconds
   effect: Effect
-  enabledCondition?: (gs: GameState) => boolean
+  enabledCondition?: <T extends LevelName = LevelName>(res: Resources[T]) => boolean
   displayCondition?: (gs: GameState) => boolean
   defaultDisplayed?: boolean
 }
