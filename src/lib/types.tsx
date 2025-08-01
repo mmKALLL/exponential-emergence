@@ -31,23 +31,27 @@ export type UnlockedDisplaySections = {
 }
 
 export type Resources = {
-  readonly amoeba: { food: number; energy: number; nutrients: number; waste: number; divisions: number }
-  readonly multicellular: { cells: number; stone: number }
-  readonly algae: { branches: number; sunlight: number }
-  readonly insect: { strength: number; speed: number }
+  readonly amoeba: { food: number; energy: number; nutrients: number; divisions: number }
+  readonly multicellular: {
+    food: number
+    nutrients: number
+    waste: number
+    energy: number
+    energyEfficiency: number
+    cells: number
+  }
+  readonly algae: { size: number; branches: number; sunlight: number; chlorophyll: number; energy: number; hardness: number }
+  readonly insect: { speed: number; perception: number; digestion: number; pheromones: number; eggs: number }
+  readonly crustacean: { strength: number; dexterity: number; vitality: number; intelligence: number; mass: number }
 }
 
-export type Goal<T extends LevelName = LevelName> = {
+export type Goal = {
   requiredAmount: number
-  resourceName: keyof Resources[T]
+  resourceName: string
   onComplete: (gs: GameState) => GameState // Be careful to make this idempotent, since reducers may be called more than once with the same parameters
 }
 
-export type LevelName = 'amoeba'
-// | 'multicellular'
-// | 'algae'
-// | 'insect'
-// | 'crustacean'
+export type LevelName = 'amoeba' | 'multicellular' | 'algae' | 'insect' | 'crustacean'
 // | 'mammal'
 // | 'human'
 // | 'clan'
@@ -58,19 +62,26 @@ export type LevelName = 'amoeba'
 // | 'universe'
 // | 'reality'
 
-export const levelNameOrder: LevelName[] = [
-  'amoeba',
-  // 'multicellular',
-  // 'algae',
-] as const
+export const levelNameOrder: LevelName[] = ['amoeba', 'multicellular', 'algae', 'insect', 'crustacean'] as const
 
-export type Level<T extends LevelName = LevelName> = {
+export type Level<T extends LevelName> = {
   name: T
+  playerAdvice?: string
   unlocked: boolean
   actions: Record<string, Action>
   goals: Goal[]
   initialResources: Record<keyof Resources[T], number>
   resources: Resources[T]
+  resourceInputs?: {
+    level: LevelName
+    resourceName:
+      | keyof Resources['amoeba']
+      | keyof Resources['multicellular']
+      | keyof Resources['algae']
+      | keyof Resources['insect']
+      | keyof Resources['crustacean']
+    description: string
+  }[] // List of resources that synergize from previous levels
   resourceOutputs: Partial<Record<keyof Resources[T], number>> // List of best scores for resources that can be used as synergies in later stages
 }
 
@@ -81,6 +92,12 @@ export type GameState = {
   currentActionName: string | null
   lifespanLeft: number
   runStarted: boolean
-  levels: Record<LevelName, Level>
+  levels: {
+    amoeba: Level<'amoeba'>
+    multicellular: Level<'multicellular'>
+    algae: Level<'algae'>
+    insect: Level<'insect'>
+    crustacean: Level<'crustacean'>
+  }
   unlockedDisplaySections: UnlockedDisplaySections
 }

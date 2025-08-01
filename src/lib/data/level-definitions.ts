@@ -1,4 +1,4 @@
-import type { GameState } from '../types'
+import type { Action, GameState } from '../types'
 import { generatedActions } from './action-definitions'
 
 export const initialLevelDefinitions: GameState['levels'] = {
@@ -9,14 +9,12 @@ export const initialLevelDefinitions: GameState['levels'] = {
       food: 0,
       energy: 0,
       nutrients: 0,
-      waste: 0,
       divisions: 0,
     },
     resources: {
       food: 0,
       energy: 0,
       nutrients: 0,
-      waste: 0,
       divisions: 0,
     },
     resourceOutputs: {
@@ -42,22 +40,136 @@ export const initialLevelDefinitions: GameState['levels'] = {
         },
       },
       {
-        requiredAmount: 4,
-        resourceName: 'energy',
-        onComplete: (gs) => {
-          gs.levels.amoeba.actions['Filter waste'].displayed = true
-          return gs
-        },
-      },
-      {
-        requiredAmount: 12,
+        requiredAmount: 8,
         resourceName: 'energy',
         onComplete: (gs) => {
           gs.levels.amoeba.actions['Divide cell'].displayed = true
           return gs
         },
       },
-      { requiredAmount: 3, resourceName: 'divisions', onComplete: (gs) => gs }, // TODO: Unlock next stage
+      {
+        requiredAmount: 3,
+        resourceName: 'divisions',
+        onComplete: (gs) => {
+          gs.levels.multicellular.unlocked = true
+          return gs
+        },
+      },
     ],
+  },
+
+  multicellular: {
+    name: 'multicellular',
+    unlocked: false,
+    initialResources: {
+      food: 0,
+      nutrients: 0,
+      waste: 0,
+      energy: 0,
+      energyEfficiency: 1,
+      cells: 0,
+    },
+    resources: {
+      food: 0,
+      nutrients: 0,
+      waste: 0,
+      energy: 0,
+      energyEfficiency: 1,
+      cells: 0,
+    },
+    resourceInputs: [
+      {
+        level: 'amoeba',
+        resourceName: 'divisions',
+        description: 'You start with this many cells.',
+      },
+      {
+        level: 'amoeba',
+        resourceName: 'energy',
+        description: 'You start with this much energy.',
+      },
+    ],
+    resourceOutputs: {
+      energyEfficiency: 0,
+    },
+    actions: {} as Record<string, Action>,
+    goals: [],
+  },
+
+  algae: {
+    name: 'algae',
+    unlocked: false,
+    initialResources: {
+      size: 0,
+      branches: 0,
+      sunlight: 0,
+      chlorophyll: 0,
+      energy: 0,
+      hardness: 0,
+    },
+    resources: {
+      size: 0,
+      branches: 0,
+      sunlight: 0,
+      chlorophyll: 0,
+      energy: 0,
+      hardness: 0,
+    },
+    resourceOutputs: {
+      hardness: 0,
+      size: 0,
+    },
+    actions: {} as Record<string, Action>,
+    goals: [],
+  },
+
+  insect: {
+    name: 'insect',
+    unlocked: false,
+    initialResources: {
+      speed: 0,
+      perception: 0,
+      digestion: 0,
+      pheromones: 0,
+      eggs: 0,
+    },
+    resources: {
+      speed: 0,
+      perception: 0,
+      digestion: 0,
+      pheromones: 0,
+      eggs: 0,
+    },
+    resourceOutputs: {
+      speed: 0,
+      perception: 0,
+    },
+    actions: {} as Record<string, Action>,
+    goals: [],
+  },
+
+  crustacean: {
+    name: 'crustacean',
+    unlocked: false,
+    initialResources: {
+      strength: 0,
+      dexterity: 0,
+      vitality: 0,
+      intelligence: 0,
+      mass: 0,
+    },
+    resources: {
+      strength: 0,
+      dexterity: 0,
+      vitality: 0,
+      intelligence: 0,
+      mass: 0,
+    },
+    resourceOutputs: {
+      strength: 0,
+      dexterity: 0,
+    },
+    actions: {} as Record<string, Action>,
+    goals: [],
   },
 }

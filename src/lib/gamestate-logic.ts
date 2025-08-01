@@ -1,5 +1,5 @@
 import { initialGameState } from './gamestate-utils'
-import { TICK_LENGTH, type Action, type LevelName } from './types'
+import { TICK_LENGTH, type Action, type LevelName, type Resources } from './types'
 import { maxTime } from './utils'
 
 const gs = { ...initialGameState }
@@ -29,9 +29,9 @@ function handleGoalCompletion() {
   const currentGoal = Game.currentLevel.goals[0]
   if (!currentGoal) return // All goals already achieved
 
-  const currentAmount = Game.currentLevel.resources[currentGoal.resourceName]
+  const currentAmount = Game.currentGoalAmount
 
-  if (currentAmount >= currentGoal.requiredAmount) {
+  if (currentAmount !== null && currentAmount >= currentGoal.requiredAmount) {
     currentGoal.onComplete(gs)
     Game.currentLevel.goals.shift() // Remove the completed goal
   }
@@ -86,7 +86,7 @@ export const Game = {
   },
 
   get currentGoalAmount() {
-    return Game.currentGoal ? Game.currentLevel.resources[Game.currentGoal.resourceName] : null
+    return Game.currentGoal ? (Game.currentLevel.resources[Game.currentGoal.resourceName as keyof Resources[LevelName]] as number) : null
   },
 
   get currentGoalMaximum() {
