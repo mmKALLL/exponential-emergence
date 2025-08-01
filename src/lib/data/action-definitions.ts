@@ -43,6 +43,17 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
       },
       description: '4 sec, -1 waste => no waste',
     },
+    {
+      name: 'Divide cell',
+      baseTime: 8,
+      effect: (res) => {
+        res.energy -= 6
+        res.divisions += 1
+        return res
+      },
+      description: '8 sec, -6 energy => +1 division\n‼️ Requires 0 waste',
+      enabledCondition: (gs) => gs.levels[gs.currentLevel].resources.waste <= 0,
+    },
   ],
 }
 
