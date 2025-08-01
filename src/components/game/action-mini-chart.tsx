@@ -25,12 +25,16 @@ export function ActionMiniChart({
   bestValueHistory: number[]
   showLegend: boolean
 }): JSX.Element {
-  const data = Array(MAX_LIFESPAN / TICK_LENGTH - 1)
+  const pointsPerSecond = 5
+  const totalPoints = MAX_LIFESPAN * pointsPerSecond
+  const totalTicks = MAX_LIFESPAN / TICK_LENGTH
+  const ticksPerPoint = totalTicks / totalPoints
+  const data = Array(totalPoints - 1)
     .fill(0)
     .map((_, i) => ({
-      time: `${Math.round(i * TICK_LENGTH)}s`,
-      current: valueHistory[i] ?? 0,
-      best: bestValueHistory[i] ?? 0,
+      time: `${Math.round(i * TICK_LENGTH * ticksPerPoint)}s`,
+      current: valueHistory[Math.round(i * ticksPerPoint)] ?? 0,
+      best: bestValueHistory[Math.round(i * ticksPerPoint)] ?? 0,
     }))
 
   return <ProgressChart className="h-36 w-full" height={height ?? 36} config={defaultChartConfig} data={data} showLegend={showLegend} />

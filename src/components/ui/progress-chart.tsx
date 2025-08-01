@@ -74,7 +74,7 @@ export function ProgressChart({
           <Area
             key={key}
             dataKey={key}
-            type="linear"
+            type="step"
             fill={`url(#fill-${key})`}
             fillOpacity={0.5}
             stroke={`var(--color-${key})`}

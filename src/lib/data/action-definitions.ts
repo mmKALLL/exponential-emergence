@@ -4,14 +4,12 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
   amoeba: [
     {
       name: 'Catch food',
-      baseTime: 8,
+      baseTime: 7,
       effect: (res) => {
-        res.food += 2
-        res.energy -= 1
+        res.food += 1
         return res
       },
-      enabledCondition: (res) => res.energy >= 1,
-      description: '-1 energy => +2 food',
+      description: '+1 food',
       defaultDisplayed: true,
     },
     {
@@ -28,7 +26,7 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
     },
     {
       name: 'Generate energy',
-      baseTime: 5,
+      baseTime: 4,
       effect: (res) => {
         res.nutrients -= 1
         res.energy += 1
@@ -39,13 +37,13 @@ export const actionDefinitions: { [level in LevelName]: ActionConfig[] } = {
     },
     {
       name: 'Filter waste',
-      baseTime: 4,
+      baseTime: 2,
       effect: (res) => {
         res.waste -= 1
         return res
       },
       enabledCondition: (res) => res.waste >= 1,
-      description: '=> -1 waste',
+      description: '-1 waste',
     },
     {
       name: 'Divide cell',

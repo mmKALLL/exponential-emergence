@@ -7,14 +7,14 @@ export const initialLevelDefinitions: GameState['levels'] = {
     unlocked: true,
     initialResources: {
       food: 0,
-      energy: 3,
+      energy: 0,
       nutrients: 0,
       waste: 0,
       divisions: 0,
     },
     resources: {
       food: 0,
-      energy: 3,
+      energy: 0,
       nutrients: 0,
       waste: 0,
       divisions: 0,
