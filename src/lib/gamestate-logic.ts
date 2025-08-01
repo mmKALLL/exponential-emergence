@@ -47,12 +47,7 @@ function updateActionHistories() {
   })
 }
 
-function canApplyAction(_action: Action) {
-  // TODO: Check action.enabledCondition against gs; or try applying the action and see if all resources are non-negative?
-  return true
-}
-
-function actionAllowed(action: Action) {
+export function canApplyAction(action: Action) {
   if (!action.enabledCondition) return true // No condition means the action is always allowed
   return action.enabledCondition(Game.currentLevel.resources)
 }
@@ -66,7 +61,7 @@ function completeAction(action: Action) {
   action.currentSpeed = Math.min(action.currentSpeed + 0.2, 4)
   action.permanentSpeed = Math.min(action.permanentSpeed + 0.02, 2.5)
   // If action is no longer allowed after the effect, toggle it off
-  if (!actionAllowed(action)) {
+  if (!canApplyAction(action)) {
     gs.currentActionName = null
   }
 }
@@ -127,7 +122,7 @@ export const Game = {
     gs.runStarted = true
 
     // Only toggle if the action can be applied and is not already active
-    if (!canApplyAction(action) || !actionAllowed(action)) {
+    if (!canApplyAction(action)) {
       return
     }
 
@@ -139,18 +134,20 @@ export const Game = {
       return
     }
 
-    if (gs.currentActionName) {
-      gs.lifespanLeft -= TICK_LENGTH // Decrease lifespan by 0.1 seconds each tick
-      if (gs.lifespanLeft <= 0) {
-        return handleGameOver()
-      }
+    if (gs.currentActionName === null) {
+      return // No action is currently active
+    }
 
-      const action = Game.currentLevel.actions[gs.currentActionName]
-      if (action) {
-        action.progress += TICK_LENGTH
-        if (action.progress >= maxTime(action)) {
-          completeAction(action)
-        }
+    gs.lifespanLeft -= TICK_LENGTH // Decrease lifespan by 0.1 seconds each tick
+    if (gs.lifespanLeft <= 0) {
+      return handleGameOver()
+    }
+
+    const action = Game.currentLevel.actions[gs.currentActionName]
+    if (action) {
+      action.progress += TICK_LENGTH
+      if (action.progress >= maxTime(action)) {
+        completeAction(action)
       }
     }
 
