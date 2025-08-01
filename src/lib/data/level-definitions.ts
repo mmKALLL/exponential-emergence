@@ -60,22 +60,22 @@ export const initialLevelDefinitions: GameState['levels'] = {
 
   multicellular: {
     name: 'multicellular',
-    unlocked: false,
+    unlocked: true, // TODO: Revert after testing is done
     initialResources: {
       food: 0,
       nutrients: 0,
       waste: 0,
-      energy: 0,
-      energyEfficiency: 0,
-      cells: 0,
+      energy: 20, // TODO: Revert after implementing synergies
+      efficiency: 0,
+      cells: 3,
     },
     resources: {
       food: 0,
       nutrients: 0,
       waste: 0,
-      energy: 0,
-      energyEfficiency: 0,
-      cells: 0,
+      energy: 20,
+      efficiency: 0,
+      cells: 3,
     },
     resourceInputs: [
       {
@@ -90,13 +90,21 @@ export const initialLevelDefinitions: GameState['levels'] = {
       },
     ],
     resourceOutputs: {
-      energyEfficiency: 0,
+      efficiency: 0,
     },
     actions: generatedActions.multicellular,
     goals: [
       {
         requiredAmount: 20,
         resourceName: 'nutrients',
+        onComplete: (gs) => {
+          gs.levels.multicellular.actions['Generate energy'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 20,
+        resourceName: 'energy',
         onComplete: (gs) => {
           gs.levels.multicellular.actions['Filter waste'].displayed = true
           return gs

@@ -34,7 +34,7 @@ export type Resources = {
   readonly amoeba: { food: number; nutrients: number; energy: number; divisions: number }
   readonly multicellular: {
     energy: number
-    energyEfficiency: number
+    efficiency: number
     food: number
     nutrients: number
     waste: number

@@ -4,7 +4,7 @@ import type { GameState } from './types'
 export const initialGameState: GameState = {
   generation: 1,
   currentScreen: 'main-menu',
-  currentLevel: 'amoeba',
+  currentLevel: 'multicellular',
   lifespanLeft: 60,
   runStarted: false,
   currentActionName: null,

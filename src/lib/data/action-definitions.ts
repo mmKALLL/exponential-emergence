@@ -22,7 +22,7 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['amoeba']) => res.food >= 1,
-      description: '-1 food => +1 nutrients',
+      description: '-1 food => +1 nutrient',
     },
     {
       name: 'Generate energy',
@@ -33,7 +33,7 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['amoeba']) => res.nutrients >= 1,
-      description: '-1 nutrients => +1 energy',
+      description: '-1 nutrient => +1 energy',
     },
     {
       name: 'Divide cell',
@@ -71,8 +71,19 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.food >= res.cells,
-      description: 'Every cell:\n-1 food => +1 nutrients, +1 waste',
+      description: 'Each cell:\n-1 food => +1 nutrient, +1 waste',
       defaultDisplayed: true,
+    },
+    {
+      name: 'Generate energy',
+      baseTime: 2,
+      effect: (res: Resources['multicellular']) => {
+        res.nutrients -= res.cells
+        res.energy += res.cells
+        return res
+      },
+      enabledCondition: (res: Resources['multicellular']) => res.nutrients >= res.cells,
+      description: 'Each cell:\n-1 nutrient => +1 energy',
     },
     {
       name: 'Filter waste',
@@ -88,11 +99,11 @@ export const actionDefinitions = {
       name: 'Multiply',
       baseTime: 4,
       effect: (res: Resources['multicellular']) => {
-        res.energy -= (10 - res.energyEfficiency) * res.cells
+        res.energy -= (10 - res.efficiency) * res.cells
         res.cells *= 2
         return res
       },
-      enabledCondition: (res: Resources['multicellular']) => res.waste <= 0 && res.energy >= (10 - res.energyEfficiency) * res.cells,
+      enabledCondition: (res: Resources['multicellular']) => res.waste <= 0 && res.energy >= (10 - res.efficiency) * res.cells,
       description: '10 energy per cell => x2 cells\n‼️ Requires 0 waste', // TODO: Dynamic description
     },
     {
@@ -100,11 +111,11 @@ export const actionDefinitions = {
       baseTime: 6,
       effect: (res: Resources['multicellular']) => {
         res.energy -= 10
-        res.energyEfficiency += 1
+        res.efficiency += 1
         return res
       },
-      enabledCondition: (res: Resources['multicellular']) => res.energy >= 10 && res.energyEfficiency < 10 && res.waste <= 0,
-      description: '-10 energy => +1 energy efficiency (max 10)\n‼️ Requires 0 waste',
+      enabledCondition: (res: Resources['multicellular']) => res.energy >= 10 && res.efficiency < 10 && res.waste <= 0,
+      description: '-10 energy => Multiply energy cost -1\n‼️ Requires 0 waste',
     },
   ],
 }
