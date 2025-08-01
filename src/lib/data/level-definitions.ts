@@ -1,4 +1,4 @@
-import type { Action, GameState } from '../types'
+import type { GameState } from '../types'
 import { generatedActions } from './action-definitions'
 
 export const initialLevelDefinitions: GameState['levels'] = {
@@ -92,7 +92,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
     resourceOutputs: {
       energyEfficiency: 0,
     },
-    actions: {} as Record<string, Action>,
+    actions: generatedActions.multicellular,
     goals: [],
   },
 
@@ -119,7 +119,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
       hardness: 0,
       size: 0,
     },
-    actions: {} as Record<string, Action>,
+    actions: generatedActions.algae,
     goals: [],
   },
 
@@ -144,7 +144,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
       speed: 0,
       perception: 0,
     },
-    actions: {} as Record<string, Action>,
+    actions: generatedActions.insect,
     goals: [],
   },
 
@@ -169,7 +169,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
       strength: 0,
       dexterity: 0,
     },
-    actions: {} as Record<string, Action>,
+    actions: generatedActions.crustacean,
     goals: [],
   },
 }

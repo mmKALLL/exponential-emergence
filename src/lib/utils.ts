@@ -28,3 +28,21 @@ export const maxTime = ({
 }): number => {
   return baseTime / (currentSpeed * permanentSpeed)
 }
+
+export const typedObjectKeys = Object.keys as <T>(o: T) => Extract<keyof T, string>[]
+export const typedObjectValues = Object.values as <T>(o: Record<PropertyKey, T>) => T[]
+export const typedObjectEntries = Object.entries as <T>(o: T) => [keyof T, T[keyof T]][]
+
+export function mapObject<Value, Mapped, Key extends string>(
+  object: Record<Key, Value>,
+  mapFn: (val: Value, key: Key, index: number) => Mapped
+): Record<Key, Mapped> {
+  return typedObjectKeys(object).reduce(
+    (result, key: Key, index: number) => {
+      const mapped = mapFn(object[key], key, index)
+      result[key] = mapped
+      return result
+    },
+    {} as Record<Key, Mapped>
+  )
+}

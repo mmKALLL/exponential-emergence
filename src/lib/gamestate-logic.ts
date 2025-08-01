@@ -1,6 +1,6 @@
 import { initialGameState } from './gamestate-utils'
 import { TICK_LENGTH, type Action, type LevelName, type Resources } from './types'
-import { maxTime } from './utils'
+import { maxTime, typedObjectEntries } from './utils'
 
 const gs = { ...initialGameState }
 
@@ -89,6 +89,12 @@ export const Game = {
 
   get currentLevel() {
     return gs.levels[gs.currentLevel]
+  },
+
+  get unlockedLevels(): LevelName[] {
+    return typedObjectEntries(gs.levels)
+      .filter(([_, level]) => level.unlocked)
+      .map(([name, _]) => name)
   },
 
   get resources() {
