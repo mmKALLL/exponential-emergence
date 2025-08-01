@@ -8,34 +8,34 @@ export const initialLevelDefinitions: GameState['levels'] = {
     actionCards: {
       'Catch food': generateAction(
         'Catch food',
-        7,
+        6,
         (res) => {
           res.food += 1
           return res
         },
-        '8 sec => +1 food',
+        '6 sec => +1 food',
         true
       ),
       'Absorb food': generateAction(
         'Absorb food',
-        8,
+        7,
         (res) => {
           res.food -= 1
-          res.nutrients += 2
+          res.nutrients += 1
           res.waste += 1
           return res
         },
-        '6 sec, -1 food => +1 nutrients, +1 waste'
+        '7 sec, -1 food => +1 nutrients, +1 waste'
       ),
       'Generate energy': generateAction(
         'Generate energy',
-        6,
+        5,
         (res) => {
-          res.food -= 1
+          res.nutrients -= 1
           res.energy += 1
           return res
         },
-        '6 sec, -1 food => +1 energy'
+        '5 sec, -1 nutrients => +1 energy'
       ),
       'Filter waste': generateAction(
         'Filter waste',
@@ -44,18 +44,18 @@ export const initialLevelDefinitions: GameState['levels'] = {
           res.waste -= 1
           return res
         },
-        '6 sec, -1 waste'
+        '4 sec, -1 waste'
       ),
       'Divide cell': generateAction(
         'Divide cell',
         8,
         // TODO: Make this action require 0 waste
         (res) => {
-          res.energy -= 10
+          res.energy -= 6
           res.divisions += 1
           return res
         },
-        '10 sec, -8 energy => +1 division\n‼️ Requires 0 waste'
+        '8 sec, -6 energy => +1 division\n‼️ Requires 0 waste'
       ),
     },
     goals: [
