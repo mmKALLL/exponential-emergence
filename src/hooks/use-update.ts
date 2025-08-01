@@ -1,34 +1,35 @@
-import { useEffect, useState } from "react";
+import { Game } from '@/lib/gamestate-logic'
+import { useEffect, useState } from 'react'
 
-type Callback = () => void;
-const subscribers = new Set<Callback>();
+type Callback = () => void
+const subscribers = new Set<Callback>()
 
-let gameUILoopStarted = false;
+let gameUILoopStarted = false
 const gameUILoop = () => {
-  subscribers.forEach((fn) => fn());
-  setTimeout(gameUILoop, 100);
-};
+  subscribers.forEach((fn) => fn())
+  setTimeout(gameUILoop, 100)
+}
 
 const ensureLoopStarted = () => {
   if (!gameUILoopStarted) {
-    gameUILoopStarted = true;
-    gameUILoop();
+    gameUILoopStarted = true
+    gameUILoop()
   }
-};
+}
 
 export function useUpdate<T>(callback: () => T) {
-  const [value, setValue] = useState<T>(() => callback());
+  const [value, setValue] = useState<T>(() => callback())
 
   useEffect(() => {
-    ensureLoopStarted();
+    ensureLoopStarted()
 
     const update = () => {
       setValue((prev) => {
-        const next = callback();
-        return Object.is(prev, next) ? prev : next;
-      });
-    };
-    subscribers.add(update);
+        const next = callback()
+        return Object.is(prev, next) ? prev : next
+      })
+    }
+    subscribers.add(update)
     return () => {
       subscribers.delete(update)
     }
