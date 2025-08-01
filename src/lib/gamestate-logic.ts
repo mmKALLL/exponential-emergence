@@ -1,5 +1,6 @@
+import { generatedActions } from './data/action-definitions'
 import { initialGameState } from './gamestate-utils'
-import { TICK_LENGTH, type Action, type LevelName } from './types'
+import { TICK_LENGTH, type Action, type GameStateAction, type LevelName } from './types'
 import { maxTime } from './utils'
 
 const gs = { ...initialGameState }
@@ -14,7 +15,7 @@ function handleGameOver() {
   gs.unlockedDisplaySections.bestValue = true
 }
 
-function resetAction(action: Action) {
+function resetAction(action: GameStateAction) {
   const didImproveBest = action.currentValue > action.bestValue
 
   action.progress = 0
@@ -38,12 +39,12 @@ function handleGoalCompletion() {
 }
 
 function updateActionHistories() {
-  Object.values(gs.levels[gs.currentLevel].actionCards).forEach((action) => {
+  Object.values(gs.levels[gs.currentLevel].actions).forEach((action) => {
     const updatedAction = {
       ...action,
       valueHistory: [...action.valueHistory, action.currentValue],
     }
-    gs.levels[gs.currentLevel].actionCards[action.name] = updatedAction
+    gs.levels[gs.currentLevel].actions[action.name] = updatedAction
   })
 }
 
@@ -84,7 +85,10 @@ export const Game = {
   },
 
   get actionCards() {
-    return Object.values(gs.levels[gs.currentLevel].actionCards)
+    return Object.entries(gs.levels[gs.currentLevel].actions).map(([name, action]) => ({
+      ...action,
+      ...generatedActions[gs.currentLevel][name].data,
+    })) as Action[]
   },
 
   get visibleActionCards() {
@@ -131,11 +135,17 @@ export const Game = {
     }
 
     if (gs.currentActionName) {
-      const action = gs.levels[gs.currentLevel].actionCards[gs.currentActionName]
+      const actionState = gs.levels[gs.currentLevel].actions[gs.currentActionName]
+      const actionData = generatedActions[gs.currentLevel][gs.currentActionName].data
+      const action: Action = {
+        ...actionState,
+        ...actionData,
+      }
 
-      if (action) {
-        action.progress += TICK_LENGTH
-        if (action.progress >= maxTime(action)) {
+      if (actionState && actionData) {
+        actionState.progress += TICK_LENGTH
+        console.log(actionState)
+        if (actionState.progress >= maxTime(action)) {
           completeAction(action)
         }
       }
