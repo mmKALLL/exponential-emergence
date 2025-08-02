@@ -103,14 +103,86 @@ export const Game = {
     return Object.entries(Game.currentLevel.resources).map(([name, amount]) => ({ name, amount }))
   },
 
+  // Synergies that affect the current level, group by basedOn.level
   get synergies() {
     return synergyDefinitions
-      .filter((synergy) => synergy.affectedLevel === gs.currentLevel)
+      .filter((synergy) => synergy.affectedLevel === gs.currentLevel && gs.levels[synergy.basedOn.level].unlocked)
       .map((synergy) => ({
         ...synergy,
         record: gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName] || 0,
         description: synergy.description(gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName]),
       }))
+      .reduce(
+        (acc, synergy) => {
+          const s = acc.find((s) => s.basedOnLevel === synergy.basedOn.level)
+          if (s) {
+            s.synergyList.push({
+              basedOnResourceName: synergy.basedOn.resourceName,
+              record: synergy.record,
+              description: synergy.description,
+            })
+          } else {
+            acc.push({
+              basedOnLevel: synergy.basedOn.level,
+              synergyList: [
+                {
+                  basedOnResourceName: synergy.basedOn.resourceName,
+                  record: synergy.record,
+                  description: synergy.description,
+                },
+              ],
+            })
+          }
+          return acc
+        },
+        [] as {
+          basedOnLevel: string
+          synergyList: {
+            basedOnResourceName: string
+            record: number
+            description: string
+          }[]
+        }[]
+      )
+  },
+
+  // Synergies that affect other levels based on the current level,
+  // group by basedOn.level and basedOn.resourceName
+  get outBoundSynergies() {
+    return synergyDefinitions
+      .filter((synergy) => synergy.basedOn.level === gs.currentLevel && gs.levels[synergy.affectedLevel].unlocked)
+      .map((synergy) => ({
+        ...synergy,
+        record: gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName] || 0,
+        description: synergy.description(gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName]),
+      }))
+      .reduce(
+        (acc, synergy) => {
+          const s = acc.find((s) => s.basedOn.level === synergy.basedOn.level && s.basedOn.resourceName === synergy.basedOn.resourceName)
+          if (s) {
+            s.synergyList.push({ description: synergy.description, affectedLevel: synergy.affectedLevel })
+          } else {
+            acc.push({
+              basedOn: synergy.basedOn,
+              record: synergy.record,
+              synergyList: [{ description: synergy.description, affectedLevel: synergy.affectedLevel }],
+            })
+          }
+          return acc
+        },
+        [] as {
+          basedOn: { level: string; resourceName: string }
+          record: number
+          synergyList: { description: string; affectedLevel: LevelName }[]
+        }[]
+      ) // Ensure the return type matches the expected type
+    // return synergyDefinitions
+    //   .filter((synergy) => synergy.basedOn.level === gs.currentLevel)
+    //   .map((synergy) => ({
+    //     ...synergy,
+    //     record: gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName] || 0,
+    //     description: synergy.description(gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName]),
+    //   }))
   },
 
   get resourceRecords() {
