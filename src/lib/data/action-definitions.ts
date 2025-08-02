@@ -118,6 +118,76 @@ export const actionDefinitions = {
   ],
 
   // Branching in algae: add +1 multiplier to chlorophyll, but divide current hardness by 2
+  // Algae has two passive actions: sunlight goes up and down twice per life, and chlorophyll absorbs it into energy
+  // Sunlight: 0s 0, 10s 100, 20s 100, 30s 0, 40s 0, 50s 100, 60s 100
+  algae: [
+    {
+      name: 'Harden',
+      baseTime: 4,
+      description: '+20 hardness',
+      effect: (res: Resources['algae']) => {
+        res.hardness += 20
+        return res
+      },
+      defaultDisplayed: true,
+    },
+    {
+      name: 'Rapid harden',
+      baseTime: 3,
+      description: '-100 energy => +100 hardness',
+      effect: (res: Resources['algae']) => {
+        res.energy -= 100
+        res.hardness += 100
+        return res
+      },
+      enabledCondition: (res: Resources['algae']) => res.energy >= 100,
+      defaultDisplayed: true,
+    },
+    {
+      name: 'Grow length',
+      baseTime: 4,
+      description: '-100 hardness => +1 millimeter per branch',
+      effect: (res: Resources['algae']) => {
+        res.hardness -= 100
+        res.millimeters += res.branches
+        return res
+      },
+      enabledCondition: (res: Resources['algae']) => res.hardness >= 100,
+    },
+    {
+      name: 'Branch out',
+      baseTime: 6,
+      description: '-10 millimeters, -100 energy => +1 branch',
+      effect: (res: Resources['algae']) => {
+        res.millimeters -= 10
+        res.energy -= 100
+        res.branches += 1
+        return res
+      },
+      defaultDisplayed: true,
+    },
+    {
+      name: 'Sunbathe',
+      baseTime: 4,
+      description: '+2 energy per chlorophyll\n‼️ Requires sunlight over 50',
+      effect: (res: Resources['algae']) => {
+        res.energy += res.sunlight > 50 ? res.chlorophyll * 2 : 0
+        return res
+      },
+      enabledCondition: (res: Resources['algae']) => res.sunlight > 50,
+    },
+    {
+      name: 'Grow chlorophyll',
+      baseTime: 5,
+      description: 'Each millimeter:\n-10 energy => +1 chlorophyll',
+      effect: (res: Resources['algae']) => {
+        res.energy -= 10 * res.millimeters
+        res.chlorophyll += res.millimeters
+        return res
+      },
+      enabledCondition: (res: Resources['algae']) => res.energy >= 10 * res.millimeters,
+    },
+  ],
 }
 
 export const defaultActionGameState = () => ({

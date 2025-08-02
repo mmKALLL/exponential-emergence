@@ -160,7 +160,48 @@ export const initialLevelDefinitions: GameState['levels'] = {
       hardness: 0,
     },
     actions: generatedActions.algae,
-    goals: [],
+    goals: [
+      {
+        requiredAmount: 800,
+        resourceName: 'hardness',
+        onComplete: (gs) => {
+          gs.levels.algae.actions['Grow length'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 10,
+        resourceName: 'millimeters',
+        onComplete: (gs) => {
+          gs.levels.algae.actions['Branch out'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 2,
+        resourceName: 'branches',
+        onComplete: (gs) => {
+          gs.levels.algae.actions['Sunbathe'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 10,
+        resourceName: 'branches',
+        onComplete: (gs) => {
+          gs.levels.algae.actions['Grow chlorophyll'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 1000,
+        resourceName: 'millimeters',
+        onComplete: (gs) => {
+          gs.levels.insect.unlocked = true
+          return gs
+        },
+      },
+    ],
   },
 
   // Auto-generates its own energy based on digestion level
@@ -168,24 +209,33 @@ export const initialLevelDefinitions: GameState['levels'] = {
     name: 'insect',
     unlocked: false,
     initialResources: {
-      speed: 0,
-      perception: 0,
-      digestion: 0,
-      pheromones: 0,
-      eggs: 0,
+      food: 0,
+      energy: 0,
+      speed: 0, // typical: 400-500 (multicellular food)
+      perception: 0, // typical: 10-20 (multicellular efficiency)
+      digestion: 0, // typical: 50-100 (chlorophyll)
+      pheromones: 0, // 20?
+      mates: 0,
+      eggs: 0, // target: 10k
     },
     resources: {
+      food: 0,
+      energy: 0,
       speed: 0,
       perception: 0,
       digestion: 0,
       pheromones: 0,
+      mates: 0,
       eggs: 0,
     },
     resourceRecords: {
+      food: 0,
+      energy: 0,
       speed: 0,
       perception: 0,
       digestion: 0,
       pheromones: 0,
+      mates: 0,
       eggs: 0,
     },
     actions: generatedActions.insect,
@@ -196,13 +246,19 @@ export const initialLevelDefinitions: GameState['levels'] = {
     name: 'crustacean',
     unlocked: false,
     initialResources: {
-      strength: 0,
-      dexterity: 0,
+      energy: 0,
+      targets: 0,
+      food: 0,
+      strength: 0, // 50-100; amoeba energy
+      dexterity: 0, // 500-800; insect speed
       vitality: 0,
       intelligence: 0,
       mass: 0,
     },
     resources: {
+      energy: 0,
+      targets: 0,
+      food: 0,
       strength: 0,
       dexterity: 0,
       vitality: 0,
@@ -210,6 +266,9 @@ export const initialLevelDefinitions: GameState['levels'] = {
       mass: 0,
     },
     resourceRecords: {
+      energy: 0,
+      targets: 0,
+      food: 0,
       strength: 0,
       dexterity: 0,
       vitality: 0,

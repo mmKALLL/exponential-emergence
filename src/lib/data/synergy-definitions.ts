@@ -166,10 +166,10 @@ export const synergyDefinitions = [
       level: 'multicellular',
       resourceName: 'cells',
     },
-    description: (value) => `Start with ${value} mass`,
+    description: (value) => `Start with ${Math.floor(value / 100)}g mass`,
     affectedLevel: 'crustacean',
     onLevelStart: (gs, value) => {
-      gs.levels.crustacean.resources.mass = value
+      gs.levels.crustacean.resources.mass = Math.floor(value / 100)
       return gs
     },
   },
