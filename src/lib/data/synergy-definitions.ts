@@ -91,6 +91,18 @@ export const synergyDefinitions = [
       level: 'algae',
       resourceName: 'chlorophyll',
     },
+    description: (value) => `Start with ${value} digestion`,
+    affectedLevel: 'insect',
+    onLevelStart: (gs, value) => {
+      gs.levels.insect.resources.digestion = value
+      return gs
+    },
+  },
+  {
+    basedOn: {
+      level: 'multicellular',
+      resourceName: 'efficiency',
+    },
     description: (value) => `Start with ${value} perception`,
     affectedLevel: 'insect',
     onLevelStart: (gs, value) => {
@@ -99,9 +111,66 @@ export const synergyDefinitions = [
     },
   },
 
-  // [
-  //     { level: 'algae', resourceName: 'chlorophyll', description: 'Improves digestion rank (1/100).' },
-  //   ],
-
   // CRUSTACEAN
+
+  {
+    basedOn: {
+      level: 'amoeba',
+      resourceName: 'energy',
+    },
+    description: (value) => `Start with ${value} strength`,
+    affectedLevel: 'crustacean',
+    onLevelStart: (gs, value) => {
+      gs.levels.crustacean.resources.strength = value
+      return gs
+    },
+  },
+  {
+    basedOn: {
+      level: 'insect',
+      resourceName: 'speed',
+    },
+    description: (value) => `Start with ${value} dexterity`,
+    affectedLevel: 'crustacean',
+    onLevelStart: (gs, value) => {
+      gs.levels.crustacean.resources.dexterity = value
+      return gs
+    },
+  },
+  {
+    basedOn: {
+      level: 'algae',
+      resourceName: 'hardness',
+    },
+    description: (value) => `Start with ${value} vitality`,
+    affectedLevel: 'crustacean',
+    onLevelStart: (gs, value) => {
+      gs.levels.crustacean.resources.vitality = value
+      return gs
+    },
+  },
+  {
+    basedOn: {
+      level: 'insect',
+      resourceName: 'perception',
+    },
+    description: (value) => `Start with ${value} intelligence`,
+    affectedLevel: 'crustacean',
+    onLevelStart: (gs, value) => {
+      gs.levels.crustacean.resources.intelligence = value
+      return gs
+    },
+  },
+  {
+    basedOn: {
+      level: 'multicellular',
+      resourceName: 'cells',
+    },
+    description: (value) => `Start with ${value} mass`,
+    affectedLevel: 'crustacean',
+    onLevelStart: (gs, value) => {
+      gs.levels.crustacean.resources.mass = value
+      return gs
+    },
+  },
 ] satisfies readonly SynergyConfigMap[LevelName][]

@@ -109,11 +109,11 @@ export const actionDefinitions = {
       baseTime: 4,
       effect: (res: Resources['multicellular']) => {
         res.energy -= 20
-        res.efficiency += 5
+        res.efficiency += 10
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.energy >= 20,
-      description: '-20 energy => Improve food gain and waste filtering by 5',
+      description: '-20 energy => Improve food gain and waste filtering by 10',
     },
   ],
 
