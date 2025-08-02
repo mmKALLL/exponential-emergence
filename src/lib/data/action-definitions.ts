@@ -57,7 +57,7 @@ export const actionDefinitions = {
         res.food += res.efficiency
         return res
       },
-      description: '+1 food per efficiency',
+      description: '+1 food per efficiency', // TODO: Dynamic description
       defaultDisplayed: true,
     },
     {
@@ -145,7 +145,7 @@ export const actionDefinitions = {
       defaultDisplayed: true,
     },
     {
-      name: 'Grow length',
+      name: 'Grow longer',
       baseTime: 4,
       description: '-100 hardness => +1 millimeter per branch',
       effect: (res: Resources['algae']) => {
@@ -158,13 +158,13 @@ export const actionDefinitions = {
     {
       name: 'Branch out',
       baseTime: 6,
-      description: '-10 millimeters, -100 energy => +1 branch',
+      description: '-10 millimeters => +1 branch',
       effect: (res: Resources['algae']) => {
         res.millimeters -= 10
-        res.energy -= 100
         res.branches += 1
         return res
       },
+      enabledCondition: (res: Resources['algae']) => res.millimeters >= 10,
     },
     {
       name: 'Sunbathe',
@@ -178,13 +178,13 @@ export const actionDefinitions = {
     {
       name: 'Grow chlorophyll',
       baseTime: 5,
-      description: 'Each millimeter:\n-10 energy => +1 chlorophyll',
+      description: 'Each millimeter:\n-5 energy => +1 chlorophyll',
       effect: (res: Resources['algae']) => {
-        res.energy -= 10 * res.millimeters
+        res.energy -= 5 * res.millimeters
         res.chlorophyll += res.millimeters
         return res
       },
-      enabledCondition: (res: Resources['algae']) => res.energy >= 10 * res.millimeters,
+      enabledCondition: (res: Resources['algae']) => res.energy >= 5 * res.millimeters,
     },
   ],
 
@@ -204,7 +204,7 @@ export const actionDefinitions = {
     {
       name: 'Digest food',
       baseTime: 5,
-      description: '-1 food => +1 energy\n(Multiplied by digestion)',
+      description: '-1 food per digestion => +1 energy per digestion',
       effect: (res: Resources['insect']) => {
         res.food -= res.digestion
         res.energy += res.digestion
@@ -242,8 +242,8 @@ export const actionDefinitions = {
       baseTime: 2,
       description: '-10 pheromones => +1 mate per perception',
       effect: (res: Resources['insect']) => {
-        res.energy -= 1
-        res.pheromones += 1
+        res.pheromones -= 10
+        res.mates += res.perception
         return res
       },
       enabledCondition: (res: Resources['insect']) => res.pheromones >= 10,
@@ -266,7 +266,7 @@ export const actionDefinitions = {
   crustacean: [
     {
       name: 'Find prey',
-      baseTime: 10,
+      baseTime: 6,
       description: '+1 target per intelligence',
       effect: (res: Resources['crustacean']) => {
         res.targets += res.intelligence
@@ -277,19 +277,20 @@ export const actionDefinitions = {
     {
       name: 'Fight prey',
       baseTime: 10,
-      description: '-10 targets, -(40 - dex) vitality => +1 food per strength',
+      description: '-100 targets, -(100 - dex) vitality => +1 food per strength',
       effect: (res: Resources['crustacean']) => {
-        res.targets -= 10
+        res.targets -= 100
+        res.vitality -= Math.max(0, 100 - res.dexterity)
         res.food += res.strength
         return res
       },
-      enabledCondition: (res: Resources['crustacean']) => res.targets >= 10,
+      enabledCondition: (res: Resources['crustacean']) => res.targets >= 100 && res.vitality >= 100 - res.dexterity,
       defaultDisplayed: true,
     },
     {
       name: 'Process food',
       baseTime: 4,
-      description: '-1 food => +1 energy\n(Multiplied by mass)',
+      description: '-1 food per mass => +1 energy per mass',
       effect: (res: Resources['crustacean']) => {
         res.food -= res.mass
         res.energy += res.mass
@@ -300,40 +301,40 @@ export const actionDefinitions = {
     },
     {
       name: 'Recover',
-      baseTime: 4,
-      description: '-100 energy => +2 vitality',
+      baseTime: 3,
+      description: '-100 energy => +4 vitality',
       effect: (res: Resources['crustacean']) => {
         res.energy -= 100
-        res.vitality += 2
+        res.vitality += 4
         return res
       },
-      enabledCondition: (res: Resources['crustacean']) => res.food >= 1,
+      enabledCondition: (res: Resources['crustacean']) => res.energy >= 100,
       defaultDisplayed: true,
     },
     {
       name: 'Bulk up',
-      baseTime: 4,
+      baseTime: 3,
       description: '-100 energy => +1 strength, +5 mass',
       effect: (res: Resources['crustacean']) => {
-        res.food -= 1
-        res.energy += 1
-        res.mass += 1
+        res.energy -= 100
+        res.strength += 1
+        res.mass += 5
         return res
       },
-      enabledCondition: (res: Resources['crustacean']) => res.food >= 1,
+      enabledCondition: (res: Resources['crustacean']) => res.energy >= 100,
       defaultDisplayed: true,
     },
     {
       name: 'Smarten up',
-      baseTime: 4,
+      baseTime: 3,
       description: '-100 energy => +1 dexterity, +1 intelligence',
       effect: (res: Resources['crustacean']) => {
-        res.food -= 1
-        res.energy += 1
-        res.mass += 1
+        res.energy -= 100
+        res.dexterity += 1
+        res.intelligence += 1
         return res
       },
-      enabledCondition: (res: Resources['crustacean']) => res.food >= 1,
+      enabledCondition: (res: Resources['crustacean']) => res.energy >= 100,
       defaultDisplayed: true,
     },
   ],
