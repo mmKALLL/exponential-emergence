@@ -175,14 +175,7 @@ export const Game = {
           record: number
           synergyList: { description: string; affectedLevel: LevelName }[]
         }[]
-      ) // Ensure the return type matches the expected type
-    // return synergyDefinitions
-    //   .filter((synergy) => synergy.basedOn.level === gs.currentLevel)
-    //   .map((synergy) => ({
-    //     ...synergy,
-    //     record: gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName] || 0,
-    //     description: synergy.description(gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName]),
-    //   }))
+      )
   },
 
   get resourceRecords() {
