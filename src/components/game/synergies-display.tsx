@@ -1,6 +1,7 @@
 import { useUpdate } from '@/hooks/use-update'
 import { Game } from '@/lib/gamestate-logic'
 import { capitalize } from '@/lib/utils'
+import { ArrowDown } from 'lucide-react'
 
 export function SynergiesDisplay() {
   const synergies = useUpdate(() => Game.synergies || [])
@@ -21,7 +22,9 @@ export function SynergiesDisplay() {
                     <span className="text-xs">
                       Highest {basedOnResourceName}: {record}
                     </span>
-                    <div>🡓</div>
+                    <div>
+                      <ArrowDown />
+                    </div>
                     <div className="font-bold">{description}</div>
                   </div>
                 ))}
