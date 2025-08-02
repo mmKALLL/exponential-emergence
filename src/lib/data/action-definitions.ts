@@ -91,7 +91,7 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.waste >= 1,
-      description: '-10 waste',
+      description: '-10 waste', // TODO: Dynamic description
     },
     {
       name: 'Multiply',
@@ -102,7 +102,7 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.waste <= 0 && res.energy >= (10 - res.efficiency) * res.cells,
-      description: '10 energy per cell => x2 cells\n‼️ Requires 0 waste', // TODO: Dynamic description
+      description: '10 energy per cell => x2 cells\n‼️ Requires 0 waste',
     },
     {
       name: 'Specialize',

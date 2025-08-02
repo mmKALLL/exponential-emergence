@@ -86,17 +86,6 @@ export type Level<T extends LevelName> = {
   goals: Goal[]
   initialResources: Record<keyof Resources[T], number>
   resources: Resources[T]
-  // TODO: remove these, they are left here for reference when moving them to synergy-definitions.ts
-  resourceInputs?: {
-    level: LevelName
-    resourceName:
-      | keyof Resources['amoeba']
-      | keyof Resources['multicellular']
-      | keyof Resources['algae']
-      | keyof Resources['insect']
-      | keyof Resources['crustacean']
-    description: string
-  }[] // List of resources that synergize from previous levels
   resourceRecords: Resources[T]
 }
 

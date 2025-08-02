@@ -79,19 +79,6 @@ export const initialLevelDefinitions: GameState['levels'] = {
       efficiency: 0,
       cells: 0,
     },
-    resourceInputs: [
-      {
-        level: 'amoeba',
-        resourceName: 'divisions',
-        description: 'You start with this many cells.',
-      },
-      {
-        level: 'amoeba',
-        resourceName: 'energy',
-        description: 'You start with this much energy.',
-      },
-    ],
-
     resourceRecords: {
       food: 0,
       nutrients: 0,
@@ -164,12 +151,6 @@ export const initialLevelDefinitions: GameState['levels'] = {
       energy: 0,
       hardness: 0,
     },
-    // TODO: Make sure all of these are in the outputs
-    resourceInputs: [
-      { level: 'multicellular', resourceName: 'cells', description: 'You start with this many millimeters.' },
-      { level: 'multicellular', resourceName: 'nutrients', description: 'You start with this much chlorophyll.' },
-      { level: 'multicellular', resourceName: 'efficiency', description: 'You start with this much energy and sunlight.' },
-    ],
     resourceRecords: {
       millimeters: 0,
       branches: 0,
@@ -200,11 +181,6 @@ export const initialLevelDefinitions: GameState['levels'] = {
       pheromones: 0,
       eggs: 0,
     },
-    // TODO: Make sure all of these are in the outputs
-    resourceInputs: [
-      { level: 'multicellular', resourceName: 'food', description: 'Improves movement speed (1/10).' },
-      { level: 'algae', resourceName: 'chlorophyll', description: 'Improves digestion rank (1/100).' },
-    ],
     resourceRecords: {
       speed: 0,
       perception: 0,
@@ -233,14 +209,6 @@ export const initialLevelDefinitions: GameState['levels'] = {
       intelligence: 0,
       mass: 0,
     },
-    // TODO: Make sure all of these are in the outputs
-    resourceInputs: [
-      { level: 'amoeba', resourceName: 'energy', description: 'Start with this much strength.' },
-      { level: 'insect', resourceName: 'speed', description: 'Start with this much dexterity.' },
-      { level: 'algae', resourceName: 'hardness', description: 'Start with this much vitality.' },
-      { level: 'insect', resourceName: 'perception', description: 'Start with this much intelligence.' },
-      { level: 'multicellular', resourceName: 'cells', description: 'Start with this much mass.' },
-    ],
     resourceRecords: {
       strength: 0,
       dexterity: 0,
