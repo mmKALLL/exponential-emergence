@@ -223,6 +223,7 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['insect']) => res.energy >= 50,
+      defaultDisplayed: true,
     },
     {
       name: 'Generate pheromones',
@@ -234,6 +235,7 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['insect']) => res.energy >= 10,
+      defaultDisplayed: true,
     },
     {
       name: 'Find mates',
@@ -245,6 +247,7 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['insect']) => res.pheromones >= 10,
+      defaultDisplayed: true,
     },
     {
       name: 'Lay eggs',
@@ -256,6 +259,7 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['insect']) => res.energy >= 100,
+      defaultDisplayed: true,
     },
   ],
 
@@ -292,6 +296,7 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['crustacean']) => res.food >= res.mass,
+      defaultDisplayed: true,
     },
     {
       name: 'Recover',
@@ -303,6 +308,7 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['crustacean']) => res.food >= 1,
+      defaultDisplayed: true,
     },
     {
       name: 'Bulk up',
@@ -315,6 +321,7 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['crustacean']) => res.food >= 1,
+      defaultDisplayed: true,
     },
     {
       name: 'Smarten up',
@@ -327,6 +334,7 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['crustacean']) => res.food >= 1,
+      defaultDisplayed: true,
     },
   ],
 }
