@@ -1,11 +1,11 @@
 import type { LevelName, SynergyConfig } from '../types'
 
-// This is basically just for type safety
-export function defineSynergies<T extends LevelName>(defs: SynergyConfig<T>[]): SynergyConfig<T>[] {
-  return defs
+// To get proper typing for basedOn
+type SynergyConfigMap = {
+  [K in LevelName]: SynergyConfig<K>
 }
 
-export const synergyDefinitions = defineSynergies([
+export const synergyDefinitions = [
   {
     basedOn: {
       level: 'amoeba',
@@ -30,4 +30,4 @@ export const synergyDefinitions = defineSynergies([
       return gs
     },
   },
-])
+] satisfies readonly SynergyConfigMap[LevelName][]

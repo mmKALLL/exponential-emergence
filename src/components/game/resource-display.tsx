@@ -26,7 +26,7 @@ export function ResourceDisplay(): JSX.Element {
           <h2 className="text-lg font-bold">Synergies</h2>
           <div className="text-xs">Based on your best scores.</div>
           {synergies.map(({ description, basedOn, record }) => (
-            <div key={basedOn.resourceName} className="flex flex-col gap-1 w-full">
+            <div key={`${basedOn.level}-${basedOn.resourceName}`} className="flex flex-col gap-1 w-full">
               <span>
                 {capitalize(basedOn.level)} - {record} {basedOn.resourceName}
               </span>
