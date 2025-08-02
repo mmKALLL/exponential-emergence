@@ -6,10 +6,9 @@ import { SynergiesDisplay } from './synergies-display'
 import { Game } from '@/lib/gamestate-logic'
 
 export function SidePanel() {
-  const synergies = useUpdate(() => Game.synergies || [])
-  const outBoundSynergies = useUpdate(() => Game.outBoundSynergies || [])
+  const hasSynergies = useUpdate(() => Game.hasSynergies)
 
-  if (synergies.length === 0 && outBoundSynergies.length === 0) {
+  if (!hasSynergies) {
     return (
       <Card className="flex flex-col items-center p-4 gap-4 w-52 h-full">
         <ResourceDisplay />

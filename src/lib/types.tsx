@@ -3,12 +3,14 @@ export const MAX_LIFESPAN = 60 // seconds
 
 export type Effect<T extends LevelName = LevelName> = (res: Resources[T]) => Resources[T]
 
-export type ActionConfig = {
+export type ActionConfig<T extends LevelName = LevelName> = {
   name: string
   description?: string
+  gives?: Array<string | ((gs: Resources[T]) => string)>
+  takes?: Array<string | ((gs: Resources[T]) => string)>
   baseTime: number // in seconds
-  effect: Effect
-  enabledCondition?: <T extends LevelName = LevelName>(res: Resources[T]) => boolean
+  effect: Effect<T>
+  enabledCondition?: (res: Resources[T]) => boolean
   displayCondition?: (gs: GameState) => boolean
   defaultDisplayed?: boolean
 }
@@ -88,6 +90,7 @@ export type Goal = {
   requiredAmount: number
   resourceName: string
   onComplete: (gs: GameState) => GameState // Be careful to make this idempotent, since reducers may be called more than once with the same parameters
+  completed?: boolean
 }
 
 export type LevelName = 'amoeba' | 'multicellular' | 'algae' | 'insect' | 'crustacean'

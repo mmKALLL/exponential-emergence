@@ -2,35 +2,60 @@ import { Button } from '../ui/button'
 import { Progress } from '../ui/progress'
 import { Card } from '../ui/card'
 import type { JSX } from 'react'
-import type { Action } from '@/lib/types'
-import { TooltipWrapper } from '../ui/tooltip-button'
 import { cn, maxTime } from '@/lib/utils'
 import { ActionMiniChart } from './action-mini-chart'
 import { useUpdate } from '@/hooks/use-update'
 import { canApplyAction, Game } from '@/lib/gamestate-logic'
 
-export function ActionCard({ action }: { action: Action }): JSX.Element {
-  const { name, description, progress, currentSpeed, permanentSpeed, valueHistory, bestValueHistory } = action
+export function ActionCard({ actionName }: { actionName: string }): JSX.Element {
+  // The reason we do this so much is due to performance reasons.
+  // 1. We don't want to list the full objects in the parent component to cause all Actions to re-render.
+  // 2. useUpdate checks if a value has changed, but doesn't work well with objects.
+  //    so we use it only for primitive values. It also handles arrays of primitives well.
+  // 3. Game.getActionCard gets called a lot, but it just uses a map lookup,
+  //    The map itself is built based on visibleActionCards, which in turn
+  //    has caching built in, so it only recomputes every 33ms (max).
+  // With this approach, pretty much only cards that re-render is the current one active.
+  // TLDR; We do this so there's less re-rendering of cards.
+  const name = useUpdate(() => Game.getActionCard(actionName).name)
+  const description = useUpdate(() => Game.getActionCard(actionName).description)
+  const progress = useUpdate(() => Game.getActionCard(actionName).progress)
+  const currentSpeed = useUpdate(() => Game.getActionCard(actionName).currentSpeed)
+  const permanentSpeed = useUpdate(() => Game.getActionCard(actionName).permanentSpeed)
+  const maxActionTime = useUpdate(() => maxTime(Game.getActionCard(actionName)))
+  const gives = useUpdate(() => Game.getActionCard(actionName).gives)
+  const takes = useUpdate(() => Game.getActionCard(actionName).takes)
+  const valueHistory = useUpdate(() => Game.getActionCard(actionName).valueHistory)
+  const bestValueHistory = useUpdate(() => Game.getActionCard(actionName).bestValueHistory)
 
-  const { unlockedDisplaySections } = useUpdate(() => Game.state)
-  const canToggle = useUpdate(() => canApplyAction(action))
+  const speedsUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.speeds)
+  const bestValueUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.bestValue)
+  const canToggle = useUpdate(() => canApplyAction(Game.getActionCard(actionName)))
 
   return (
     <Card className="flex flex-col items-center justify-center p-4 gap-4 w-52">
-      <Progress value={(progress / maxTime(action)) * 100} />
-      <TooltipWrapper
-        component={
-          <Button
-            onClick={() => Game.toggleAction(action)}
-            variant="outline"
-            className={cn('w-44', !canToggle && '!bg-red-900 opacity-30')}
-          >
-            {name} ({(maxTime(action) - progress).toFixed(1)})
-          </Button>
-        }
-        content={description}
-      />
-      {unlockedDisplaySections.speeds && (
+      <Progress value={(progress / maxActionTime) * 100} />
+      <div className="text-xs -my-2 text-center">{description}</div>
+      <div className="text-xs flex flex-wrap gap-2">
+        {takes?.map((t) => (
+          <div key={t} className="text-red-300">
+            {t}
+          </div>
+        ))}
+        {gives?.map((g) => (
+          <div key={g} className="text-green-300">
+            {g}
+          </div>
+        ))}
+      </div>
+      <Button
+        onClick={() => Game.toggleAction(Game.getActionCard(actionName))}
+        variant="outline"
+        className={cn('w-44', !canToggle && '!bg-red-900 opacity-30')}
+      >
+        {name} ({(maxActionTime - progress).toFixed(1)})
+      </Button>
+      {speedsUnlocked && (
         <div className="flex flex-col items-center gap-2">
           <div className="flex place-content-between w-42">
             <div className="text-sm">Current life speed:</div>
@@ -42,12 +67,7 @@ export function ActionCard({ action }: { action: Action }): JSX.Element {
           </div>
         </div>
       )}
-      <ActionMiniChart
-        height={30}
-        valueHistory={valueHistory}
-        bestValueHistory={bestValueHistory}
-        showLegend={unlockedDisplaySections.bestValue}
-      />
+      <ActionMiniChart height={30} valueHistory={valueHistory} bestValueHistory={bestValueHistory} showLegend={bestValueUnlocked} />
     </Card>
   )
 }

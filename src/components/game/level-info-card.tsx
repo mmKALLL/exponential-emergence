@@ -1,6 +1,6 @@
 import { useUpdate } from '@/hooks/use-update'
 import { Game } from '@/lib/gamestate-logic'
-import { levelLabel } from '@/lib/utils'
+import { formatNumber, levelLabel } from '@/lib/utils'
 import { Card } from '../ui/card'
 import { ProgressItem } from './progress-item'
 import { MAX_LIFESPAN } from '@/lib/types'
@@ -24,7 +24,7 @@ export function LevelInfoCard() {
         {currentGoal ? (
           <ProgressItem value={currentGoalAmount || 0} max={currentGoalMaximum}>
             <div className="text-2xl font-bold">
-              Next goal: {currentGoalAmount}/{currentGoalMaximum} {currentGoal.resourceName}
+              Next goal: {formatNumber(currentGoalAmount)}/{formatNumber(currentGoalMaximum)} {currentGoal.resourceName}
             </div>
           </ProgressItem>
         ) : (

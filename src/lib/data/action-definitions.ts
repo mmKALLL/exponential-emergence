@@ -1,8 +1,9 @@
 import { Game } from '../gamestate-logic'
-import type { Action, LevelName, Resources } from '../types'
+import type { Action, ActionConfig, LevelName, Resources } from '../types'
+import { formatNumber } from '../utils'
 
 // TODO: Add typing; not as easy as it looks
-export const actionDefinitions = {
+export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
   amoeba: [
     {
       name: 'Catch food',
@@ -11,7 +12,7 @@ export const actionDefinitions = {
         res.food += 1
         return res
       },
-      description: '+1 food',
+      gives: ['+1 food'],
       defaultDisplayed: true,
     },
     {
@@ -23,7 +24,8 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['amoeba']) => res.food >= 1,
-      description: '-1 food => +1 nutrient',
+      gives: ['+1 nutrient'],
+      takes: ['-1 food'],
     },
     {
       name: 'Generate energy',
@@ -34,7 +36,8 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['amoeba']) => res.nutrients >= 1,
-      description: '-1 nutrient => +1 energy',
+      gives: ['+1 energy'],
+      takes: ['-1 nutrient'],
     },
     {
       name: 'Divide cell',
@@ -44,8 +47,9 @@ export const actionDefinitions = {
         res.divisions += 1
         return res
       },
-      description: '-5 energy => +1 division',
       enabledCondition: (res: Resources['amoeba']) => res.energy >= 5,
+      gives: ['+1 division'],
+      takes: ['-5 energy'],
     },
   ],
 
@@ -57,7 +61,8 @@ export const actionDefinitions = {
         res.food += 20 * res['food multiplier']
         return res
       },
-      description: '+20 food * food multiplier', // TODO: Dynamic description
+      description: 'Affected by food multiplier',
+      gives: [(gs: Resources['multicellular']) => `+${formatNumber(20 * gs['food multiplier'])} food`],
       defaultDisplayed: true,
     },
     {
@@ -69,7 +74,9 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.food >= res.cells,
-      description: 'Each cell:\n-1 food => +1 nutrient',
+      description: 'Affected by cell count',
+      gives: [(gs: Resources['multicellular']) => `+${formatNumber(gs.cells)} nutrients`],
+      takes: [(gs: Resources['multicellular']) => `-${formatNumber(gs.cells)} food`],
       defaultDisplayed: true,
     },
     {
@@ -81,7 +88,10 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.nutrients >= res.cells,
-      description: 'Each cell:\n-1 nutrient => +1 energy',
+      description: 'Affected by cell count',
+      gives: [(gs: Resources['multicellular']) => `+${formatNumber(gs.cells)} energy`],
+      takes: [(gs: Resources['multicellular']) => `-${formatNumber(gs.cells)} nutrients`],
+      defaultDisplayed: true,
     },
     {
       name: 'Filter waste',
@@ -92,7 +102,8 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.energy >= 20,
-      description: '-20 energy => +1 food multiplier',
+      gives: ['+1 food multiplier'],
+      takes: ['-20 energy'],
     },
     {
       name: 'Multiply',
@@ -103,7 +114,8 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.energy >= (5 - res.efficiency) * res.cells,
-      description: '5 energy per cell => x2 cells\n(Cost per cell reduced by efficiency)',
+      gives: ['x2 cells'],
+      takes: [(gs: Resources['multicellular']) => `-${Math.max(0, 5 - gs.efficiency) * gs.cells} energy`],
     },
     {
       name: 'Specialize',
@@ -114,7 +126,9 @@ export const actionDefinitions = {
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.energy >= 20,
-      description: '-20 energy => Reduce multiply base cost by 1',
+      description: 'Efficiency makes Multiply cheaper',
+      gives: ['+1 efficiency'],
+      takes: ['-20 energy'],
     },
   ],
 
@@ -125,7 +139,7 @@ export const actionDefinitions = {
     {
       name: 'Harden',
       baseTime: 4,
-      description: '+20 hardness',
+      gives: ['+20 hardness'],
       effect: (res: Resources['algae']) => {
         res.hardness += 20
         return res
@@ -135,7 +149,8 @@ export const actionDefinitions = {
     {
       name: 'Rapid harden',
       baseTime: 3,
-      description: '-100 energy => +100 hardness',
+      gives: ['+100 hardness'],
+      takes: ['-100 energy'],
       effect: (res: Resources['algae']) => {
         res.energy -= 100
         res.hardness += 100
@@ -147,7 +162,9 @@ export const actionDefinitions = {
     {
       name: 'Grow longer',
       baseTime: 4,
-      description: '-100 hardness => +1 millimeter per branch',
+      description: 'Millimeters affected by branches',
+      gives: [(gs: Resources['algae']) => `+${formatNumber(gs.branches)} millimeters`],
+      takes: ['-100 hardness'],
       effect: (res: Resources['algae']) => {
         res.hardness -= 100
         res.millimeters += res.branches
@@ -158,7 +175,8 @@ export const actionDefinitions = {
     {
       name: 'Branch out',
       baseTime: 6,
-      description: '-10 millimeters => +1 branch',
+      gives: ['+1 branch'],
+      takes: ['-10 millimeters'],
       effect: (res: Resources['algae']) => {
         res.millimeters -= 10
         res.branches += 1
@@ -169,7 +187,8 @@ export const actionDefinitions = {
     {
       name: 'Sunbathe',
       baseTime: 4,
-      description: '+1 energy per chlorophyll * sunlight',
+      description: 'Affected by sunlight and chlorophyll',
+      gives: [(gs: Resources['algae']) => `+${formatNumber((gs.chlorophyll * Game.currentSunlight) / 100, 2)} energy`],
       effect: (res: Resources['algae']) => {
         res.energy += res.chlorophyll * (Game.currentSunlight / 100)
         return res
@@ -178,7 +197,9 @@ export const actionDefinitions = {
     {
       name: 'Grow chlorophyll',
       baseTime: 5,
-      description: 'Each millimeter:\n-5 energy => +1 chlorophyll',
+      description: 'Affected by millimeters',
+      gives: [(gs: Resources['algae']) => `+${gs.millimeters} chlorophyll`],
+      takes: [(gs: Resources['algae']) => `-${5 * gs.millimeters} energy`],
       effect: (res: Resources['algae']) => {
         res.energy -= 5 * res.millimeters
         res.chlorophyll += res.millimeters
@@ -192,7 +213,9 @@ export const actionDefinitions = {
     {
       name: 'Scavenge food',
       baseTime: 2,
-      description: '-20 energy => +1 food per speed',
+      description: 'Food affected by speed',
+      gives: [(gs: Resources['insect']) => `+${formatNumber(gs.speed)} food`],
+      takes: ['-20 energy'],
       effect: (res: Resources['insect']) => {
         res.energy -= 20
         res.food += res.speed
@@ -204,7 +227,9 @@ export const actionDefinitions = {
     {
       name: 'Digest food',
       baseTime: 5,
-      description: '-1 food per digestion => +1 energy per digestion',
+      description: 'Affected by digestion',
+      gives: [(gs: Resources['insect']) => `+${formatNumber(gs.digestion)} energy`],
+      takes: [(gs: Resources['insect']) => `-${formatNumber(gs.digestion)} food`],
       effect: (res: Resources['insect']) => {
         res.food -= res.digestion
         res.energy += res.digestion
@@ -216,7 +241,8 @@ export const actionDefinitions = {
     {
       name: 'Improve perception',
       baseTime: 4,
-      description: '-50 energy => +5 perception',
+      gives: ['+5 perception'],
+      takes: ['-50 energy'],
       effect: (res: Resources['insect']) => {
         res.energy -= 50
         res.perception += 5
@@ -228,7 +254,8 @@ export const actionDefinitions = {
     {
       name: 'Generate pheromones',
       baseTime: 5,
-      description: '-20 energy => +1 pheromone',
+      gives: ['+1 pheromone'],
+      takes: ['-20 energy'],
       effect: (res: Resources['insect']) => {
         res.energy -= 20
         res.pheromones += 1
@@ -240,7 +267,9 @@ export const actionDefinitions = {
     {
       name: 'Find mates',
       baseTime: 2,
-      description: '-1 pheromone => +1 mate per perception',
+      description: 'Mates affected by perception',
+      gives: [(gs: Resources['insect']) => `+${formatNumber(gs.perception)} mates`],
+      takes: ['-1 pheromone'],
       effect: (res: Resources['insect']) => {
         res.pheromones -= 1
         res.mates += res.perception
@@ -252,7 +281,9 @@ export const actionDefinitions = {
     {
       name: 'Lay eggs',
       baseTime: 3,
-      description: '-100 energy => +1 egg per mate',
+      description: 'Eggs affected by mates',
+      gives: [(gs: Resources['insect']) => `+${formatNumber(gs.mates)} eggs`],
+      takes: ['-100 energy'],
       effect: (res: Resources['insect']) => {
         res.energy -= 100
         res.eggs += res.mates
@@ -267,7 +298,8 @@ export const actionDefinitions = {
     {
       name: 'Find prey',
       baseTime: 6,
-      description: '+1 target per intelligence',
+      description: 'Affected by intelligence',
+      gives: [(gs: Resources['crustacean']) => `+${formatNumber(gs.intelligence)} targets`],
       effect: (res: Resources['crustacean']) => {
         res.targets += res.intelligence
         return res
@@ -277,7 +309,9 @@ export const actionDefinitions = {
     {
       name: 'Fight prey',
       baseTime: 10,
-      description: '-100 targets, -(100 - dex) vitality => +1 food per strength',
+      description: 'Vitality affected by dexterity, food affected by strength',
+      takes: ['-100 targets', (gs: Resources['crustacean']) => `-${Math.max(0, 100 - gs.dexterity)} vitality`],
+      gives: [(gs: Resources['crustacean']) => `+${formatNumber(gs.strength)} food`],
       effect: (res: Resources['crustacean']) => {
         res.targets -= 100
         res.vitality -= Math.max(0, 100 - res.dexterity)
@@ -290,7 +324,9 @@ export const actionDefinitions = {
     {
       name: 'Process food',
       baseTime: 4,
-      description: '-1 food per mass => +1 energy per mass',
+      description: 'Affected by mass',
+      takes: [(gs: Resources['crustacean']) => `-${formatNumber(gs.mass)} food`],
+      gives: [(gs: Resources['crustacean']) => `+${formatNumber(gs.mass)} energy`],
       effect: (res: Resources['crustacean']) => {
         res.food -= res.mass
         res.energy += res.mass
@@ -302,7 +338,8 @@ export const actionDefinitions = {
     {
       name: 'Recover',
       baseTime: 3,
-      description: '-100 energy => +4 vitality',
+      gives: ['+4 vitality'],
+      takes: ['-100 energy'],
       effect: (res: Resources['crustacean']) => {
         res.energy -= 100
         res.vitality += 4
@@ -314,7 +351,8 @@ export const actionDefinitions = {
     {
       name: 'Bulk up',
       baseTime: 3,
-      description: '-100 energy => +1 strength, +5 mass',
+      gives: ['+1 strength', '+5 mass'],
+      takes: ['-100 energy'],
       effect: (res: Resources['crustacean']) => {
         res.energy -= 100
         res.strength += 1
@@ -327,7 +365,8 @@ export const actionDefinitions = {
     {
       name: 'Smarten up',
       baseTime: 3,
-      description: '-100 energy => +1 dexterity, +1 intelligence',
+      gives: ['+1 dexterity', '+1 intelligence'],
+      takes: ['-100 energy'],
       effect: (res: Resources['crustacean']) => {
         res.energy -= 100
         res.dexterity += 1
