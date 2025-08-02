@@ -13,7 +13,6 @@ export function ActionCard({ action }: { action: Action }): JSX.Element {
   const { name, description, progress, currentSpeed, permanentSpeed, valueHistory, bestValueHistory } = action
 
   const { unlockedDisplaySections } = useUpdate(() => Game.state)
-  const isActive = useUpdate(() => Game.state.currentActionName === action.name)
   const canToggle = useUpdate(() => canApplyAction(action))
 
   return (
@@ -26,7 +25,7 @@ export function ActionCard({ action }: { action: Action }): JSX.Element {
             variant="outline"
             className={cn('w-44', !canToggle && '!bg-red-900 opacity-30')}
           >
-            {isActive ? `Stop action` : name} ({(maxTime(action) - progress).toFixed(1)})
+            {name} ({(maxTime(action) - progress).toFixed(1)})
           </Button>
         }
         content={description}
