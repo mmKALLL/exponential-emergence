@@ -1,3 +1,4 @@
+import { Game } from '../gamestate-logic'
 import type { Action, LevelName, Resources } from '../types'
 
 // TODO: Add typing; not as easy as it looks
@@ -97,12 +98,12 @@ export const actionDefinitions = {
       name: 'Multiply',
       baseTime: 4,
       effect: (res: Resources['multicellular']) => {
-        res.energy -= (10 - res.efficiency) * res.cells
+        res.energy -= (5 - res.efficiency) * res.cells
         res.cells *= 2
         return res
       },
-      enabledCondition: (res: Resources['multicellular']) => res.waste <= 0 && res.energy >= (10 - res.efficiency) * res.cells,
-      description: '10 energy per cell => x2 cells\n‼️ Requires 0 waste',
+      enabledCondition: (res: Resources['multicellular']) => res.waste <= 0 && res.energy >= (5 - res.efficiency) * res.cells,
+      description: '5 energy per cell => x2 cells\n‼️ Requires 0 waste',
     },
     {
       name: 'Specialize',
@@ -164,17 +165,15 @@ export const actionDefinitions = {
         res.branches += 1
         return res
       },
-      defaultDisplayed: true,
     },
     {
       name: 'Sunbathe',
       baseTime: 4,
-      description: '+2 energy per chlorophyll\n‼️ Requires sunlight over 50',
+      description: '+1 energy per chlorophyll * sunlight',
       effect: (res: Resources['algae']) => {
-        res.energy += res.sunlight > 50 ? res.chlorophyll * 2 : 0
+        res.energy += res.chlorophyll * (Game.currentSunlight / 100)
         return res
       },
-      enabledCondition: (res: Resources['algae']) => res.sunlight > 50,
     },
     {
       name: 'Grow chlorophyll',

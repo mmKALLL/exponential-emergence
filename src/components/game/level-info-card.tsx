@@ -1,4 +1,4 @@
-import { useGameState, useUpdate } from '@/hooks/use-update'
+import { useUpdate } from '@/hooks/use-update'
 import { Game } from '@/lib/gamestate-logic'
 import { levelLabel } from '@/lib/utils'
 import { Card } from '../ui/card'
@@ -9,12 +9,16 @@ export function LevelInfoCard() {
   const currentGoal = useUpdate(() => Game.currentGoal)
   const currentGoalAmount = useUpdate(() => Game.currentGoalAmount)
   const currentGoalMaximum = useUpdate(() => Game.currentGoalMaximum)
-  const { currentLevel, lifespanLeft, generation } = useGameState()
+  const currentSunlight = useUpdate(() => Game.currentSunlight)
+  const currentSunlightMaximum = useUpdate(() => Game.sunlightMaximum)
+  const currentLevelName = useUpdate(() => Game.currentLevel.name)
+  const generation = useUpdate(() => Game.state.generation)
+  const lifespanLeft = useUpdate(() => Game.state.lifespanLeft)
 
   return (
     <Card className="flex flex-col gap-4 p-4 items-center w-108">
       <p>
-        Generation {generation} - {levelLabel(currentLevel)}
+        Generation {generation} - {levelLabel(currentLevelName)}
       </p>
       <div className="w-full">
         {currentGoal ? (
@@ -24,7 +28,7 @@ export function LevelInfoCard() {
             </div>
           </ProgressItem>
         ) : (
-          <h1 className="text-2xl font-bold text-green-500 justify-self-center">All {levelLabel(currentLevel)} goals completed!</h1>
+          <h1 className="text-2xl font-bold text-green-500 justify-self-center">All {levelLabel(currentLevelName)} goals completed!</h1>
         )}
       </div>
 
@@ -34,6 +38,15 @@ export function LevelInfoCard() {
           <span>{lifespanLeft.toFixed(1)}s</span>
         </div>
       </ProgressItem>
+
+      {currentLevelName === 'algae' && (
+        <ProgressItem value={currentSunlight} max={currentSunlightMaximum} className="w-full">
+          <div className="flex justify-between w-28">
+            <span>Sunlight: </span>
+            <span>{currentSunlight.toFixed(0)}%</span>
+          </div>
+        </ProgressItem>
+      )}
     </Card>
   )
 }

@@ -1,6 +1,6 @@
 import { synergyDefinitions } from './data/synergy-definitions'
 import { initialGameState } from './gamestate-utils'
-import { TICK_LENGTH, type Action, type LevelName, type Resources } from './types'
+import { MAX_LIFESPAN, TICK_LENGTH, type Action, type LevelName, type Resources } from './types'
 import { maxTime, typedObjectEntries } from './utils'
 
 const gs = { ...initialGameState }
@@ -26,7 +26,7 @@ function updateResourceRecords() {
     })
     .forEach(({ name, amount }) => {
       // @ts-expect-error TypeScript doesn't know that name is a key of Resources[LevelName]
-      currentLevel.resourceRecords[name as keyof Resources[LevelName]] = amount
+      currentLevel.resourceRecords[name] = amount
     })
 }
 
@@ -197,6 +197,18 @@ export const Game = {
 
   get currentGoalMaximum() {
     return Game.currentGoal?.requiredAmount ?? 0
+  },
+
+  get currentSunlight() {
+    const currentSec = MAX_LIFESPAN - Game.state.lifespanLeft
+
+    // Off-centered sinusoidal function that oscillates between 0 and 100 twice, with peaks starting at 8 and 53 seconds
+    const functionValue = (Math.sin((currentSec / 60) * 5 * Math.PI - 0.5) + 0.48) * 100
+    return Math.max(0, Math.min(100, functionValue))
+  },
+
+  get sunlightMaximum() {
+    return 100
   },
 
   get actionCards() {

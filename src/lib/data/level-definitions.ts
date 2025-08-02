@@ -173,15 +173,15 @@ export const initialLevelDefinitions: GameState['levels'] = {
         requiredAmount: 10,
         resourceName: 'millimeters',
         onComplete: (gs) => {
-          gs.levels.algae.actions['Branch out'].displayed = true
+          gs.levels.algae.actions['Sunbathe'].displayed = true
           return gs
         },
       },
       {
-        requiredAmount: 2,
-        resourceName: 'branches',
+        requiredAmount: 500,
+        resourceName: 'energy',
         onComplete: (gs) => {
-          gs.levels.algae.actions['Sunbathe'].displayed = true
+          gs.levels.algae.actions['Branch out'].displayed = true
           return gs
         },
       },
