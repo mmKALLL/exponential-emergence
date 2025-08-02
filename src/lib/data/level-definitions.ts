@@ -68,7 +68,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
       nutrients: 0,
       waste: 0,
       energy: 0,
-      efficiency: 0,
+      efficiency: 20,
       cells: 0,
     },
     resources: {
@@ -76,7 +76,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
       nutrients: 0,
       waste: 0,
       energy: 0,
-      efficiency: 0,
+      efficiency: 20,
       cells: 0,
     },
     resourceRecords: {
@@ -178,7 +178,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
         },
       },
       {
-        requiredAmount: 500,
+        requiredAmount: 1000,
         resourceName: 'energy',
         onComplete: (gs) => {
           gs.levels.algae.actions['Branch out'].displayed = true
@@ -212,7 +212,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
       food: 0,
       energy: 0,
       speed: 0, // typical: 400-500 (multicellular food)
-      perception: 0, // typical: 10-20 (multicellular efficiency)
+      perception: 0, // typical: 100-200 (multicellular efficiency)
       digestion: 0, // typical: 50-100 (chlorophyll)
       pheromones: 0, // 20?
       mates: 0,
@@ -239,7 +239,16 @@ export const initialLevelDefinitions: GameState['levels'] = {
       eggs: 0,
     },
     actions: generatedActions.insect,
-    goals: [],
+    goals: [
+      {
+        requiredAmount: 10000,
+        resourceName: 'eggs',
+        onComplete: (gs) => {
+          gs.levels.crustacean.unlocked = true
+          return gs
+        },
+      },
+    ],
   },
 
   crustacean: {

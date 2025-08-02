@@ -54,10 +54,10 @@ export const actionDefinitions = {
       name: 'Catch food',
       baseTime: 8,
       effect: (res: Resources['multicellular']) => {
-        res.food += 20
+        res.food += res.efficiency
         return res
       },
-      description: '+20 food',
+      description: '+1 food per efficiency',
       defaultDisplayed: true,
     },
     {
@@ -88,21 +88,21 @@ export const actionDefinitions = {
       name: 'Filter waste',
       baseTime: 2,
       effect: (res: Resources['multicellular']) => {
-        res.waste = Math.max(res.waste - 10, 0)
+        res.waste = Math.max(res.waste - res.efficiency, 0)
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.waste >= 1,
-      description: '-10 waste', // TODO: Dynamic description
+      description: '-1 waste per efficiency', // TODO: Dynamic description
     },
     {
       name: 'Multiply',
       baseTime: 4,
       effect: (res: Resources['multicellular']) => {
-        res.energy -= (5 - res.efficiency) * res.cells
+        res.energy -= 5 * res.cells
         res.cells *= 2
         return res
       },
-      enabledCondition: (res: Resources['multicellular']) => res.waste <= 0 && res.energy >= (5 - res.efficiency) * res.cells,
+      enabledCondition: (res: Resources['multicellular']) => res.waste <= 0 && res.energy >= 5 * res.cells,
       description: '5 energy per cell => x2 cells\n‼️ Requires 0 waste',
     },
     {
