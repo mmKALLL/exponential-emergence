@@ -109,8 +109,11 @@ export const Game = {
       .filter((synergy) => synergy.affectedLevel === gs.currentLevel && gs.levels[synergy.basedOn.level].unlocked)
       .map((synergy) => ({
         ...synergy,
-        record: gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName] || 0,
-        description: synergy.description(gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName]),
+        record:
+          (gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName as keyof Resources[LevelName]] as number) || 0,
+        description: synergy.description(
+          (gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName as keyof Resources[LevelName]] as number) || 0
+        ),
       }))
       .reduce(
         (acc, synergy) => {
@@ -153,8 +156,10 @@ export const Game = {
       .filter((synergy) => synergy.basedOn.level === gs.currentLevel && gs.levels[synergy.affectedLevel].unlocked)
       .map((synergy) => ({
         ...synergy,
-        record: gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName] || 0,
-        description: synergy.description(gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName]),
+        record: gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName as keyof Resources[LevelName]] || 0,
+        description: synergy.description(
+          gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName as keyof Resources[LevelName]] || 0
+        ),
       }))
       .reduce(
         (acc, synergy) => {
@@ -228,7 +233,10 @@ export const Game = {
     synergyDefinitions
       .filter((synergy) => synergy.affectedLevel === newLevelName)
       .forEach((synergy) => {
-        synergy.onLevelStart?.(gs, gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName])
+        synergy.onLevelStart?.(
+          gs,
+          gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName as keyof Resources[LevelName]] || 0
+        )
       })
   },
 
