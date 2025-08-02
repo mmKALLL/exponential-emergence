@@ -66,25 +66,25 @@ export const initialLevelDefinitions: GameState['levels'] = {
     initialResources: {
       food: 0,
       nutrients: 0,
-      waste: 0,
       energy: 0,
-      efficiency: 20,
+      efficiency: 0,
+      'food multiplier': 1,
       cells: 0,
     },
     resources: {
       food: 0,
       nutrients: 0,
-      waste: 0,
       energy: 0,
-      efficiency: 20,
+      efficiency: 0,
+      'food multiplier': 1,
       cells: 0,
     },
     resourceRecords: {
       food: 0,
       nutrients: 0,
-      waste: 0,
       energy: 0,
       efficiency: 0,
+      'food multiplier': 1,
       cells: 0,
     },
     actions: generatedActions.multicellular,
@@ -139,7 +139,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
       millimeters: 0,
       branches: 0,
       sunlight: 0,
-      chlorophyll: 0,
+      chlorophyll: 10,
       energy: 0,
       hardness: 0,
     },
@@ -147,7 +147,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
       millimeters: 0,
       branches: 0,
       sunlight: 0,
-      chlorophyll: 0,
+      chlorophyll: 10,
       energy: 0,
       hardness: 0,
     },
@@ -212,9 +212,9 @@ export const initialLevelDefinitions: GameState['levels'] = {
       food: 0,
       energy: 200,
       speed: 0, // typical: 40-50 (multicellular food / 10)
-      perception: 0, // typical: 10-20 (multicellular efficiency / 10)
+      perception: 20,
       digestion: 0, // typical: 20-100 (chlorophyll / 100)
-      pheromones: 0, // 20?
+      pheromones: 0, // typical: 4-10 (multicellular efficiency)
       mates: 0,
       eggs: 0, // target: 10k
     },

@@ -52,7 +52,19 @@ export const synergyDefinitions = [
       level: 'multicellular',
       resourceName: 'efficiency',
     },
-    description: (value) => `Start with ${value} chlorophyll`,
+    description: (value) => `Start with +${value} chlorophyll`,
+    affectedLevel: 'algae',
+    onLevelStart: (gs, value) => {
+      gs.levels.algae.resources.chlorophyll = value
+      return gs
+    },
+  },
+  {
+    basedOn: {
+      level: 'multicellular',
+      resourceName: 'food multiplier',
+    },
+    description: (value) => `Start with +${value} chlorophyll`,
     affectedLevel: 'algae',
     onLevelStart: (gs, value) => {
       gs.levels.algae.resources.chlorophyll = value
@@ -91,10 +103,10 @@ export const synergyDefinitions = [
       level: 'multicellular',
       resourceName: 'efficiency',
     },
-    description: (value) => `Start with ${Math.floor(value / 10)} perception`,
+    description: (value) => `Start with ${value} pheromones`,
     affectedLevel: 'insect',
     onLevelStart: (gs, value) => {
-      gs.levels.insect.resources.perception = Math.floor(value / 10)
+      gs.levels.insect.resources.pheromones = value
       return gs
     },
   },

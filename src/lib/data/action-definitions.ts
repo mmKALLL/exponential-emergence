@@ -52,12 +52,12 @@ export const actionDefinitions = {
   multicellular: [
     {
       name: 'Catch food',
-      baseTime: 8,
+      baseTime: 6,
       effect: (res: Resources['multicellular']) => {
-        res.food += res.efficiency
+        res.food += 20 * res['food multiplier']
         return res
       },
-      description: '+1 food per efficiency', // TODO: Dynamic description
+      description: '+20 food * food multiplier', // TODO: Dynamic description
       defaultDisplayed: true,
     },
     {
@@ -66,11 +66,10 @@ export const actionDefinitions = {
       effect: (res: Resources['multicellular']) => {
         res.food -= res.cells
         res.nutrients += res.cells
-        res.waste += res.cells
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.food >= res.cells,
-      description: 'Each cell:\n-1 food => +1 nutrient, +1 waste',
+      description: 'Each cell:\n-1 food => +1 nutrient',
       defaultDisplayed: true,
     },
     {
@@ -85,36 +84,37 @@ export const actionDefinitions = {
       description: 'Each cell:\n-1 nutrient => +1 energy',
     },
     {
-      name: 'Filter waste',
-      baseTime: 2,
-      effect: (res: Resources['multicellular']) => {
-        res.waste = Math.max(res.waste - res.efficiency, 0)
-        return res
-      },
-      enabledCondition: (res: Resources['multicellular']) => res.waste >= 1,
-      description: '-1 waste per efficiency', // TODO: Dynamic description
-    },
-    {
       name: 'Multiply',
       baseTime: 4,
       effect: (res: Resources['multicellular']) => {
-        res.energy -= 5 * res.cells
+        res.energy -= Math.max(0, 5 - res.efficiency) * res.cells
         res.cells *= 2
         return res
       },
-      enabledCondition: (res: Resources['multicellular']) => res.waste <= 0 && res.energy >= 5 * res.cells,
-      description: '5 energy per cell => x2 cells\n‼️ Requires 0 waste',
+      enabledCondition: (res: Resources['multicellular']) => res.energy >= (5 - res.efficiency) * res.cells,
+      description: '5 energy per cell => x2 cells\n(Cost per cell reduced by efficiency)',
     },
     {
       name: 'Specialize',
-      baseTime: 4,
+      baseTime: 3,
       effect: (res: Resources['multicellular']) => {
         res.energy -= 20
-        res.efficiency += 10
+        res.efficiency + 1
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.energy >= 20,
-      description: '-20 energy => Improve food gain and waste filtering by 10',
+      description: '-20 energy => Reduce multiply base cost by 1',
+    },
+    {
+      name: 'Filter waste',
+      baseTime: 2,
+      effect: (res: Resources['multicellular']) => {
+        res.energy -= 20
+        res['food multiplier'] += 1
+        return res
+      },
+      enabledCondition: (res: Resources['multicellular']) => res.energy >= 20,
+      description: '-20 energy => +1 food multiplier',
     },
   ],
 
@@ -228,25 +228,25 @@ export const actionDefinitions = {
     {
       name: 'Generate pheromones',
       baseTime: 5,
-      description: '-10 energy => +1 pheromone',
+      description: '-20 energy => +1 pheromone',
       effect: (res: Resources['insect']) => {
-        res.energy -= 10
+        res.energy -= 20
         res.pheromones += 1
         return res
       },
-      enabledCondition: (res: Resources['insect']) => res.energy >= 10,
+      enabledCondition: (res: Resources['insect']) => res.energy >= 20,
       defaultDisplayed: true,
     },
     {
       name: 'Find mates',
       baseTime: 2,
-      description: '-10 pheromones => +1 mate per perception',
+      description: '-1 pheromone => +1 mate per perception',
       effect: (res: Resources['insect']) => {
-        res.pheromones -= 10
+        res.pheromones -= 1
         res.mates += res.perception
         return res
       },
-      enabledCondition: (res: Resources['insect']) => res.pheromones >= 10,
+      enabledCondition: (res: Resources['insect']) => res.pheromones >= 1,
       defaultDisplayed: true,
     },
     {

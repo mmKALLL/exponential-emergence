@@ -50,8 +50,8 @@ export type Resources = {
     energy: number
     efficiency: number
     food: number
+    'food multiplier': number
     nutrients: number
-    waste: number
     cells: number
   }
   readonly algae: {
