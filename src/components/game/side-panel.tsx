@@ -11,13 +11,13 @@ export function SidePanel() {
 
   if (synergies.length === 0 && outBoundSynergies.length === 0) {
     return (
-      <Card className="flex flex-col items-center p-4 gap-4 w-52 h-full">
+      <Card className="flex flex-col items-center p-4 gap-4 w-60 h-full">
         <ResourceDisplay />
       </Card>
     )
   }
   return (
-    <Card className="flex flex-col items-center p-4 gap-4 w-52 h-full">
+    <Card className="flex flex-col items-center p-4 gap-4 w-60 h-full">
       <Tabs defaultValue="resources">
         <TabsList>
           <TabsTrigger value="resources">Resources</TabsTrigger>
