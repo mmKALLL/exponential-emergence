@@ -24,6 +24,20 @@ export type Action = ActionConfig & {
   displayed: boolean
 }
 
+export type SynergyConfig<T extends LevelName> = {
+  basedOn: {
+    level: T
+    resourceName: keyof Resources[T]
+  }
+
+  description: (value: number) => string
+
+  affectedLevel: LevelName
+  // Apply the synergy effect on the start of the level
+  // Not required as we could also use it some other way
+  onLevelStart?: (gs: GameState, value: number) => void
+}
+
 export type UnlockedDisplaySections = {
   speeds: boolean
   bestValue: boolean
@@ -72,6 +86,7 @@ export type Level<T extends LevelName> = {
   goals: Goal[]
   initialResources: Record<keyof Resources[T], number>
   resources: Resources[T]
+  // TODO: remove these, they are left here for reference when moving them to synergy-definitions.ts
   resourceInputs?: {
     level: LevelName
     resourceName:
@@ -82,7 +97,7 @@ export type Level<T extends LevelName> = {
       | keyof Resources['crustacean']
     description: string
   }[] // List of resources that synergize from previous levels
-  resourceOutputs: Record<string, number> // List of best scores for resources that can be used as synergies in later stages // TODO: Try using Partial<Record<keyof Resources[T], number>> instead; leads to compile error
+  resourceRecords: Resources[T]
 }
 
 export type GameState = {

@@ -7,8 +7,7 @@ import { Separator } from '../ui/separator'
 
 export function ResourceDisplay(): JSX.Element {
   const resources = useUpdate(() => Game.resources)
-  const resourceInputs = useUpdate(() => Game.resourceInputs || [])
-  const gs = useUpdate(() => Game.state)
+  const synergies = useUpdate(() => Game.synergies || [])
 
   return (
     <Card className="flex flex-col items-center p-4 gap-4 w-52 h-full">
@@ -21,15 +20,15 @@ export function ResourceDisplay(): JSX.Element {
         ))}
       </div>
 
-      {resourceInputs.length > 0 && (
+      {synergies.length > 0 && (
         <>
           <Separator />
           <h2 className="text-lg font-bold">Synergies</h2>
           <div className="text-xs">Based on your best scores.</div>
-          {resourceInputs.map(({ resourceName, description, level }) => (
-            <div key={resourceName} className="flex flex-col gap-1 w-full">
+          {synergies.map(({ description, basedOn, record }) => (
+            <div key={`${basedOn.level}-${basedOn.resourceName}`} className="flex flex-col gap-1 w-full">
               <span>
-                {capitalize(level)} - {gs.levels[level]?.resourceOutputs[resourceName] ?? 0} {resourceName}
+                {capitalize(basedOn.level)} - {record} {basedOn.resourceName}
               </span>
               <span className="text-xs">{description}</span>
             </div>
