@@ -3,7 +3,7 @@ import type { Action } from '@/lib/types'
 import { useUpdate } from '@/hooks/use-update'
 import { Game } from '@/lib/gamestate-logic'
 import { LevelInfoCard } from '../level-info-card'
-import { ResourceDisplay } from '../resource-display'
+import { SidePanel } from '../side-panel'
 
 export function GameScreen() {
   const visibleActionCards = useUpdate(() => Game.visibleActionCards)
@@ -20,7 +20,7 @@ export function GameScreen() {
           </div>
         </div>
         <div className="flex flex-col items-center p-4 gap-4">
-          <ResourceDisplay />
+          <SidePanel />
         </div>
       </div>
       {/* <ThemeModeToggle /> */}
