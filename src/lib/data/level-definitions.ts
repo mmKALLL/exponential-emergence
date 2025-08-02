@@ -210,17 +210,17 @@ export const initialLevelDefinitions: GameState['levels'] = {
     unlocked: false,
     initialResources: {
       food: 0,
-      energy: 0,
-      speed: 0, // typical: 400-500 (multicellular food)
-      perception: 0, // typical: 100-200 (multicellular efficiency)
-      digestion: 0, // typical: 50-100 (chlorophyll)
+      energy: 200,
+      speed: 0, // typical: 40-50 (multicellular food / 10)
+      perception: 0, // typical: 10-20 (multicellular efficiency / 10)
+      digestion: 0, // typical: 20-100 (chlorophyll / 100)
       pheromones: 0, // 20?
       mates: 0,
       eggs: 0, // target: 10k
     },
     resources: {
       food: 0,
-      energy: 0,
+      energy: 200,
       speed: 0,
       perception: 0,
       digestion: 0,
@@ -255,17 +255,17 @@ export const initialLevelDefinitions: GameState['levels'] = {
     name: 'crustacean',
     unlocked: false,
     initialResources: {
-      energy: 0,
+      energy: 500,
       targets: 0,
       food: 0,
       strength: 0, // 50-100; amoeba energy
-      dexterity: 0, // 500-800; insect speed
-      vitality: 0,
-      intelligence: 0,
-      mass: 0,
+      dexterity: 0, // 50-80; insect speed
+      vitality: 0, // 100-200; algae hardness / 10
+      intelligence: 0, // 40-100; insect perception
+      mass: 0, // 10-20 -> 1000; multicellular cells / 100
     },
     resources: {
-      energy: 0,
+      energy: 500,
       targets: 0,
       food: 0,
       strength: 0,
@@ -285,6 +285,16 @@ export const initialLevelDefinitions: GameState['levels'] = {
       mass: 0,
     },
     actions: generatedActions.crustacean,
-    goals: [],
+    goals: [
+      {
+        requiredAmount: 1000,
+        resourceName: 'mass',
+        onComplete: (gs) => {
+          // TODO: Add some kind of flag for triggering a victory screen
+          // gs. = true
+          return gs
+        },
+      },
+    ],
   },
 }

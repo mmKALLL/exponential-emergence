@@ -88,18 +88,6 @@ export const synergyDefinitions = [
   },
   {
     basedOn: {
-      level: 'algae',
-      resourceName: 'chlorophyll',
-    },
-    description: (value) => `Start with ${Math.floor(value / 100)} digestion`,
-    affectedLevel: 'insect',
-    onLevelStart: (gs, value) => {
-      gs.levels.insect.resources.digestion = Math.floor(value / 100)
-      return gs
-    },
-  },
-  {
-    basedOn: {
       level: 'multicellular',
       resourceName: 'efficiency',
     },
@@ -107,6 +95,18 @@ export const synergyDefinitions = [
     affectedLevel: 'insect',
     onLevelStart: (gs, value) => {
       gs.levels.insect.resources.perception = Math.floor(value / 10)
+      return gs
+    },
+  },
+  {
+    basedOn: {
+      level: 'algae',
+      resourceName: 'chlorophyll',
+    },
+    description: (value) => `Start with ${Math.floor(value / 100)} digestion`,
+    affectedLevel: 'insect',
+    onLevelStart: (gs, value) => {
+      gs.levels.insect.resources.digestion = Math.floor(value / 100)
       return gs
     },
   },
@@ -142,10 +142,10 @@ export const synergyDefinitions = [
       level: 'algae',
       resourceName: 'hardness',
     },
-    description: (value) => `Start with ${value} vitality`,
+    description: (value) => `Start with ${Math.floor(value / 10)} vitality`,
     affectedLevel: 'crustacean',
     onLevelStart: (gs, value) => {
-      gs.levels.crustacean.resources.vitality = value
+      gs.levels.crustacean.resources.vitality = Math.floor(value / 10)
       return gs
     },
   },

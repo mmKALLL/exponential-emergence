@@ -187,6 +187,148 @@ export const actionDefinitions = {
       enabledCondition: (res: Resources['algae']) => res.energy >= 10 * res.millimeters,
     },
   ],
+
+  insect: [
+    {
+      name: 'Scavenge food',
+      baseTime: 2,
+      description: '-20 energy => +1 food per speed',
+      effect: (res: Resources['insect']) => {
+        res.energy -= 20
+        res.food += res.speed
+        return res
+      },
+      enabledCondition: (res: Resources['insect']) => res.energy >= 20,
+      defaultDisplayed: true,
+    },
+    {
+      name: 'Digest food',
+      baseTime: 5,
+      description: '-1 food => +1 energy\n(Multiplied by digestion)',
+      effect: (res: Resources['insect']) => {
+        res.food -= res.digestion
+        res.energy += res.digestion
+        return res
+      },
+      enabledCondition: (res: Resources['insect']) => res.food >= res.digestion,
+      defaultDisplayed: true,
+    },
+    {
+      name: 'Improve perception',
+      baseTime: 4,
+      description: '-50 energy => +5 perception',
+      effect: (res: Resources['insect']) => {
+        res.energy -= 50
+        res.perception += 5
+        return res
+      },
+      enabledCondition: (res: Resources['insect']) => res.energy >= 50,
+    },
+    {
+      name: 'Generate pheromones',
+      baseTime: 5,
+      description: '-10 energy => +1 pheromone',
+      effect: (res: Resources['insect']) => {
+        res.energy -= 10
+        res.pheromones += 1
+        return res
+      },
+      enabledCondition: (res: Resources['insect']) => res.energy >= 10,
+    },
+    {
+      name: 'Find mates',
+      baseTime: 2,
+      description: '-10 pheromones => +1 mate per perception',
+      effect: (res: Resources['insect']) => {
+        res.energy -= 1
+        res.pheromones += 1
+        return res
+      },
+      enabledCondition: (res: Resources['insect']) => res.pheromones >= 10,
+    },
+    {
+      name: 'Lay eggs',
+      baseTime: 3,
+      description: '-100 energy => +1 egg per mate',
+      effect: (res: Resources['insect']) => {
+        res.energy -= 100
+        res.eggs += res.mates
+        return res
+      },
+      enabledCondition: (res: Resources['insect']) => res.energy >= 100,
+    },
+  ],
+
+  crustacean: [
+    {
+      name: 'Find prey',
+      baseTime: 10,
+      description: '+1 target per intelligence',
+      effect: (res: Resources['crustacean']) => {
+        res.targets += res.intelligence
+        return res
+      },
+      defaultDisplayed: true,
+    },
+    {
+      name: 'Fight prey',
+      baseTime: 10,
+      description: '-10 targets, -(40 - dex) vitality => +1 food per strength',
+      effect: (res: Resources['crustacean']) => {
+        res.targets -= 10
+        res.food += res.strength
+        return res
+      },
+      enabledCondition: (res: Resources['crustacean']) => res.targets >= 10,
+      defaultDisplayed: true,
+    },
+    {
+      name: 'Process food',
+      baseTime: 4,
+      description: '-1 food => +1 energy\n(Multiplied by mass)',
+      effect: (res: Resources['crustacean']) => {
+        res.food -= res.mass
+        res.energy += res.mass
+        return res
+      },
+      enabledCondition: (res: Resources['crustacean']) => res.food >= res.mass,
+    },
+    {
+      name: 'Recover',
+      baseTime: 4,
+      description: '-100 energy => +2 vitality',
+      effect: (res: Resources['crustacean']) => {
+        res.energy -= 100
+        res.vitality += 2
+        return res
+      },
+      enabledCondition: (res: Resources['crustacean']) => res.food >= 1,
+    },
+    {
+      name: 'Bulk up',
+      baseTime: 4,
+      description: '-100 energy => +1 strength, +5 mass',
+      effect: (res: Resources['crustacean']) => {
+        res.food -= 1
+        res.energy += 1
+        res.mass += 1
+        return res
+      },
+      enabledCondition: (res: Resources['crustacean']) => res.food >= 1,
+    },
+    {
+      name: 'Smarten up',
+      baseTime: 4,
+      description: '-100 energy => +1 dexterity, +1 intelligence',
+      effect: (res: Resources['crustacean']) => {
+        res.food -= 1
+        res.energy += 1
+        res.mass += 1
+        return res
+      },
+      enabledCondition: (res: Resources['crustacean']) => res.food >= 1,
+    },
+  ],
 }
 
 export const defaultActionGameState = () => ({
