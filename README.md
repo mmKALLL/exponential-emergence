@@ -19,5 +19,6 @@ Although the game is very minimalistic, the core data is based on actual researc
 
 mmKALLL - code, design, concept
 Hevipelle - code, advice
+Eldazare - testing
 
 Google DeepMind - logo asset (from Unsplash)

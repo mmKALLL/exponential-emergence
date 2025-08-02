@@ -84,6 +84,17 @@ export const actionDefinitions = {
       description: 'Each cell:\n-1 nutrient => +1 energy',
     },
     {
+      name: 'Filter waste',
+      baseTime: 2,
+      effect: (res: Resources['multicellular']) => {
+        res.energy -= 20
+        res['food multiplier'] += 1
+        return res
+      },
+      enabledCondition: (res: Resources['multicellular']) => res.energy >= 20,
+      description: '-20 energy => +1 food multiplier',
+    },
+    {
       name: 'Multiply',
       baseTime: 4,
       effect: (res: Resources['multicellular']) => {
@@ -99,22 +110,11 @@ export const actionDefinitions = {
       baseTime: 3,
       effect: (res: Resources['multicellular']) => {
         res.energy -= 20
-        res.efficiency + 1
+        res.efficiency += 1
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.energy >= 20,
       description: '-20 energy => Reduce multiply base cost by 1',
-    },
-    {
-      name: 'Filter waste',
-      baseTime: 2,
-      effect: (res: Resources['multicellular']) => {
-        res.energy -= 20
-        res['food multiplier'] += 1
-        return res
-      },
-      enabledCondition: (res: Resources['multicellular']) => res.energy >= 20,
-      description: '-20 energy => +1 food multiplier',
     },
   ],
 
