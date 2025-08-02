@@ -1,3 +1,4 @@
+import { synergyDefinitions } from './data/synergy-definitions'
 import { initialGameState } from './gamestate-utils'
 import { TICK_LENGTH, type Action, type LevelName, type Resources } from './types'
 import { maxTime, typedObjectEntries } from './utils'
@@ -13,19 +14,20 @@ function handleGameOver() {
   gs.unlockedDisplaySections.valueHistory = true
   gs.unlockedDisplaySections.bestValue = true
 
-  updateResourceOutputs()
+  updateResourceRecords()
 }
 
-function updateResourceOutputs() {
+function updateResourceRecords() {
   const currentLevel = Game.currentLevel
-  const updatedResourceOutputs = Object.fromEntries(
-    Object.entries(Game.resourceOutputs).map(([resourceName, amount]) => {
+  Object.entries(Game.resourceRecords)
+    .map(([resourceName, amount]) => {
       const newAmount = Math.max(amount, currentLevel.resources[resourceName as keyof Resources[LevelName]] || 0)
-      return [resourceName, newAmount]
+      return { name: resourceName, amount: newAmount }
     })
-  )
-
-  gs.levels[gs.currentLevel].resourceOutputs = updatedResourceOutputs
+    .forEach(({ name, amount }) => {
+      // @ts-expect-error TypeScript doesn't know that name is a key of Resources[LevelName]
+      currentLevel.resourceRecords[name as keyof Resources[LevelName]] = amount
+    })
 }
 
 function resetAction(action: Action) {
@@ -101,12 +103,18 @@ export const Game = {
     return Object.entries(Game.currentLevel.resources).map(([name, amount]) => ({ name, amount }))
   },
 
-  get resourceInputs() {
-    return Game.currentLevel.resourceInputs || []
+  get synergies() {
+    return synergyDefinitions
+      .filter((synergy) => synergy.affectedLevel === gs.currentLevel)
+      .map((synergy) => ({
+        ...synergy,
+        record: gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName] || 0,
+        description: synergy.description(gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName]),
+      }))
   },
 
-  get resourceOutputs() {
-    return Game.currentLevel.resourceOutputs || []
+  get resourceRecords() {
+    return Game.currentLevel.resourceRecords
   },
 
   get currentGoal() {
@@ -150,6 +158,13 @@ export const Game = {
     gs.currentActionName = null
     gs.generation += 1
     gs.currentScreen = 'in-game'
+
+    // Apply synergies for the new level
+    synergyDefinitions
+      .filter((synergy) => synergy.affectedLevel === newLevelName)
+      .forEach((synergy) => {
+        synergy.onLevelStart?.(gs, gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName])
+      })
   },
 
   toggleAction(action: Action) {
@@ -190,6 +205,7 @@ export const Game = {
 
     handleGoalCompletion()
     updateActionHistories()
+    updateResourceRecords()
   },
 
   start: () => {
