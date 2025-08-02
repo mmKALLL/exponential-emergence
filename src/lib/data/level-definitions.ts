@@ -138,8 +138,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
         requiredAmount: 1000,
         resourceName: 'cells',
         onComplete: (gs) => {
-          // TODO: add algae unlock once multicellular is finished
-          // gs.levels.algae.unlocked = true
+          gs.levels.algae.unlocked = true
           return gs
         },
       },
@@ -150,7 +149,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
     name: 'algae',
     unlocked: false,
     initialResources: {
-      micrometers: 0,
+      millimeters: 0,
       branches: 0,
       sunlight: 0,
       chlorophyll: 0,
@@ -158,7 +157,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
       hardness: 0,
     },
     resources: {
-      micrometers: 0,
+      millimeters: 0,
       branches: 0,
       sunlight: 0,
       chlorophyll: 0,
@@ -167,12 +166,12 @@ export const initialLevelDefinitions: GameState['levels'] = {
     },
     // TODO: Make sure all of these are in the outputs
     resourceInputs: [
-      { level: 'multicellular', resourceName: 'cells', description: 'You start with this many micrometers.' },
+      { level: 'multicellular', resourceName: 'cells', description: 'You start with this many millimeters.' },
       { level: 'multicellular', resourceName: 'nutrients', description: 'You start with this much chlorophyll.' },
       { level: 'multicellular', resourceName: 'efficiency', description: 'You start with this much energy and sunlight.' },
     ],
     resourceRecords: {
-      micrometers: 0,
+      millimeters: 0,
       branches: 0,
       sunlight: 0,
       chlorophyll: 0,
@@ -183,6 +182,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
     goals: [],
   },
 
+  // Auto-generates its own energy based on digestion level
   insect: {
     name: 'insect',
     unlocked: false,

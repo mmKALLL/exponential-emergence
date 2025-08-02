@@ -54,7 +54,7 @@ export type Resources = {
     waste: number
     cells: number
   }
-  readonly algae: { micrometers: number; energy: number; sunlight: number; chlorophyll: number; branches: number; hardness: number }
+  readonly algae: { millimeters: number; energy: number; sunlight: number; chlorophyll: number; branches: number; hardness: number }
   readonly insect: { speed: number; perception: number; digestion: number; pheromones: number; eggs: number }
   readonly crustacean: { strength: number; dexterity: number; vitality: number; intelligence: number; mass: number }
 }

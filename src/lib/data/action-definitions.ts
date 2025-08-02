@@ -39,26 +39,24 @@ export const actionDefinitions = {
       name: 'Divide cell',
       baseTime: 4,
       effect: (res: Resources['amoeba']) => {
-        res.energy -= 6
+        res.energy -= 5
         res.divisions += 1
         return res
       },
-      description: '-6 energy => +1 division',
-      enabledCondition: (res: Resources['amoeba']) => res.energy >= 6,
+      description: '-5 energy => +1 division',
+      enabledCondition: (res: Resources['amoeba']) => res.energy >= 5,
     },
   ],
 
   multicellular: [
     {
       name: 'Catch food',
-      baseTime: 5,
+      baseTime: 8,
       effect: (res: Resources['multicellular']) => {
-        res.energy -= 5
-        res.food += 25
+        res.food += 20
         return res
       },
-      enabledCondition: (res: Resources['multicellular']) => res.energy >= 5,
-      description: '-5 energy => +20 food',
+      description: '+20 food',
       defaultDisplayed: true,
     },
     {
@@ -110,14 +108,16 @@ export const actionDefinitions = {
       name: 'Specialize',
       baseTime: 4,
       effect: (res: Resources['multicellular']) => {
-        res.energy -= 10
-        res.efficiency += 1
+        res.energy -= 20
+        res.efficiency += 5
         return res
       },
-      enabledCondition: (res: Resources['multicellular']) => res.energy >= 10 && res.efficiency < 10 && res.waste <= 0,
-      description: '-10 energy => Multiply energy cost -1\n‼️ Requires 0 waste',
+      enabledCondition: (res: Resources['multicellular']) => res.energy >= 20,
+      description: '-20 energy => Improve food gain and waste filtering by 5',
     },
   ],
+
+  // Branching in algae: add +1 multiplier to chlorophyll, but divide current hardness by 2
 }
 
 export const defaultActionGameState = () => ({
