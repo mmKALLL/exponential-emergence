@@ -206,7 +206,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Digest food',
       baseTime: 8,
-      description: 'Based on workers, digestion',
+      description: 'Workers bring food over time',
       gives: [(res: Resources['insect']) => `+${formatNumber(Math.min(res.food, res.digestion))} energy`],
       takes: [(res: Resources['insect']) => `-${formatNumber(Math.min(res.food, res.digestion))} food`],
       effect: (res: Resources['insect']) => {
@@ -271,11 +271,14 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
       name: 'Metabolize',
       baseTime: 4,
       gives: ['+10 digestion', '+10 perception'],
+      takes: ['-10 energy'],
       effect: (res: Resources['insect']) => {
         res.perception += 10
         res.digestion += 10
+        res.energy -= 10
         return res
       },
+      enabledCondition: (res: Resources['insect']) => res.energy >= 10,
     },
   ],
 
@@ -334,17 +337,18 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Molt exoskeleton',
       baseTime: 10,
-      gives: [() => `+${(5 * 0.95 ** Game.state.timesExtendedLifespan).toFixed(2)}s lifespan`],
+      gives: [() => `+${(5 * 0.96 ** Game.state.timesExtendedLifespan).toFixed(2)}s lifespan`],
       takes: ['-5 HP'],
       effect: (res: Resources['crustacean']) => {
         res.health -= 5
-        Game.state.lifespanLeft += 5 * 0.95 ** Game.state.timesExtendedLifespan
+        Game.state.lifespanLeft += 5 * 0.96 ** Game.state.timesExtendedLifespan
+        Game.state.lifespanLeft = Math.min(Game.state.lifespanLeft, MAX_LIFESPAN)
         Game.state.timesExtendedLifespan += 1
         return res
       },
       enabledCondition: (res: Resources['crustacean']) =>
         // Prevent molting if lowering health would lock the player out of fighting, or if it would extend lifespan beyond the maximum.
-        res.health >= 5 && Game.state.lifespanLeft + 5 * 0.95 ** Game.state.timesExtendedLifespan < MAX_LIFESPAN,
+        res.health >= 10 && Game.state.lifespanLeft + 5 * 0.96 ** Game.state.timesExtendedLifespan < MAX_LIFESPAN,
     },
     {
       name: 'Bulk up',

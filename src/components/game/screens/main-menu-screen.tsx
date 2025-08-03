@@ -12,7 +12,7 @@ export function MainMenuScreen(): JSX.Element {
         <div>1.</div>
         <div>Live as an amoeba for 60 seconds. </div>
         <div>2.</div>
-        <div>Gain permanent bonuses based on how you did.</div>
+        <div>Die and rebirth, with permanent bonuses based on how you did.</div>
         <div>3.</div>
         <div>Finish goals to reach the pinnacle of evolution.</div>
       </div>

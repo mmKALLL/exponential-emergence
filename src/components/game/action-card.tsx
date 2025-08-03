@@ -1,14 +1,14 @@
 import { Button } from '../ui/button'
 import { Progress } from '../ui/progress'
 import { Card } from '../ui/card'
-import type { JSX } from 'react'
+import { useEffect, type JSX } from 'react'
 import { cn, maxTime } from '@/lib/utils'
 import { ActionMiniChart } from './action-mini-chart'
 import { useUpdate } from '@/hooks/use-update'
 import { canApplyAction, Game } from '@/lib/gamestate-logic'
 import { useForceRefresh } from '@/hooks/use-force-refresh'
 
-export function ActionCard({ actionName }: { actionName: string }): JSX.Element {
+export function ActionCard({ actionName, index }: { actionName: string; index: number }): JSX.Element {
   // The reason we do this so much is due to performance reasons.
   // 1. We don't want to list the full objects in the parent component to cause all Actions to re-render.
   // 2. useUpdate checks if a value has changed, but doesn't work well with objects.
@@ -34,7 +34,11 @@ export function ActionCard({ actionName }: { actionName: string }): JSX.Element 
   const canToggle = useUpdate(() => canApplyAction(Game.getActionCard(actionName)))
 
   // Force refresh cards every second so the charts update for inactive actions
-  useForceRefresh(1000)
+  useForceRefresh(1500)
+
+  useEffect(() => {
+    Game.addHotkey(actionName, index)
+  }, [index, actionName])
 
   return (
     <Card className="flex flex-col items-center justify-center p-4 pb-2 gap-4 w-52">
@@ -71,7 +75,13 @@ export function ActionCard({ actionName }: { actionName: string }): JSX.Element 
           </div>
         </div>
       )}
-      <ActionMiniChart height={30} valueHistory={valueHistory} bestValueHistory={bestValueHistory} showLegend={bestValueUnlocked} />
+      <ActionMiniChart
+        height={30}
+        valueHistory={valueHistory}
+        bestValueHistory={bestValueHistory}
+        showLegend={bestValueUnlocked}
+        index={index}
+      />
     </Card>
   )
 }

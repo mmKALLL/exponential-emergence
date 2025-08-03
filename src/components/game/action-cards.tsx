@@ -7,8 +7,8 @@ export function ActionCards() {
 
   return (
     <div className="flex gap-4 flex-wrap justify-start">
-      {visibleActionCardNames.map((actionName) => (
-        <ActionCard key={actionName} actionName={actionName} />
+      {visibleActionCardNames.map((actionName, index) => (
+        <ActionCard key={actionName} actionName={actionName} index={index + 1} />
       ))}
     </div>
   )

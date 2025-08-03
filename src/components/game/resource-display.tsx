@@ -38,12 +38,12 @@ export function ResourceDisplay(): JSX.Element {
           </span>
         ) : currentLevelName === 'insect' ? (
           <span className="text-sm text-gray-500">
-            Insects form colonies whose efficiency is dependent on their numbers. Synergies from earlier stages significantly help support
-            your growth.
+            Insects form colonies whose efficiency is dependent on their numbers. Your job is to convert food into eggs. Synergies help the
+            colony grow much faster.
           </span>
         ) : currentLevelName === 'crustacean' ? (
           <span className="text-sm text-gray-500">
-            Crustaceans are hardened organisms capable of navigating a hostile world.
+            Crustaceans are hardened organisms, fully capable of navigating a hostile world.
             <br /> Use everything available to overcome the final challenge!
           </span>
         ) : (

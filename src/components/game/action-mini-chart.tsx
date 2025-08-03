@@ -19,11 +19,13 @@ export function ActionMiniChart({
   valueHistory,
   bestValueHistory,
   showLegend,
+  index,
 }: {
   height?: number
   valueHistory: number[]
   bestValueHistory: number[]
   showLegend: boolean
+  index: number
 }): JSX.Element {
   const pointsPerSecond = 5
   const totalPoints = MAX_LIFESPAN * pointsPerSecond
@@ -37,5 +39,10 @@ export function ActionMiniChart({
       best: bestValueHistory[Math.round(i * ticksPerPoint)] ?? 0,
     }))
 
-  return <ProgressChart className="h-36 w-full" height={height ?? 36} config={defaultChartConfig} data={data} showLegend={showLegend} />
+  return (
+    <div className="h-36 w-full">
+      <ProgressChart className="h-36 w-full" height={height ?? 36} config={defaultChartConfig} data={data} showLegend={showLegend} />
+      <div className="relative bottom-4 right-2 text-xs text-gray-500">[{index}]</div>
+    </div>
+  )
 }

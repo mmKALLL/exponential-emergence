@@ -5,6 +5,16 @@ import { MAX_LIFESPAN, TICK_LENGTH, type Action, type LevelName, type Resources 
 import { maxTime, typedObjectEntries } from './utils'
 
 const gs = { ...initialGameState }
+let hotkeyMapping: Record<string, string> = {}
+
+window.addEventListener('keydown', (event) => {
+  if (gs.currentScreen !== 'in-game') return
+
+  const actionName = hotkeyMapping[event.key]
+  if (actionName) {
+    Game.toggleAction(Game.getActionCard(actionName))
+  }
+})
 
 // Cache for expensive computations
 let cachedActionCards: ReturnType<typeof computeActionCards> | null = null
@@ -27,6 +37,7 @@ function computeActionCards() {
 function handleGameOver() {
   gs.currentScreen = gs.triggerVictoryScreen ? 'victory' : 'rebirth'
   gs.triggerVictoryScreen = false
+  hotkeyMapping = {}
 
   gs.lifespanLeft = 0
   gs.runStarted = false
@@ -327,6 +338,8 @@ export const Game = {
   },
 
   toggleAction(action: Action) {
+    if (gs.currentScreen !== 'in-game') return
+
     gs.runStarted = true
 
     // Only toggle if the action can be applied and is not already active
@@ -337,6 +350,11 @@ export const Game = {
     gs.currentActionName = gs.currentActionName !== action.name ? action.name : null
     // Invalidate cache when action state changes
     invalidateActionCardCache()
+  },
+
+  addHotkey(actionName: string, index: number) {
+    hotkeyMapping[index.toString()] = actionName
+    console.log(`Hotkey for action "${actionName}" set to "${index}"`)
   },
 
   resetRun: () => {

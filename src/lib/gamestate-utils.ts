@@ -21,7 +21,7 @@ const baseInitialGameState: GameState = {
   },
 }
 
-// - @ts-expect-error
+// @ts-expect-error
 const debugInitialGameState: GameState = {
   ...baseInitialGameState,
   currentScreen: 'rebirth',
@@ -121,4 +121,4 @@ const debugInitialGameState: GameState = {
   },
 }
 
-export const initialGameState: GameState = debugInitialGameState
+export const initialGameState: GameState = baseInitialGameState
