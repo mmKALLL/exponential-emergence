@@ -361,7 +361,6 @@ export const initialLevelDefinitions: GameState['levels'] = {
         requiredAmount: 50,
         resourceName: 'strength',
         onComplete: (gs) => {
-          gs.levels.crustacean.actions['Smarten up'].displayed = true
           return gs
         },
       },
