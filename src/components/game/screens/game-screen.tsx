@@ -45,7 +45,7 @@ export function GameScreen() {
   const resetButtonText = (() => {
     switch (resetClickCount) {
       case 0:
-        return 'Reset run'
+        return 'Reset life'
       case 1:
         return 'Are you sure?'
       default:

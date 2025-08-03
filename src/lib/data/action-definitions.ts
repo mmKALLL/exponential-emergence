@@ -271,14 +271,14 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
       name: 'Metabolize',
       baseTime: 4,
       gives: ['+20 digestion', '+20 perception'],
-      takes: ['-100 energy'],
+      takes: ['-20 energy'],
       effect: (res: Resources['insect']) => {
-        res.energy -= 100
+        res.energy -= 20
         res.perception += 20
         res.digestion += 20
         return res
       },
-      enabledCondition: (res: Resources['insect']) => res.energy >= 100,
+      enabledCondition: (res: Resources['insect']) => res.energy >= 20,
     },
   ],
 

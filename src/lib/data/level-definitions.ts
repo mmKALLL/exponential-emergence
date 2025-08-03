@@ -211,7 +211,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
     name: 'insect',
     unlocked: false,
     initialResources: {
-      food: 0,
+      food: 1,
       energy: 0,
       workers: 0,
       perception: 20,
@@ -221,7 +221,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
       eggs: 0, // target: 10k
     },
     resources: {
-      food: 0,
+      food: 1,
       energy: 0,
       workers: 0,
       perception: 20,

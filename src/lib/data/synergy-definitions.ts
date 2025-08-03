@@ -115,10 +115,10 @@ export const synergyDefinitions = [
       level: 'algae',
       resourceName: 'chlorophyll',
     },
-    description: (value) => `Start with ${Math.floor(value / 100)} digestion`,
+    description: (value) => `Start with ${Math.floor(value ** 0.5)} digestion`,
     affectedLevel: 'insect',
     onLevelStart: (gs, value) => {
-      gs.levels.insect.resources.digestion = Math.floor(value / 100)
+      gs.levels.insect.resources.digestion = Math.floor(value ** 0.5)
       return gs
     },
   },
