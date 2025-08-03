@@ -142,7 +142,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
     unlocked: false,
     initialResources: {
       millimeters: 0,
-      branches: 0,
+      branches: 1,
       sunlight: 0,
       chlorophyll: 10,
       energy: 0,
@@ -150,7 +150,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
     },
     resources: {
       millimeters: 0,
-      branches: 0,
+      branches: 1,
       sunlight: 0,
       chlorophyll: 10,
       energy: 0,
@@ -167,18 +167,18 @@ export const initialLevelDefinitions: GameState['levels'] = {
     actions: generatedActions.algae,
     goals: [
       {
-        requiredAmount: 800,
-        resourceName: 'hardness',
+        requiredAmount: 500,
+        resourceName: 'energy',
         onComplete: (gs) => {
-          gs.levels.algae.actions['Grow longer'].displayed = true
+          gs.levels.algae.actions['Rapid harden'].displayed = true
           return gs
         },
       },
       {
-        requiredAmount: 10,
-        resourceName: 'millimeters',
+        requiredAmount: 1500,
+        resourceName: 'hardness',
         onComplete: (gs) => {
-          gs.levels.algae.actions['Sunbathe'].displayed = true
+          gs.levels.algae.actions['Grow longer'].displayed = true
           return gs
         },
       },

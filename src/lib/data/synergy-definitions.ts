@@ -55,7 +55,7 @@ export const synergyDefinitions = [
     description: (value) => `Start with +${value} chlorophyll`,
     affectedLevel: 'algae',
     onLevelStart: (gs, value) => {
-      gs.levels.algae.resources.chlorophyll = value
+      gs.levels.algae.resources.chlorophyll += value
       return gs
     },
   },
@@ -67,7 +67,7 @@ export const synergyDefinitions = [
     description: (value) => `Start with +${value} chlorophyll`,
     affectedLevel: 'algae',
     onLevelStart: (gs, value) => {
-      gs.levels.algae.resources.chlorophyll = value
+      gs.levels.algae.resources.chlorophyll += value
       return gs
     },
   },

@@ -134,8 +134,19 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
   // Sunlight: 0s 0, 10s 100, 20s 100, 30s 0, 40s 0, 50s 100, 60s 100
   algae: [
     {
-      name: 'Harden',
+      name: 'Sunbathe',
       baseTime: 4,
+      description: 'Based on sunlight, chlorophyll',
+      gives: [(gs: Resources['algae']) => `+${formatNumber((gs.chlorophyll * Game.currentSunlight) / 100, 2)} energy`],
+      effect: (res: Resources['algae']) => {
+        res.energy += res.chlorophyll * (Game.currentSunlight / 100)
+        return res
+      },
+      defaultDisplayed: true,
+    },
+    {
+      name: 'Harden',
+      baseTime: 3,
       gives: ['+20 hardness'],
       effect: (res: Resources['algae']) => {
         res.hardness += 20
@@ -145,7 +156,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     },
     {
       name: 'Rapid harden',
-      baseTime: 3,
+      baseTime: 2,
       gives: ['+100 hardness'],
       takes: ['-100 energy'],
       effect: (res: Resources['algae']) => {
@@ -159,7 +170,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Grow longer',
       baseTime: 4,
-      description: 'Millimeters affected by branches',
+      description: '+1 millimeter per branch',
       gives: [(gs: Resources['algae']) => `+${formatNumber(gs.branches)} millimeters`],
       takes: ['-100 hardness'],
       effect: (res: Resources['algae']) => {
@@ -180,16 +191,6 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
         return res
       },
       enabledCondition: (res: Resources['algae']) => res.millimeters >= 10,
-    },
-    {
-      name: 'Sunbathe',
-      baseTime: 4,
-      description: 'Affected by sunlight and chlorophyll',
-      gives: [(gs: Resources['algae']) => `+${formatNumber((gs.chlorophyll * Game.currentSunlight) / 100, 2)} energy`],
-      effect: (res: Resources['algae']) => {
-        res.energy += res.chlorophyll * (Game.currentSunlight / 100)
-        return res
-      },
     },
     {
       name: 'Grow chlorophyll',
