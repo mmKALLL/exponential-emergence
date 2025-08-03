@@ -1,12 +1,24 @@
 import type * as React from 'react'
 
 import { cn } from '@/lib/utils'
+import { Game } from '@/lib/gamestate-logic'
+import { useUpdate } from '@/hooks/use-update'
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
+  const currentLevel = useUpdate(() => Game.currentLevelName)
   return (
     <div
       data-slot="card"
-      className={cn('bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm', className)}
+      className={cn(
+        'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm',
+        className,
+        // Make minor tweaks to color based on level
+        currentLevel === 'amoeba' && 'border-grey-950',
+        currentLevel === 'multicellular' && 'border-indigo-950',
+        currentLevel === 'algae' && 'border-green-900',
+        currentLevel === 'insect' && 'border-sky-950',
+        currentLevel === 'crustacean' && 'border-amber-950'
+      )}
       {...props}
     />
   )

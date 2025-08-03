@@ -124,6 +124,10 @@ export const Game = {
     return gs.levels[gs.currentLevel]
   },
 
+  get currentLevelName() {
+    return gs.currentLevel
+  },
+
   get unlockedLevels(): LevelName[] {
     return typedObjectEntries(gs.levels)
       .filter(([_, level]) => level.unlocked)
