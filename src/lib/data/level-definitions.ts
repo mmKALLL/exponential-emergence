@@ -142,14 +142,14 @@ export const initialLevelDefinitions: GameState['levels'] = {
     unlocked: false,
     initialResources: {
       millimeters: 0,
-      branches: 1,
+      branches: 2,
       chlorophyll: 10,
       energy: 0,
       hardness: 0,
     },
     resources: {
       millimeters: 0,
-      branches: 1,
+      branches: 2,
       chlorophyll: 10,
       energy: 0,
       hardness: 0,
@@ -188,7 +188,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
         },
       },
       {
-        requiredAmount: 10,
+        requiredAmount: 20,
         resourceName: 'branches',
         onComplete: (gs) => {
           gs.levels.algae.actions['Grow chlorophyll'].displayed = true

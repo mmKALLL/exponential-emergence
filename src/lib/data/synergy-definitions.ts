@@ -175,8 +175,8 @@ export const synergyDefinitions = [
   },
   {
     basedOn: {
-      level: 'multicellular',
-      resourceName: 'cells',
+      level: 'algae',
+      resourceName: 'millimeters',
     },
     description: (value) => `Start with ${Math.floor(value / 100)}g mass`,
     affectedLevel: 'crustacean',

@@ -58,7 +58,7 @@ const debugInitialGameState: GameState = {
       resourceRecords: {
         millimeters: 1000,
         branches: 15,
-        chlorophyll: 500,
+        chlorophyll: 2000,
         energy: 2000,
         hardness: 1000,
       },
