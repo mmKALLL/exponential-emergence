@@ -294,8 +294,8 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Fight prey',
       baseTime: 8,
-      description: 'Strength increases food',
-      takes: ['-50 targets', '-5 health'],
+      description: '+1 food per strength',
+      takes: ['-50 targets', '-5 HP'],
       gives: [(gs: Resources['crustacean']) => `+${formatNumber(gs.strength)} food`],
       effect: (res: Resources['crustacean']) => {
         res.targets -= 50
@@ -322,7 +322,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Rest',
       baseTime: 4,
-      gives: ['+10 health'],
+      gives: ['+10 HP'],
       takes: ['-10 energy'],
       effect: (res: Resources['crustacean']) => {
         res.energy -= 10
@@ -335,7 +335,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
       name: 'Molt exoskeleton',
       baseTime: 10,
       gives: [() => `+${(5 * 0.95 ** Game.state.timesExtendedLifespan).toFixed(2)}s lifespan`],
-      takes: ['-5 health'],
+      takes: ['-5 HP'],
       effect: (res: Resources['crustacean']) => {
         res.health -= 5
         Game.state.lifespanLeft += 5 * 0.95 ** Game.state.timesExtendedLifespan
