@@ -39,7 +39,7 @@ export function ActionCard({ actionName }: { actionName: string }): JSX.Element 
   return (
     <Card className="flex flex-col items-center justify-center p-4 pb-2 gap-4 w-52">
       <Progress value={(progress / maxActionTime) * 100} />
-      <div className={cn('text-xs flex flex-wrap gap-2', description && '-mt-2')}>
+      <div className={cn('text-xs flex justify-center flex-wrap gap-2', description && '-mt-2')}>
         {takes?.map((t) => (
           <div key={t} className="text-red-300">
             {t}

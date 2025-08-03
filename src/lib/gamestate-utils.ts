@@ -9,6 +9,7 @@ const baseInitialGameState: GameState = {
   runStarted: false,
   currentActionName: null,
   levels: initialLevelDefinitions,
+  timesExtendedLifespan: 0,
   unlockedDisplaySections: {
     speeds: false,
     bestValue: false,
@@ -35,7 +36,7 @@ const debugInitialGameState: GameState = {
       ...baseInitialGameState.levels.amoeba,
       resourceRecords: {
         food: 20,
-        energy: 20,
+        energy: 40,
         nutrients: 20,
         divisions: 3,
       },
@@ -86,7 +87,7 @@ const debugInitialGameState: GameState = {
         food: 1000,
         strength: 100,
         dexterity: 80,
-        vitality: 200,
+        health: 200,
         intelligence: 100,
         mass: 1000,
       },

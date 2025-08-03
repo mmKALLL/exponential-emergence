@@ -130,10 +130,10 @@ export const synergyDefinitions = [
       level: 'amoeba',
       resourceName: 'energy',
     },
-    description: (value) => `Start with ${value} strength`,
+    description: (value) => `Start with ${Math.floor(value ** 0.5 * 4)} strength`,
     affectedLevel: 'crustacean',
     onLevelStart: (gs, value) => {
-      gs.levels.crustacean.resources.strength = value
+      gs.levels.crustacean.resources.strength = Math.floor(value ** 0.5 * 4)
       return gs
     },
   },
@@ -142,10 +142,10 @@ export const synergyDefinitions = [
       level: 'insect',
       resourceName: 'speed',
     },
-    description: (value) => `Start with ${value} dexterity`,
+    description: (value) => `Start with ${Math.floor(value ** 0.75 * 0.66)} dexterity`,
     affectedLevel: 'crustacean',
     onLevelStart: (gs, value) => {
-      gs.levels.crustacean.resources.dexterity = value
+      gs.levels.crustacean.resources.dexterity = Math.floor(value ** 0.75 * 0.66)
       return gs
     },
   },
@@ -154,10 +154,10 @@ export const synergyDefinitions = [
       level: 'algae',
       resourceName: 'hardness',
     },
-    description: (value) => `Start with ${Math.floor(value / 10)} vitality`,
+    description: (value) => `Start with ${Math.floor(value ** 0.5)} health`,
     affectedLevel: 'crustacean',
     onLevelStart: (gs, value) => {
-      gs.levels.crustacean.resources.vitality = Math.floor(value / 10)
+      gs.levels.crustacean.resources.health = Math.floor(value ** 0.5)
       return gs
     },
   },
@@ -166,10 +166,10 @@ export const synergyDefinitions = [
       level: 'insect',
       resourceName: 'perception',
     },
-    description: (value) => `Start with ${value} intelligence`,
+    description: (value) => `Start with ${Math.floor(value ** 0.5 * 3)} intelligence`,
     affectedLevel: 'crustacean',
     onLevelStart: (gs, value) => {
-      gs.levels.crustacean.resources.intelligence = value
+      gs.levels.crustacean.resources.intelligence = Math.floor(value ** 0.5 * 3)
       return gs
     },
   },

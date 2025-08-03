@@ -1,5 +1,5 @@
 import { Game } from '../gamestate-logic'
-import type { Action, ActionConfig, LevelName, Resources } from '../types'
+import { MAX_LIFESPAN, type Action, type ActionConfig, type LevelName, type Resources } from '../types'
 import { formatNumber } from '../utils'
 
 // TODO: Add typing; not as easy as it looks
@@ -291,32 +291,38 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
   crustacean: [
     {
       name: 'Find prey',
-      baseTime: 6,
-      description: 'Based on intelligence',
+      baseTime: 5,
+      description: '+1 target per intelligence',
       gives: [(gs: Resources['crustacean']) => `+${formatNumber(gs.intelligence)} targets`],
+      takes: ['-5 energy'],
       effect: (res: Resources['crustacean']) => {
         res.targets += res.intelligence
+        res.energy -= 5
         return res
       },
+      enabledCondition: (res: Resources['crustacean']) => res.energy >= 5,
       defaultDisplayed: true,
     },
     {
       name: 'Fight prey',
-      baseTime: 10,
+      baseTime: 8,
       description: 'DEX reduces damage,\n STR increases food',
-      takes: ['-100 targets', (gs: Resources['crustacean']) => `-${Math.max(0, 100 - gs.dexterity)} vitality`],
+      takes: [
+        '-50 targets',
+        (gs: Resources['crustacean']) => (gs.dexterity < 100 ? `-${Math.max(0, Math.ceil(5 - gs.dexterity / 20))} health` : ''),
+      ],
       gives: [(gs: Resources['crustacean']) => `+${formatNumber(gs.strength)} food`],
       effect: (res: Resources['crustacean']) => {
-        res.targets -= 100
-        res.vitality -= Math.max(0, 100 - res.dexterity)
+        res.targets -= 50
+        res.health -= Math.max(0, Math.ceil(5 - res.dexterity / 20))
         res.food += res.strength
         return res
       },
-      enabledCondition: (res: Resources['crustacean']) => res.targets >= 100 && res.vitality >= 100 - res.dexterity,
+      enabledCondition: (res: Resources['crustacean']) => res.targets >= 50 && res.health >= Math.ceil(5 - res.dexterity / 20),
       defaultDisplayed: true,
     },
     {
-      name: 'Process food',
+      name: 'Consume food',
       baseTime: 4,
       description: 'Based on mass',
       takes: [(gs: Resources['crustacean']) => `-${formatNumber(gs.mass)} food`],
@@ -327,34 +333,49 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
         return res
       },
       enabledCondition: (res: Resources['crustacean']) => res.food >= res.mass,
-      defaultDisplayed: true,
     },
     {
-      name: 'Recover',
+      name: 'Rest',
       baseTime: 3,
-      gives: ['+4 vitality'],
-      takes: ['-100 energy'],
+      gives: ['+10 health'],
+      takes: ['-10 energy'],
       effect: (res: Resources['crustacean']) => {
-        res.energy -= 100
-        res.vitality += 4
+        res.energy -= 10
+        res.health += 10
         return res
       },
-      enabledCondition: (res: Resources['crustacean']) => res.energy >= 100,
-      defaultDisplayed: true,
+      // Make sure the player has enough energy to find enough prey to get energy back.
+      enabledCondition: (res: Resources['crustacean']) => res.energy >= 10 + 5 * Math.ceil(50 / res.intelligence),
+    },
+    {
+      name: 'Molt exoskeleton',
+      baseTime: 10,
+      gives: [() => `+${(5 * 0.95 ** Game.state.timesExtendedLifespan).toFixed(2)}s lifespan`],
+      takes: ['-5 health'],
+      effect: (res: Resources['crustacean']) => {
+        res.health -= 5
+        Game.state.lifespanLeft += 5 * 0.95 ** Game.state.timesExtendedLifespan
+        Game.state.timesExtendedLifespan += 1
+        return res
+      },
+      enabledCondition: (res: Resources['crustacean']) =>
+        // Prevent molting if lowering health would lock the player out of fighting, or if it would extend lifespan beyond the maximum.
+        res.health >= 5 + Math.max(0, Math.ceil(5 - res.dexterity / 20)) &&
+        Game.state.lifespanLeft + 5 * 0.95 ** Game.state.timesExtendedLifespan < MAX_LIFESPAN,
     },
     {
       name: 'Bulk up',
       baseTime: 3,
-      gives: ['+1 strength', '+5 mass'],
-      takes: ['-100 energy'],
+      gives: ['+3 strength', '+5 mass'],
+      takes: ['-50 food'],
       effect: (res: Resources['crustacean']) => {
-        res.energy -= 100
-        res.strength += 1
+        res.food -= 50
+        res.strength += 3
         res.mass += 5
         return res
       },
-      enabledCondition: (res: Resources['crustacean']) => res.energy >= 100,
-      defaultDisplayed: true,
+      // Prevent bulk up if the player doesn't have enough food to get energy back.
+      enabledCondition: (res: Resources['crustacean']) => res.food >= 50 + res.mass + 5,
     },
     {
       name: 'Smarten up',
