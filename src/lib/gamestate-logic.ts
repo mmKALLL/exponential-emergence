@@ -362,6 +362,10 @@ export const Game = {
       }
     }
 
+    if (gs.currentLevel === 'insect' && gs.runStarted) {
+      gs.levels.insect.resources.food += (gs.levels.insect.resources.workers * diff) / 5
+    }
+
     handleGoalCompletion()
     updateActionHistories()
     updateResourceRecords()

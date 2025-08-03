@@ -143,14 +143,14 @@ export const initialLevelDefinitions: GameState['levels'] = {
     initialResources: {
       millimeters: 0,
       branches: 2,
-      chlorophyll: 10,
+      chlorophyll: 0,
       energy: 0,
       hardness: 0,
     },
     resources: {
       millimeters: 0,
       branches: 2,
-      chlorophyll: 10,
+      chlorophyll: 0,
       energy: 0,
       hardness: 0,
     },
@@ -212,18 +212,18 @@ export const initialLevelDefinitions: GameState['levels'] = {
     unlocked: false,
     initialResources: {
       food: 0,
-      energy: 200,
-      speed: 0, // typical: 40-50 (multicellular food / 10)
+      energy: 0,
+      workers: 0,
       perception: 20,
-      digestion: 0, // typical: 20-100 (chlorophyll / 100)
-      pheromones: 0, // typical: 4-10 (multicellular efficiency)
+      digestion: 0,
+      pheromones: 0,
       mates: 0,
       eggs: 0, // target: 10k
     },
     resources: {
       food: 0,
-      energy: 200,
-      speed: 0,
+      energy: 0,
+      workers: 0,
       perception: 20,
       digestion: 0,
       pheromones: 0,
@@ -233,7 +233,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
     resourceRecords: {
       food: 0,
       energy: 0,
-      speed: 0,
+      workers: 0,
       perception: 0,
       digestion: 0,
       pheromones: 0,
@@ -242,6 +242,46 @@ export const initialLevelDefinitions: GameState['levels'] = {
     },
     actions: generatedActions.insect,
     goals: [
+      {
+        requiredAmount: 200,
+        resourceName: 'energy',
+        onComplete: (gs) => {
+          gs.levels.insect.actions['Attract'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 30,
+        resourceName: 'pheromones',
+        onComplete: (gs) => {
+          gs.levels.insect.actions['Find mates'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 100,
+        resourceName: 'mates',
+        onComplete: (gs) => {
+          gs.levels.insect.actions['Lay eggs'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 200,
+        resourceName: 'eggs',
+        onComplete: (gs) => {
+          gs.levels.insect.actions['Hatch workers'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 1000,
+        resourceName: 'eggs',
+        onComplete: (gs) => {
+          gs.levels.insect.actions['Metabolize'].displayed = true
+          return gs
+        },
+      },
       {
         requiredAmount: 10000,
         resourceName: 'eggs',
