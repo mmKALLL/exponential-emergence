@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import type { LevelName } from './types'
+// @ts-expect-error This doesn't have type declarations
+import { StandardNotation } from '@antimatter-dimensions/notations'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -45,4 +47,12 @@ export function mapObject<Value, Mapped, Key extends string>(
     },
     {} as Record<Key, Mapped>
   )
+}
+
+const formatter = new StandardNotation()
+export function formatNumber(value: number | undefined | null, placesUnder1000 = 0): string {
+  if (value === undefined || value === null) {
+    return ''
+  }
+  return formatter.format(value, 2, placesUnder1000)
 }

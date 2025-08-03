@@ -1,9 +1,28 @@
 import { synergyDefinitions } from './data/synergy-definitions'
 import { initialGameState } from './gamestate-utils'
+import { load, save } from './saving'
 import { MAX_LIFESPAN, TICK_LENGTH, type Action, type LevelName, type Resources } from './types'
 import { maxTime, typedObjectEntries } from './utils'
 
 const gs = { ...initialGameState }
+
+// Cache for expensive computations
+let cachedActionCards: ReturnType<typeof computeActionCards> | null = null
+let lastCacheTime = 0
+
+function invalidateActionCardCache() {
+  cachedActionCards = null
+  lastCacheTime = 0
+}
+
+function computeActionCards() {
+  return Object.values(Game.currentLevel.actions).map((a) => ({
+    ...a,
+    // These can be string or function, so we evaluate them here instead of in the component
+    gives: a.gives?.map((g) => (typeof g === 'function' ? g(Game.currentLevel.resources) : g)) ?? [],
+    takes: a.takes?.map((t) => (typeof t === 'function' ? t(Game.currentLevel.resources) : t)) ?? [],
+  }))
+}
 
 function handleGameOver() {
   gs.currentScreen = 'rebirth'
@@ -19,21 +38,23 @@ function handleGameOver() {
 
 function updateResourceRecords() {
   const currentLevel = Game.currentLevel
-  Object.entries(Game.resourceRecords)
-    .map(([resourceName, amount]) => {
-      const newAmount = Math.max(amount, currentLevel.resources[resourceName as keyof Resources[LevelName]] || 0)
-      return { name: resourceName, amount: newAmount }
-    })
-    .forEach(({ name, amount }) => {
-      // @ts-expect-error TypeScript doesn't know that name is a key of Resources[LevelName]
-      currentLevel.resourceRecords[name] = amount
-    })
+  const resourceRecords = Game.resourceRecords
+  const currentResources = currentLevel.resources
+
+  for (const resourceName in resourceRecords) {
+    const currentAmount = resourceRecords[resourceName as keyof typeof resourceRecords]
+    const newAmount = currentResources[resourceName as keyof Resources[LevelName]] || 0
+    if (newAmount > currentAmount) {
+      // @ts-expect-error TypeScript doesn't know that resourceName is a key of Resources[LevelName]
+      currentLevel.resourceRecords[resourceName] = newAmount
+    }
+  }
 }
 
 function resetAction(action: Action) {
   const didImproveBest = action.currentValue > action.bestValue
   action.bestValue = didImproveBest ? action.currentValue : action.bestValue
-  action.bestValueHistory = didImproveBest ? action.valueHistory : action.bestValueHistory
+  action.bestValueHistory = didImproveBest ? action.valueHistory.slice() : action.bestValueHistory
 
   action.progress = 0
   action.currentSpeed = 1
@@ -42,25 +63,25 @@ function resetAction(action: Action) {
 }
 
 function handleGoalCompletion() {
-  const currentGoal = Game.currentLevel.goals[0]
-  if (!currentGoal) return // All goals already achieved
+  if (!Game.currentGoal) return // All goals already achieved
 
   const currentAmount = Game.currentGoalAmount
+  const currentGoal = Game.currentGoal
 
   if (currentAmount !== null && currentAmount >= currentGoal.requiredAmount) {
     currentGoal.onComplete(gs)
-    Game.currentLevel.goals.shift() // Remove the completed goal
+    invalidateActionCardCache()
+    gs.levels[gs.currentLevel].goals[Game.currentGoalIdx].completed = true
   }
 }
 
 function updateActionHistories() {
-  Object.values(Game.currentLevel.actions).forEach((action) => {
-    const updatedAction = {
-      ...action,
-      valueHistory: [...action.valueHistory, action.currentValue],
-    }
-    Game.currentLevel.actions[action.name] = updatedAction
-  })
+  const actions = Game.currentLevel.actions
+
+  for (const actionName in actions) {
+    const action = actions[actionName]
+    action.valueHistory.push(action.currentValue)
+  }
 }
 
 export function canApplyAction(action: Action) {
@@ -183,12 +204,22 @@ export const Game = {
       )
   },
 
+  get hasSynergies() {
+    return Game.synergies.length > 0 || Game.outBoundSynergies.length > 0
+  },
+
   get resourceRecords() {
     return Game.currentLevel.resourceRecords
   },
 
+  get currentGoalIdx() {
+    return Game.currentLevel.goals.findIndex((goal) => !goal.completed)
+  },
+
   get currentGoal() {
-    return Game.currentLevel.goals[0] || null
+    const currentGoalIdx = this.currentGoalIdx
+    if (currentGoalIdx < 0) return null // All goals already achieved
+    return Game.currentLevel.goals[currentGoalIdx] || null
   },
 
   get currentGoalAmount() {
@@ -211,12 +242,37 @@ export const Game = {
     return 100
   },
 
+  // This gets called a lot from getActionCard, so we cache it
   get actionCards() {
-    return Object.values(Game.currentLevel.actions)
+    const now = Date.now()
+    // Cache for 33ms to avoid recomputing on every access
+    if (!cachedActionCards || now - lastCacheTime > 33) {
+      cachedActionCards = computeActionCards()
+      lastCacheTime = now
+    }
+    return computeActionCards()
   },
 
   get visibleActionCards() {
     return Game.actionCards.filter((action) => action.displayed)
+  },
+
+  get visibleActionCardNames() {
+    return Game.visibleActionCards.map((action) => action.name)
+  },
+
+  get actionCardMap() {
+    return Game.actionCards.reduce(
+      (acc, action) => {
+        acc[action.name] = action
+        return acc
+      },
+      {} as Record<string, (typeof Game.actionCards)[number]>
+    )
+  },
+
+  getActionCard(name: string) {
+    return Game.actionCardMap[name] || null
   },
 
   startGame() {
@@ -241,6 +297,9 @@ export const Game = {
     gs.generation += 1
     gs.currentScreen = 'in-game'
 
+    // Invalidate cache when level changes
+    invalidateActionCardCache()
+
     // Apply synergies for the new level
     synergyDefinitions
       .filter((synergy) => synergy.affectedLevel === newLevelName)
@@ -261,6 +320,8 @@ export const Game = {
     }
 
     gs.currentActionName = gs.currentActionName !== action.name ? action.name : null
+    // Invalidate cache when action state changes
+    invalidateActionCardCache()
   },
 
   gameTick: () => {
@@ -294,8 +355,20 @@ export const Game = {
   },
 
   start: () => {
+    const loadedSave = load()
+    console.log('Loaded save:', loadedSave)
+    if (loadedSave) {
+      for (const stateKey in loadedSave) {
+        // @ts-expect-error TypeScript doesn't know that stateKey is a key of GameState
+        gs[stateKey] = loadedSave[stateKey]
+      }
+    }
     setInterval(() => {
       Game.gameTick()
     }, TICK_LENGTH * 1000) // Convert TICK_LENGTH to milliseconds
+
+    setInterval(() => {
+      save(Game.state)
+    }, 1000 * 10) // Save every 10 seconds
   },
 }
