@@ -8,6 +8,7 @@ import type { JSX } from 'react'
 export function RebirthScreen(): JSX.Element {
   const currentLevel = useUpdate(() => Game.state.currentLevel)
   const unlockedLevels = useUpdate(() => Game.unlockedLevels)
+  const helpTextUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.synergyHelpText)
   const lockedTexts: Record<LevelName, string> = {
     amoeba: 'Esa fucked up',
     multicellular: 'Reach 3 divisions to unlock',
@@ -35,10 +36,12 @@ export function RebirthScreen(): JSX.Element {
           </Button>
         )
       )}
-      <div className="text-lg mb-8 mt-7">
-        From the multicellular stage onwards, you get synergy bonuses based on previous stages. <br />
-        You can see them in the resource display's Synergies tab.
-      </div>
+      {helpTextUnlocked && (
+        <div className="text-lg mb-8 mt-7">
+          From the multicellular stage onwards, you get synergy bonuses based on previous stages. <br />
+          You can see them in the resource display's Synergies tab.
+        </div>
+      )}
     </div>
   )
 }

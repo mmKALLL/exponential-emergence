@@ -56,7 +56,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
   multicellular: [
     {
       name: 'Catch food',
-      baseTime: 6,
+      baseTime: 5,
       effect: (res: Resources['multicellular']) => {
         res.food += 20 * res['food multiplier']
         return res
@@ -95,21 +95,18 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     },
     {
       name: 'Filter waste',
-      baseTime: 2,
+      baseTime: 4,
       effect: (res: Resources['multicellular']) => {
-        res.energy -= 20
         res['food multiplier'] += 1
         return res
       },
-      enabledCondition: (res: Resources['multicellular']) => res.energy >= 20,
       gives: ['+1 food multiplier'],
-      takes: ['-20 energy'],
     },
     {
       name: 'Multiply',
-      baseTime: 4,
+      baseTime: 3,
       effect: (res: Resources['multicellular']) => {
-        res.energy -= Math.max(0, 5 - res.efficiency) * res.cells
+        res.energy -= Math.max(1, 5 - res.efficiency) * res.cells
         res.cells *= 2
         return res
       },
@@ -119,7 +116,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     },
     {
       name: 'Specialize',
-      baseTime: 3,
+      baseTime: 2,
       effect: (res: Resources['multicellular']) => {
         res.energy -= 20
         res.efficiency += 1
