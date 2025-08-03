@@ -224,7 +224,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
       food: 0,
       energy: 200,
       speed: 0,
-      perception: 0,
+      perception: 20,
       digestion: 0,
       pheromones: 0,
       mates: 0,

@@ -246,7 +246,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
       defaultDisplayed: true,
     },
     {
-      name: 'Generate pheromones',
+      name: 'Attract',
       baseTime: 5,
       gives: ['+1 pheromone'],
       takes: ['-20 energy'],

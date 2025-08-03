@@ -45,7 +45,7 @@ const debugInitialGameState: GameState = {
       ...baseInitialGameState.levels.multicellular,
       resourceRecords: {
         food: 800,
-        nutrients: 800,
+        nutrients: 1000,
         energy: 800,
         efficiency: 4,
         'food multiplier': 15,
@@ -58,7 +58,7 @@ const debugInitialGameState: GameState = {
       resourceRecords: {
         millimeters: 1000,
         branches: 15,
-        chlorophyll: 2000,
+        chlorophyll: 5000,
         energy: 2000,
         hardness: 1000,
       },
