@@ -61,7 +61,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
         res.food += 20 * res['food multiplier']
         return res
       },
-      description: 'Affected by food multiplier',
+      description: 'Based on food multiplier',
       gives: [(gs: Resources['multicellular']) => `+${formatNumber(20 * gs['food multiplier'])} food`],
       defaultDisplayed: true,
     },
@@ -74,7 +74,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.food >= res.cells,
-      description: 'Affected by cell count',
+      description: 'Based on cell count',
       gives: [(gs: Resources['multicellular']) => `+${formatNumber(gs.cells)} nutrients`],
       takes: [(gs: Resources['multicellular']) => `-${formatNumber(gs.cells)} food`],
       defaultDisplayed: true,
@@ -88,7 +88,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.nutrients >= res.cells,
-      description: 'Affected by cell count',
+      description: 'Based on cell count',
       gives: [(gs: Resources['multicellular']) => `+${formatNumber(gs.cells)} energy`],
       takes: [(gs: Resources['multicellular']) => `-${formatNumber(gs.cells)} nutrients`],
       defaultDisplayed: true,
@@ -195,7 +195,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Grow chlorophyll',
       baseTime: 5,
-      description: 'Affected by millimeters',
+      description: 'Based on millimeters',
       gives: [(gs: Resources['algae']) => `+${gs.millimeters} chlorophyll`],
       takes: [(gs: Resources['algae']) => `-${5 * gs.millimeters} energy`],
       effect: (res: Resources['algae']) => {
@@ -211,7 +211,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Scavenge food',
       baseTime: 2,
-      description: 'Food affected by speed',
+      description: 'Food based on speed',
       gives: [(gs: Resources['insect']) => `+${formatNumber(gs.speed)} food`],
       takes: ['-20 energy'],
       effect: (res: Resources['insect']) => {
@@ -225,7 +225,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Digest food',
       baseTime: 5,
-      description: 'Affected by digestion',
+      description: 'Based on digestion',
       gives: [(gs: Resources['insect']) => `+${formatNumber(gs.digestion)} energy`],
       takes: [(gs: Resources['insect']) => `-${formatNumber(gs.digestion)} food`],
       effect: (res: Resources['insect']) => {
@@ -265,7 +265,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Find mates',
       baseTime: 2,
-      description: 'Mates affected by perception',
+      description: 'Mates based on perception',
       gives: [(gs: Resources['insect']) => `+${formatNumber(gs.perception)} mates`],
       takes: ['-1 pheromone'],
       effect: (res: Resources['insect']) => {
@@ -279,7 +279,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Lay eggs',
       baseTime: 3,
-      description: 'Eggs affected by mates',
+      description: 'Eggs based on mates',
       gives: [(gs: Resources['insect']) => `+${formatNumber(gs.mates)} eggs`],
       takes: ['-100 energy'],
       effect: (res: Resources['insect']) => {
@@ -296,7 +296,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Find prey',
       baseTime: 6,
-      description: 'Affected by intelligence',
+      description: 'Based on intelligence',
       gives: [(gs: Resources['crustacean']) => `+${formatNumber(gs.intelligence)} targets`],
       effect: (res: Resources['crustacean']) => {
         res.targets += res.intelligence
@@ -307,7 +307,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Fight prey',
       baseTime: 10,
-      description: 'Vitality affected by dexterity, food affected by strength',
+      description: 'DEX reduces damage,\n STR increases food',
       takes: ['-100 targets', (gs: Resources['crustacean']) => `-${Math.max(0, 100 - gs.dexterity)} vitality`],
       gives: [(gs: Resources['crustacean']) => `+${formatNumber(gs.strength)} food`],
       effect: (res: Resources['crustacean']) => {
@@ -322,7 +322,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Process food',
       baseTime: 4,
-      description: 'Affected by mass',
+      description: 'Based on mass',
       takes: [(gs: Resources['crustacean']) => `-${formatNumber(gs.mass)} food`],
       gives: [(gs: Resources['crustacean']) => `+${formatNumber(gs.mass)} energy`],
       effect: (res: Resources['crustacean']) => {
