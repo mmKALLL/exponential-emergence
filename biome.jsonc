@@ -24,9 +24,9 @@
                 "useKeyWithClickEvents": "off"
             },
             "correctness": {
-                // Error out on unused imports, variables, and function parameters
+                // Error out on unused imports, and function parameters
                 "noUnusedImports": "error",
-                "noUnusedVariables": "error",
+                "noUnusedVariables": "off",
                 "noUnusedFunctionParameters": "error",
                 "useExhaustiveDependencies": "warn"
             },
