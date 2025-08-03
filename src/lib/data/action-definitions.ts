@@ -91,7 +91,6 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
       description: 'Based on cell count',
       gives: [(gs: Resources['multicellular']) => `+${formatNumber(gs.cells)} energy`],
       takes: [(gs: Resources['multicellular']) => `-${formatNumber(gs.cells)} nutrients`],
-      defaultDisplayed: true,
     },
     {
       name: 'Filter waste',
@@ -205,78 +204,49 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
 
   insect: [
     {
-      name: 'Scavenge food',
-      baseTime: 2,
-      description: 'Food based on speed',
-      gives: [(gs: Resources['insect']) => `+${formatNumber(gs.speed)} food`],
-      takes: ['-20 energy'],
-      effect: (res: Resources['insect']) => {
-        res.energy -= 20
-        res.food += res.speed
-        return res
-      },
-      enabledCondition: (res: Resources['insect']) => res.energy >= 20,
-      defaultDisplayed: true,
-    },
-    {
       name: 'Digest food',
-      baseTime: 5,
-      description: 'Based on digestion',
-      gives: [(gs: Resources['insect']) => `+${formatNumber(gs.digestion)} energy`],
-      takes: [(gs: Resources['insect']) => `-${formatNumber(gs.digestion)} food`],
+      baseTime: 8,
+      description: 'Based on workers, digestion',
+      gives: [(res: Resources['insect']) => `+${formatNumber(Math.min(res.food, res.digestion))} energy`],
+      takes: [(res: Resources['insect']) => `-${formatNumber(Math.min(res.food, res.digestion))} food`],
       effect: (res: Resources['insect']) => {
-        res.food -= res.digestion
-        res.energy += res.digestion
+        const digestable = Math.min(res.food, res.digestion)
+        res.food -= digestable
+        res.energy += digestable
         return res
       },
-      enabledCondition: (res: Resources['insect']) => res.food >= res.digestion,
-      defaultDisplayed: true,
-    },
-    {
-      name: 'Improve perception',
-      baseTime: 4,
-      gives: ['+5 perception'],
-      takes: ['-50 energy'],
-      effect: (res: Resources['insect']) => {
-        res.energy -= 50
-        res.perception += 5
-        return res
-      },
-      enabledCondition: (res: Resources['insect']) => res.energy >= 50,
       defaultDisplayed: true,
     },
     {
       name: 'Attract',
       baseTime: 5,
-      gives: ['+1 pheromone'],
-      takes: ['-20 energy'],
+      gives: ['+5 pheromones'],
+      takes: ['-50 energy'],
       effect: (res: Resources['insect']) => {
-        res.energy -= 20
-        res.pheromones += 1
+        res.energy -= 50
+        res.pheromones += 5
         return res
       },
-      enabledCondition: (res: Resources['insect']) => res.energy >= 20,
-      defaultDisplayed: true,
+      enabledCondition: (res: Resources['insect']) => res.energy >= 50,
     },
     {
       name: 'Find mates',
-      baseTime: 2,
+      baseTime: 3,
       description: 'Mates based on perception',
-      gives: [(gs: Resources['insect']) => `+${formatNumber(gs.perception)} mates`],
-      takes: ['-1 pheromone'],
+      gives: [(res: Resources['insect']) => `+${formatNumber(res.perception)} mates`],
+      takes: ['-5 pheromones'],
       effect: (res: Resources['insect']) => {
-        res.pheromones -= 1
+        res.pheromones -= 5
         res.mates += res.perception
         return res
       },
-      enabledCondition: (res: Resources['insect']) => res.pheromones >= 1,
-      defaultDisplayed: true,
+      enabledCondition: (res: Resources['insect']) => res.pheromones >= 5,
     },
     {
       name: 'Lay eggs',
       baseTime: 3,
       description: 'Eggs based on mates',
-      gives: [(gs: Resources['insect']) => `+${formatNumber(gs.mates)} eggs`],
+      gives: [(res: Resources['insect']) => `+${formatNumber(res.mates)} eggs`],
       takes: ['-100 energy'],
       effect: (res: Resources['insect']) => {
         res.energy -= 100
@@ -284,7 +254,31 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
         return res
       },
       enabledCondition: (res: Resources['insect']) => res.energy >= 100,
-      defaultDisplayed: true,
+    },
+    {
+      name: 'Hatch workers',
+      baseTime: 2,
+      gives: ['+10 workers'],
+      takes: ['-10 eggs'],
+      effect: (res: Resources['insect']) => {
+        res.workers += 10
+        res.eggs -= 100
+        return res
+      },
+      enabledCondition: (res: Resources['insect']) => res.eggs >= 100,
+    },
+    {
+      name: 'Metabolize',
+      baseTime: 4,
+      gives: ['+20 digestion', '+20 perception'],
+      takes: ['-100 energy'],
+      effect: (res: Resources['insect']) => {
+        res.energy -= 100
+        res.perception += 20
+        res.digestion += 20
+        return res
+      },
+      enabledCondition: (res: Resources['insect']) => res.energy >= 100,
     },
   ],
 

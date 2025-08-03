@@ -1,5 +1,6 @@
 import { initialLevelDefinitions } from './data/level-definitions'
 import type { GameState } from './types'
+import { mapObject } from './utils'
 
 const baseInitialGameState: GameState = {
   generation: 1,
@@ -39,6 +40,12 @@ const debugInitialGameState: GameState = {
         nutrients: 20,
         divisions: 3,
       },
+      actions: {
+        ...mapObject(baseInitialGameState.levels.amoeba.actions, (a) => ({
+          ...a,
+          permanentSpeed: 2,
+        })),
+      },
       unlocked: true,
     },
     multicellular: {
@@ -52,6 +59,12 @@ const debugInitialGameState: GameState = {
         cells: 1400,
       },
       unlocked: true,
+      actions: {
+        ...mapObject(baseInitialGameState.levels.multicellular.actions, (a) => ({
+          ...a,
+          permanentSpeed: 2,
+        })),
+      },
     },
     algae: {
       ...baseInitialGameState.levels.algae,
@@ -63,13 +76,19 @@ const debugInitialGameState: GameState = {
         hardness: 1000,
       },
       unlocked: true,
+      actions: {
+        ...mapObject(baseInitialGameState.levels.algae.actions, (a) => ({
+          ...a,
+          permanentSpeed: 2,
+        })),
+      },
     },
     insect: {
       ...baseInitialGameState.levels.insect,
       resourceRecords: {
         food: 500,
         energy: 1000,
-        speed: 100,
+        workers: 100,
         perception: 50,
         digestion: 100,
         pheromones: 10,

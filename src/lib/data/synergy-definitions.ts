@@ -91,10 +91,10 @@ export const synergyDefinitions = [
       level: 'multicellular',
       resourceName: 'nutrients',
     },
-    description: (value) => `Start with ${Math.floor(value / 10)} speed`,
+    description: (value) => `Start with ${Math.floor(value ** 0.5)} workers`,
     affectedLevel: 'insect',
     onLevelStart: (gs, value) => {
-      gs.levels.insect.resources.speed = Math.floor(value / 10)
+      gs.levels.insect.resources.workers = Math.floor(value ** 0.5)
       return gs
     },
   },
@@ -140,7 +140,7 @@ export const synergyDefinitions = [
   {
     basedOn: {
       level: 'insect',
-      resourceName: 'speed',
+      resourceName: 'pheromones',
     },
     description: (value) => `Start with ${value} dexterity`,
     affectedLevel: 'crustacean',

@@ -68,7 +68,7 @@ export type Resources = {
   readonly insect: {
     food: number
     energy: number
-    speed: number
+    workers: number
     perception: number
     digestion: number
     pheromones: number
