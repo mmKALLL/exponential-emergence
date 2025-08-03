@@ -18,7 +18,7 @@ export function SidePanel() {
   return (
     <Card className="flex flex-col items-center p-4 gap-4 w-60 h-full">
       <Tabs defaultValue="resources">
-        <TabsList>
+        <TabsList className="w-52">
           <TabsTrigger value="resources">Resources</TabsTrigger>
           <TabsTrigger value="synergies">Synergies</TabsTrigger>
         </TabsList>

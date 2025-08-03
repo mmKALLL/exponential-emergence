@@ -18,7 +18,7 @@ export function SynergiesDisplay() {
               <div key={basedOnLevel} className="flex flex-col items-center gap-1 w-full bg-accent p-2 rounded-md">
                 <span className="text-sm font-bold mb-1">From {capitalize(basedOnLevel)}</span>
                 {synergyList.map(({ basedOnResourceName, record, description }) => (
-                  <div key={basedOnResourceName} className="text-xs flex flex-col gap-1 items-center mb-4">
+                  <div key={basedOnResourceName} className="text-xs flex flex-col gap-1 items-center py-2 [&:not(:last-child)]:border-b">
                     <span className="text-xs">
                       Highest {basedOnResourceName}: {record}
                     </span>
@@ -49,12 +49,14 @@ export function SynergiesDisplay() {
                 <div>
                   <ArrowDown />
                 </div>
-                {synergyList.map(({ description, affectedLevel }) => (
-                  <div key={affectedLevel} className="text-xs flex flex-col gap-1 items-center">
-                    <div className="font-bold">{capitalize(affectedLevel)}:</div>
-                    <div>{description}</div>
-                  </div>
-                ))}
+                <div>
+                  {synergyList.map(({ description, affectedLevel }) => (
+                    <div key={affectedLevel} className="text-xs flex flex-col gap-1 items-center [&:not(:last-child)]:border-b py-1">
+                      <div className="font-bold">{capitalize(affectedLevel)}:</div>
+                      <div>{description}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
