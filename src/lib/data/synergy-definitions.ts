@@ -89,7 +89,7 @@ export const synergyDefinitions = [
   {
     basedOn: {
       level: 'multicellular',
-      resourceName: 'food',
+      resourceName: 'nutrients',
     },
     description: (value) => `Start with ${Math.floor(value / 10)} speed`,
     affectedLevel: 'insect',
