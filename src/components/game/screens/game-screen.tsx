@@ -4,20 +4,22 @@ import { Button } from '@/components/ui/button'
 import { clearSave } from '@/lib/saving'
 import { ActionCards } from '../action-cards'
 import { useState } from 'react'
+import { Game } from '@/lib/gamestate-logic'
 
 export function GameScreen() {
-  const [clickCount, setClickCount] = useState(0)
+  const [deleteClickCount, setDeleteClickCount] = useState(0)
+  const [resetClickCount, setResetClickCount] = useState(0)
 
   const handleSaveDelete = () => {
-    setClickCount((prev) => prev + 1)
-    if (clickCount >= 4) {
+    setDeleteClickCount((prev) => prev + 1)
+    if (deleteClickCount >= 4) {
       clearSave()
-      setClickCount(0)
+      setDeleteClickCount(0)
     }
   }
 
   const deleteButtonText = (() => {
-    switch (clickCount) {
+    switch (deleteClickCount) {
       case 0:
         return 'Delete save'
       case 1:
@@ -28,6 +30,24 @@ export function GameScreen() {
         return 'Last chance!'
       case 4:
         return 'Clicking now will delete your save!'
+      default:
+        return '???'
+    }
+  })()
+
+  const handleResetRun = () => {
+    setResetClickCount((prev) => prev + 1)
+    if (resetClickCount >= 1) {
+      Game.resetRun()
+      setResetClickCount(0)
+    }
+  }
+  const resetButtonText = (() => {
+    switch (resetClickCount) {
+      case 0:
+        return 'Reset run'
+      case 1:
+        return 'Are you sure?'
       default:
         return '???'
     }
@@ -44,9 +64,15 @@ export function GameScreen() {
           <SidePanel />
         </div>
       </div>
-      <Button variant="destructive" className="fixed bottom-2" onClick={handleSaveDelete}>
-        {deleteButtonText}
-      </Button>
+
+      <div className="fixed bottom-2 flex gap-4">
+        <Button className="align-self-end" onClick={handleResetRun}>
+          {resetButtonText}
+        </Button>
+        <Button variant="destructive" onClick={handleSaveDelete}>
+          {deleteButtonText}
+        </Button>
+      </div>
       {/* <ThemeModeToggle /> */}
     </>
   )

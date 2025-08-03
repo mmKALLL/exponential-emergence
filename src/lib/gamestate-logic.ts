@@ -328,6 +328,10 @@ export const Game = {
     invalidateActionCardCache()
   },
 
+  resetRun: () => {
+    handleGameOver()
+  },
+
   gameTick: () => {
     const now = Date.now()
     const diff = (now - lastUpdate) / 1000 // Convert milliseconds to seconds
