@@ -6,6 +6,7 @@ import { cn, maxTime } from '@/lib/utils'
 import { ActionMiniChart } from './action-mini-chart'
 import { useUpdate } from '@/hooks/use-update'
 import { canApplyAction, Game } from '@/lib/gamestate-logic'
+import { useForceRefresh } from '@/hooks/use-force-refresh'
 
 export function ActionCard({ actionName }: { actionName: string }): JSX.Element {
   // The reason we do this so much is due to performance reasons.
@@ -31,6 +32,9 @@ export function ActionCard({ actionName }: { actionName: string }): JSX.Element 
   const speedsUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.speeds)
   const bestValueUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.bestValue)
   const canToggle = useUpdate(() => canApplyAction(Game.getActionCard(actionName)))
+
+  // Force refresh cards every second so the charts update for inactive actions
+  useForceRefresh(1000)
 
   return (
     <Card className="flex flex-col items-center justify-center p-4 pb-2 gap-4 w-52">
