@@ -130,10 +130,22 @@ export const synergyDefinitions = [
       level: 'amoeba',
       resourceName: 'energy',
     },
-    description: (value) => `Start with ${Math.floor(value ** 0.5 * 4)} strength`,
+    description: (value) => `Start with ${Math.floor(value ** 0.7 * 3)} energy`,
     affectedLevel: 'crustacean',
     onLevelStart: (gs, value) => {
-      gs.levels.crustacean.resources.strength = Math.floor(value ** 0.5 * 4)
+      gs.levels.crustacean.resources.energy = Math.floor(value ** 0.7 * 3)
+      return gs
+    },
+  },
+  {
+    basedOn: {
+      level: 'insect',
+      resourceName: 'eggs',
+    },
+    description: (value) => `Start with ${Math.floor(value ** 0.5 / 4)} strength`,
+    affectedLevel: 'crustacean',
+    onLevelStart: (gs, value) => {
+      gs.levels.crustacean.resources.strength = Math.floor(value ** 0.5 / 4)
       return gs
     },
   },
@@ -142,10 +154,10 @@ export const synergyDefinitions = [
       level: 'insect',
       resourceName: 'pheromones',
     },
-    description: (value) => `Start with ${Math.floor(value ** 0.75 * 0.66)} dexterity`,
+    description: (value) => `Start with ${Math.floor(value ** 0.9 / 5) * 5} targets`,
     affectedLevel: 'crustacean',
     onLevelStart: (gs, value) => {
-      gs.levels.crustacean.resources.dexterity = Math.floor(value ** 0.75 * 0.66)
+      gs.levels.crustacean.resources.targets = Math.floor(value ** 0.9 / 5) * 5
       return gs
     },
   },

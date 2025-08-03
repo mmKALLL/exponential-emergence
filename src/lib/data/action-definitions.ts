@@ -285,31 +285,25 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
       baseTime: 5,
       description: '+1 target per intelligence',
       gives: [(gs: Resources['crustacean']) => `+${formatNumber(gs.intelligence)} targets`],
-      takes: ['-5 energy'],
       effect: (res: Resources['crustacean']) => {
         res.targets += res.intelligence
-        res.energy -= 5
         return res
       },
-      enabledCondition: (res: Resources['crustacean']) => res.energy >= 5,
       defaultDisplayed: true,
     },
     {
       name: 'Fight prey',
       baseTime: 8,
-      description: 'DEX reduces damage,\n STR increases food',
-      takes: [
-        '-50 targets',
-        (gs: Resources['crustacean']) => (gs.dexterity < 100 ? `-${Math.max(0, Math.ceil(5 - gs.dexterity / 20))} health` : ''),
-      ],
+      description: 'Strength increases food',
+      takes: ['-50 targets', '-5 health'],
       gives: [(gs: Resources['crustacean']) => `+${formatNumber(gs.strength)} food`],
       effect: (res: Resources['crustacean']) => {
         res.targets -= 50
-        res.health -= Math.max(0, Math.ceil(5 - res.dexterity / 20))
+        res.health -= 5
         res.food += res.strength
         return res
       },
-      enabledCondition: (res: Resources['crustacean']) => res.targets >= 50 && res.health >= Math.ceil(5 - res.dexterity / 20),
+      enabledCondition: (res: Resources['crustacean']) => res.targets >= 50 && res.health >= 5,
       defaultDisplayed: true,
     },
     {
@@ -327,7 +321,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     },
     {
       name: 'Rest',
-      baseTime: 3,
+      baseTime: 4,
       gives: ['+10 health'],
       takes: ['-10 energy'],
       effect: (res: Resources['crustacean']) => {
@@ -335,8 +329,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
         res.health += 10
         return res
       },
-      // Make sure the player has enough energy to find enough prey to get energy back.
-      enabledCondition: (res: Resources['crustacean']) => res.energy >= 10 + 5 * Math.ceil(50 / res.intelligence),
+      enabledCondition: (res: Resources['crustacean']) => res.energy >= 10,
     },
     {
       name: 'Molt exoskeleton',
@@ -351,8 +344,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
       },
       enabledCondition: (res: Resources['crustacean']) =>
         // Prevent molting if lowering health would lock the player out of fighting, or if it would extend lifespan beyond the maximum.
-        res.health >= 5 + Math.max(0, Math.ceil(5 - res.dexterity / 20)) &&
-        Game.state.lifespanLeft + 5 * 0.95 ** Game.state.timesExtendedLifespan < MAX_LIFESPAN,
+        res.health >= 5 && Game.state.lifespanLeft + 5 * 0.95 ** Game.state.timesExtendedLifespan < MAX_LIFESPAN,
     },
     {
       name: 'Bulk up',
@@ -366,21 +358,21 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
         return res
       },
       // Prevent bulk up if the player doesn't have enough food to get energy back.
-      enabledCondition: (res: Resources['crustacean']) => res.food >= 50 + res.mass + 5,
+      enabledCondition: (res: Resources['crustacean']) => res.food >= 50 + res.mass,
     },
-    {
-      name: 'Smarten up',
-      baseTime: 3,
-      gives: ['+3 dexterity', '+3 intelligence'],
-      takes: ['-100 energy'],
-      effect: (res: Resources['crustacean']) => {
-        res.energy -= 100
-        res.dexterity += 3
-        res.intelligence += 3
-        return res
-      },
-      enabledCondition: (res: Resources['crustacean']) => res.energy >= 100,
-    },
+    // {
+    //   name: 'Smarten up',
+    //   baseTime: 3,
+    //   gives: ['+3 dexterity', '+3 intelligence'],
+    //   takes: ['-100 energy'],
+    //   effect: (res: Resources['crustacean']) => {
+    //     res.energy -= 100
+    //     res.dexterity += 3
+    //     res.intelligence += 3
+    //     return res
+    //   },
+    //   enabledCondition: (res: Resources['crustacean']) => res.energy >= 100,
+    // },
   ],
 }
 

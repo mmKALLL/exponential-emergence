@@ -80,7 +80,6 @@ export type Resources = {
     targets: number
     food: number
     strength: number
-    dexterity: number
     health: number
     intelligence: number
     mass: number
@@ -120,11 +119,12 @@ export type Level<T extends LevelName> = {
 
 export type GameState = {
   generation: number
-  currentScreen: 'main-menu' | 'in-game' | 'rebirth'
+  currentScreen: 'main-menu' | 'in-game' | 'rebirth' | 'victory'
   currentLevel: LevelName
   currentActionName: string | null
   lifespanLeft: number
   timesExtendedLifespan: number
+  triggerVictoryScreen: boolean
   runStarted: boolean
   levels: {
     amoeba: Level<'amoeba'>

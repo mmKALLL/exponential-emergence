@@ -297,21 +297,19 @@ export const initialLevelDefinitions: GameState['levels'] = {
     name: 'crustacean',
     unlocked: false,
     initialResources: {
-      energy: 50,
+      energy: 0,
       targets: 0,
       food: 0,
       strength: 0,
-      dexterity: 0,
       health: 0,
       intelligence: 0,
       mass: 0,
     },
     resources: {
-      energy: 50,
+      energy: 0,
       targets: 0,
       food: 0,
       strength: 0,
-      dexterity: 0,
       health: 0,
       intelligence: 0,
       mass: 0,
@@ -321,7 +319,6 @@ export const initialLevelDefinitions: GameState['levels'] = {
       targets: 0,
       food: 0,
       strength: 0,
-      dexterity: 0,
       health: 0,
       intelligence: 0,
       mass: 0,
@@ -365,6 +362,14 @@ export const initialLevelDefinitions: GameState['levels'] = {
         resourceName: 'strength',
         onComplete: (gs) => {
           gs.levels.crustacean.actions['Smarten up'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 150,
+        resourceName: 'mass',
+        onComplete: (gs) => {
+          gs.triggerVictoryScreen = true
           return gs
         },
       },
