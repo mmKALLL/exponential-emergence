@@ -44,7 +44,8 @@ export type UnlockedDisplaySections = {
   speeds: boolean
   bestValue: boolean
   valueHistory: boolean
-  synergyHelpText?: boolean
+  synergyHelpText: boolean
+  synergyHelpTextAddition: boolean
 }
 
 export type Resources = {

@@ -9,6 +9,8 @@ export function RebirthScreen(): JSX.Element {
   const currentLevel = useUpdate(() => Game.state.currentLevel)
   const unlockedLevels = useUpdate(() => Game.unlockedLevels)
   const helpTextUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.synergyHelpText)
+  const additionalHelpTextUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.synergyHelpTextAddition)
+
   const lockedTexts: Record<LevelName, string> = {
     amoeba: 'Esa fucked up',
     multicellular: 'Reach 3 divisions to unlock',
@@ -40,6 +42,13 @@ export function RebirthScreen(): JSX.Element {
         <div className="text-lg mb-8 mt-7">
           You can now get synergy bonuses based on previous stages. <br />
           Check them in the resource display's Synergies tab!
+          {additionalHelpTextUnlocked && (
+            <>
+              <br />
+              <br />
+              If you struggle in a later stage, try improving your synergies.
+            </>
+          )}
         </div>
       )}
     </div>

@@ -180,8 +180,8 @@ export const initialLevelDefinitions: GameState['levels'] = {
         },
       },
       {
-        requiredAmount: 1000,
-        resourceName: 'energy',
+        requiredAmount: 25,
+        resourceName: 'millimeters',
         onComplete: (gs) => {
           gs.levels.algae.actions['Branch out'].displayed = true
           return gs

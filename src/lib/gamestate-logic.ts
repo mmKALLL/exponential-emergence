@@ -33,6 +33,14 @@ function handleGameOver() {
   gs.unlockedDisplaySections.valueHistory = true
   gs.unlockedDisplaySections.bestValue = true
 
+  if (Game.unlockedLevels.includes('multicellular')) {
+    gs.unlockedDisplaySections.synergyHelpText = true
+  }
+
+  if (Game.unlockedLevels.includes('algae')) {
+    gs.unlockedDisplaySections.synergyHelpTextAddition = true
+  }
+
   updateResourceRecords()
 }
 
@@ -309,10 +317,6 @@ export const Game = {
           gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName as keyof Resources[LevelName]] || 0
         )
       })
-
-    if (Game.unlockedLevels.includes('multicellular')) {
-      gs.unlockedDisplaySections.synergyHelpText = true
-    }
   },
 
   toggleAction(action: Action) {

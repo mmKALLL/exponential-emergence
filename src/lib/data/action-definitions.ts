@@ -165,7 +165,6 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
         return res
       },
       enabledCondition: (res: Resources['algae']) => res.energy >= 100,
-      defaultDisplayed: true,
     },
     {
       name: 'Grow longer',

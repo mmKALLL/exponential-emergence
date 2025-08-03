@@ -13,6 +13,8 @@ const baseInitialGameState: GameState = {
     speeds: false,
     bestValue: false,
     valueHistory: true,
+    synergyHelpText: false,
+    synergyHelpTextAddition: false,
   },
 }
 
@@ -21,6 +23,13 @@ const debugInitialGameState: GameState = {
   ...baseInitialGameState,
   currentScreen: 'rebirth',
   currentLevel: 'multicellular',
+  unlockedDisplaySections: {
+    speeds: true,
+    bestValue: true,
+    valueHistory: true,
+    synergyHelpText: true,
+    synergyHelpTextAddition: true,
+  },
   levels: {
     amoeba: {
       ...baseInitialGameState.levels.amoeba,
