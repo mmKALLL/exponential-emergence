@@ -33,9 +33,9 @@ export function ActionCard({ actionName }: { actionName: string }): JSX.Element 
   const canToggle = useUpdate(() => canApplyAction(Game.getActionCard(actionName)))
 
   return (
-    <Card className="flex flex-col items-center justify-center p-4 gap-4 w-52">
+    <Card className="flex flex-col items-center justify-center p-4 pb-2 gap-4 w-52">
       <Progress value={(progress / maxActionTime) * 100} />
-      <div className="text-xs flex flex-wrap gap-2">
+      <div className={cn('text-xs flex flex-wrap gap-2', description && '-mt-2')}>
         {takes?.map((t) => (
           <div key={t} className="text-red-300">
             {t}
@@ -47,7 +47,7 @@ export function ActionCard({ actionName }: { actionName: string }): JSX.Element 
           </div>
         ))}
       </div>
-      <div className="text-xs -my-2 text-center">{description}</div>
+      <div className="text-xs -mb-2 -mt-3 text-center">{description}</div>
       <Button
         onClick={() => Game.toggleAction(Game.getActionCard(actionName))}
         variant="outline"
@@ -56,7 +56,7 @@ export function ActionCard({ actionName }: { actionName: string }): JSX.Element 
         {name} ({(maxActionTime - progress).toFixed(1)})
       </Button>
       {speedsUnlocked && (
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-1">
           <div className="flex place-content-between w-42">
             <div className="text-sm">Current life speed:</div>
             <div className="text-sm">{currentSpeed.toFixed(2)}x</div>
