@@ -146,10 +146,10 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     },
     {
       name: 'Harden',
-      baseTime: 3,
-      gives: ['+20 hardness'],
+      baseTime: 4,
+      gives: ['+50 hardness'],
       effect: (res: Resources['algae']) => {
-        res.hardness += 20
+        res.hardness += 50
         return res
       },
       defaultDisplayed: true,
@@ -170,7 +170,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
       name: 'Grow longer',
       baseTime: 4,
       description: '+1 millimeter per branch',
-      gives: [(gs: Resources['algae']) => `+${formatNumber(gs.branches)} millimeters`],
+      gives: [(gs: Resources['algae']) => `+${formatNumber(gs.branches)} mm`],
       takes: ['-100 hardness'],
       effect: (res: Resources['algae']) => {
         res.hardness -= 100
@@ -196,13 +196,13 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
       baseTime: 5,
       description: 'Based on millimeters',
       gives: [(gs: Resources['algae']) => `+${gs.millimeters} chlorophyll`],
-      takes: [(gs: Resources['algae']) => `-${5 * gs.millimeters} energy`],
+      takes: ['-50 energy'],
       effect: (res: Resources['algae']) => {
-        res.energy -= 5 * res.millimeters
+        res.energy -= 50
         res.chlorophyll += res.millimeters
         return res
       },
-      enabledCondition: (res: Resources['algae']) => res.energy >= 5 * res.millimeters,
+      enabledCondition: (res: Resources['algae']) => res.energy >= 50,
     },
   ],
 
