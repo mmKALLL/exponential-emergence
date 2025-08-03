@@ -172,7 +172,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
         },
       },
       {
-        requiredAmount: 1500,
+        requiredAmount: 2000,
         resourceName: 'hardness',
         onComplete: (gs) => {
           gs.levels.algae.actions['Grow longer'].displayed = true

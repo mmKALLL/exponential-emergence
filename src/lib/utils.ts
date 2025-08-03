@@ -54,5 +54,5 @@ export function formatNumber(value: number | undefined | null, placesUnder1000 =
   if (value === undefined || value === null) {
     return ''
   }
-  return value < 1000 ? value.toFixed(0) : formatter.format(value, 2, placesUnder1000)
+  return value <= 1000 ? value.toFixed(0) : formatter.format(value, 2, placesUnder1000)
 }

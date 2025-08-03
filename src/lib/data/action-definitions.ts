@@ -58,16 +58,16 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
       name: 'Catch food',
       baseTime: 5,
       effect: (res: Resources['multicellular']) => {
-        res.food += 20 * res['food multiplier']
+        res.food += 25 * res['food multiplier']
         return res
       },
       description: 'Based on food multiplier',
-      gives: [(gs: Resources['multicellular']) => `+${formatNumber(20 * gs['food multiplier'])} food`],
+      gives: [(gs: Resources['multicellular']) => `+${formatNumber(25 * gs['food multiplier'])} food`],
       defaultDisplayed: true,
     },
     {
       name: 'Process food',
-      baseTime: 4,
+      baseTime: 3,
       effect: (res: Resources['multicellular']) => {
         res.food -= res.cells
         res.nutrients += res.cells
@@ -134,7 +134,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
   algae: [
     {
       name: 'Sunbathe',
-      baseTime: 4,
+      baseTime: 3,
       description: 'Based on sunlight, chlorophyll',
       gives: [(gs: Resources['algae']) => `+${formatNumber((gs.chlorophyll * Game.currentSunlight) / 100, 2)} energy`],
       effect: (res: Resources['algae']) => {
@@ -192,7 +192,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     },
     {
       name: 'Grow chlorophyll',
-      baseTime: 4,
+      baseTime: 3,
       description: 'Based on millimeters',
       gives: [(gs: Resources['algae']) => `+${gs.millimeters} chlorophyll`],
       effect: (res: Resources['algae']) => {
@@ -262,10 +262,10 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
       takes: ['-10 eggs'],
       effect: (res: Resources['insect']) => {
         res.workers += 10
-        res.eggs -= 100
+        res.eggs -= 10
         return res
       },
-      enabledCondition: (res: Resources['insect']) => res.eggs >= 100,
+      enabledCondition: (res: Resources['insect']) => res.eggs >= 10,
     },
     {
       name: 'Metabolize',
