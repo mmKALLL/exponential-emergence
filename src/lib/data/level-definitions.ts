@@ -98,7 +98,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
         },
       },
       {
-        requiredAmount: 25,
+        requiredAmount: 30,
         resourceName: 'energy',
         onComplete: (gs) => {
           gs.levels.multicellular.actions['Filter waste'].displayed = true
@@ -106,7 +106,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
         },
       },
       {
-        requiredAmount: 50,
+        requiredAmount: 60,
         resourceName: 'energy',
         onComplete: (gs) => {
           gs.levels.multicellular.actions['Multiply'].displayed = true
@@ -120,6 +120,11 @@ export const initialLevelDefinitions: GameState['levels'] = {
           gs.levels.multicellular.actions['Specialize'].displayed = true
           return gs
         },
+      },
+      {
+        requiredAmount: 4,
+        resourceName: 'efficiency',
+        onComplete: (gs) => gs,
       },
       {
         requiredAmount: 1000,

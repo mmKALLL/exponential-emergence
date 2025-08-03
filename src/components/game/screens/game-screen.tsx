@@ -44,7 +44,7 @@ export function GameScreen() {
           <SidePanel />
         </div>
       </div>
-      <Button variant="destructive" className="fixed bottom-4" onClick={handleSaveDelete}>
+      <Button variant="destructive" className="fixed bottom-2" onClick={handleSaveDelete}>
         {deleteButtonText}
       </Button>
       {/* <ThemeModeToggle /> */}

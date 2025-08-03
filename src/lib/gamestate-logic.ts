@@ -310,7 +310,7 @@ export const Game = {
         )
       })
 
-    if (Game.currentLevel.name === 'multicellular') {
+    if (Game.unlockedLevels.includes('multicellular')) {
       gs.unlockedDisplaySections.synergyHelpText = true
     }
   },

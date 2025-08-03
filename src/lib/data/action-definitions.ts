@@ -110,9 +110,9 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
         res.cells *= 2
         return res
       },
-      enabledCondition: (res: Resources['multicellular']) => res.energy >= (5 - res.efficiency) * res.cells,
+      enabledCondition: (res: Resources['multicellular']) => res.energy >= Math.max(1, 5 - res.efficiency) * res.cells,
       gives: ['x2 cells'],
-      takes: [(gs: Resources['multicellular']) => `-${Math.max(0, 5 - gs.efficiency) * gs.cells} energy`],
+      takes: [(gs: Resources['multicellular']) => `-${Math.max(1, 5 - gs.efficiency) * gs.cells} energy`],
     },
     {
       name: 'Specialize',
@@ -123,7 +123,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
         return res
       },
       enabledCondition: (res: Resources['multicellular']) => res.energy >= 20,
-      description: 'Efficiency makes Multiply cheaper',
+      description: 'Makes Multiply cheaper',
       gives: ['+1 efficiency'],
       takes: ['-20 energy'],
     },
