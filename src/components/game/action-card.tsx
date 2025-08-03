@@ -35,7 +35,6 @@ export function ActionCard({ actionName }: { actionName: string }): JSX.Element 
   return (
     <Card className="flex flex-col items-center justify-center p-4 gap-4 w-52">
       <Progress value={(progress / maxActionTime) * 100} />
-      <div className="text-xs -my-2 text-center">{description}</div>
       <div className="text-xs flex flex-wrap gap-2">
         {takes?.map((t) => (
           <div key={t} className="text-red-300">
@@ -48,6 +47,7 @@ export function ActionCard({ actionName }: { actionName: string }): JSX.Element 
           </div>
         ))}
       </div>
+      <div className="text-xs -my-2 text-center">{description}</div>
       <Button
         onClick={() => Game.toggleAction(Game.getActionCard(actionName))}
         variant="outline"

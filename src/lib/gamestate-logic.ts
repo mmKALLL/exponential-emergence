@@ -309,6 +309,10 @@ export const Game = {
           gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName as keyof Resources[LevelName]] || 0
         )
       })
+
+    if (Game.currentLevel.name === 'multicellular') {
+      gs.unlockedDisplaySections.synergyHelpText = true
+    }
   },
 
   toggleAction(action: Action) {

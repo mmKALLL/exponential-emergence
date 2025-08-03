@@ -46,7 +46,9 @@ export function SynergiesDisplay() {
                 <span className="text-xs">
                   Highest {basedOn.resourceName}: {record}
                 </span>
-                <div>🡓</div>
+                <div>
+                  <ArrowDown />
+                </div>
                 {synergyList.map(({ description, affectedLevel }) => (
                   <div key={affectedLevel} className="text-xs flex flex-col gap-1 items-center">
                     <div className="font-bold">{capitalize(affectedLevel)}:</div>

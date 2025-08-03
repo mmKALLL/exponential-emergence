@@ -35,6 +35,10 @@ export function RebirthScreen(): JSX.Element {
           </Button>
         )
       )}
+      <div className="text-lg mb-8 mt-7">
+        From the multicellular stage onwards, you get synergy bonuses based on previous stages. <br />
+        You can see them in the resource display's Synergies tab.
+      </div>
     </div>
   )
 }
