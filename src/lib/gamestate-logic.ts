@@ -301,6 +301,7 @@ export const Game = {
 
     gs.currentLevel = newLevelName
     gs.lifespanLeft = 60
+    gs.timesExtendedLifespan = 0
     gs.currentActionName = null
     gs.generation += 1
     gs.currentScreen = 'in-game'

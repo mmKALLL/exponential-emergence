@@ -81,7 +81,7 @@ export type Resources = {
     food: number
     strength: number
     dexterity: number
-    vitality: number
+    health: number
     intelligence: number
     mass: number
   }
@@ -124,6 +124,7 @@ export type GameState = {
   currentLevel: LevelName
   currentActionName: string | null
   lifespanLeft: number
+  timesExtendedLifespan: number
   runStarted: boolean
   levels: {
     amoeba: Level<'amoeba'>

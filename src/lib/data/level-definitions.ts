@@ -297,22 +297,22 @@ export const initialLevelDefinitions: GameState['levels'] = {
     name: 'crustacean',
     unlocked: false,
     initialResources: {
-      energy: 500,
+      energy: 50,
       targets: 0,
       food: 0,
       strength: 0,
       dexterity: 0,
-      vitality: 0,
+      health: 0,
       intelligence: 0,
       mass: 0,
     },
     resources: {
-      energy: 500,
+      energy: 50,
       targets: 0,
       food: 0,
       strength: 0,
       dexterity: 0,
-      vitality: 0,
+      health: 0,
       intelligence: 0,
       mass: 0,
     },
@@ -322,18 +322,41 @@ export const initialLevelDefinitions: GameState['levels'] = {
       food: 0,
       strength: 0,
       dexterity: 0,
-      vitality: 0,
+      health: 0,
       intelligence: 0,
       mass: 0,
     },
     actions: generatedActions.crustacean,
     goals: [
       {
-        requiredAmount: 1000,
-        resourceName: 'mass',
+        requiredAmount: 50,
+        resourceName: 'food',
         onComplete: (gs) => {
-          // TODO: Add some kind of flag for triggering a victory screen
-          // gs. = true
+          gs.levels.crustacean.actions['Consume food'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 100,
+        resourceName: 'energy',
+        onComplete: (gs) => {
+          gs.levels.crustacean.actions['Rest'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 100,
+        resourceName: 'health',
+        onComplete: (gs) => {
+          gs.levels.crustacean.actions['Molt exoskeleton'].displayed = true
+          return gs
+        },
+      },
+      {
+        requiredAmount: 150,
+        resourceName: 'food',
+        onComplete: (gs) => {
+          gs.levels.crustacean.actions['Bulk up'].displayed = true
           return gs
         },
       },
