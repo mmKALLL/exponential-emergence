@@ -97,6 +97,12 @@ const debugInitialGameState: GameState = {
         eggs: 10000,
       },
       unlocked: true,
+      actions: {
+        ...mapObject(baseInitialGameState.levels.insect.actions, (a) => ({
+          ...a,
+          permanentSpeed: 2,
+        })),
+      },
     },
     crustacean: {
       ...baseInitialGameState.levels.crustacean,

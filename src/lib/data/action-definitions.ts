@@ -270,15 +270,12 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Metabolize',
       baseTime: 4,
-      gives: ['+20 digestion', '+20 perception'],
-      takes: ['-20 energy'],
+      gives: ['+10 digestion', '+10 perception'],
       effect: (res: Resources['insect']) => {
-        res.energy -= 20
-        res.perception += 20
-        res.digestion += 20
+        res.perception += 10
+        res.digestion += 10
         return res
       },
-      enabledCondition: (res: Resources['insect']) => res.energy >= 20,
     },
   ],
 
@@ -374,16 +371,15 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     {
       name: 'Smarten up',
       baseTime: 3,
-      gives: ['+1 dexterity', '+1 intelligence'],
+      gives: ['+3 dexterity', '+3 intelligence'],
       takes: ['-100 energy'],
       effect: (res: Resources['crustacean']) => {
         res.energy -= 100
-        res.dexterity += 1
-        res.intelligence += 1
+        res.dexterity += 3
+        res.intelligence += 3
         return res
       },
       enabledCondition: (res: Resources['crustacean']) => res.energy >= 100,
-      defaultDisplayed: true,
     },
   ],
 }
