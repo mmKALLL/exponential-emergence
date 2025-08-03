@@ -93,7 +93,7 @@ const debugInitialGameState: GameState = {
         workers: 200,
         perception: 80,
         digestion: 150,
-        pheromones: 500,
+        pheromones: 100,
         mates: 500,
         eggs: 10000,
       },

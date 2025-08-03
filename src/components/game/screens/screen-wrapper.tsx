@@ -5,6 +5,7 @@ import { MainMenuScreen } from './main-menu-screen'
 import { RebirthScreen } from './rebirth-screen'
 import { useUpdate } from '@/hooks/use-update'
 import { Game } from '@/lib/gamestate-logic'
+import { VictoryScreen } from './victory-screen'
 
 export function ScreenWrapper(): JSX.Element {
   const currentScreen = useUpdate(() => Game.state.currentScreen)
@@ -16,6 +17,8 @@ export function ScreenWrapper(): JSX.Element {
         <GameScreen />
       ) : currentScreen === 'rebirth' ? (
         <RebirthScreen />
+      ) : currentScreen === 'victory' ? (
+        <VictoryScreen />
       ) : (
         assertNever(currentScreen)
       )}

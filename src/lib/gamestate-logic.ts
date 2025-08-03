@@ -26,6 +26,8 @@ function computeActionCards() {
 
 function handleGameOver() {
   gs.currentScreen = gs.triggerVictoryScreen ? 'victory' : 'rebirth'
+  gs.triggerVictoryScreen = false
+
   gs.lifespanLeft = 0
   gs.runStarted = false
   gs.currentActionName = null
