@@ -17,9 +17,11 @@ Although the game is very minimalistic, the core data is based on actual researc
 
 # Credits:
 
-mmKALLL - code, design, concept
-Hevipelle - code, advice
+mmKALLL - code, design, concept, coordination
+Hevipelle - code, design, amazing advice
 Eldazare - testing
 VsKatshuma - testing
+Joonamo - testing
+Muggshotter - testing
 
-Google DeepMind - logo asset (from Unsplash)
+Google DeepMind - logo asset (from Unsplash, not AI-generated AFAIK)
