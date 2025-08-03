@@ -143,7 +143,6 @@ export const initialLevelDefinitions: GameState['levels'] = {
     initialResources: {
       millimeters: 0,
       branches: 1,
-      sunlight: 0,
       chlorophyll: 10,
       energy: 0,
       hardness: 0,
@@ -151,7 +150,6 @@ export const initialLevelDefinitions: GameState['levels'] = {
     resources: {
       millimeters: 0,
       branches: 1,
-      sunlight: 0,
       chlorophyll: 10,
       energy: 0,
       hardness: 0,
@@ -159,7 +157,6 @@ export const initialLevelDefinitions: GameState['levels'] = {
     resourceRecords: {
       millimeters: 0,
       branches: 0,
-      sunlight: 0,
       chlorophyll: 0,
       energy: 0,
       hardness: 0,

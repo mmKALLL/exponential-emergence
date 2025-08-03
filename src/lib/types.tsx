@@ -60,7 +60,6 @@ export type Resources = {
   readonly algae: {
     millimeters: number
     energy: number
-    sunlight: number
     chlorophyll: number
     branches: number
     hardness: number
