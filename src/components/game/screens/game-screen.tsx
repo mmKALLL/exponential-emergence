@@ -11,11 +11,12 @@ export function GameScreen() {
   const [resetClickCount, setResetClickCount] = useState(0)
 
   const handleSaveDelete = () => {
-    setDeleteClickCount((prev) => prev + 1)
     if (deleteClickCount >= 4) {
-      clearSave()
       setDeleteClickCount(0)
+      clearSave()
     }
+
+    setDeleteClickCount((prev) => prev + 1)
   }
 
   const deleteButtonText = (() => {

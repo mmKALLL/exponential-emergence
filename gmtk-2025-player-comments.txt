@@ -1,0 +1,72 @@
+pomelovictor:
+Really well-designed! Even though it’s an idle game, the 60-second limit creates a surprising sense of urgency and tension. That contrast makes for a brilliant and engaging experience!
+
+--------
+
+nomadjackalope:
+This one was so creative! I loved it. I got a little stuck since I didn't see that cells would allow me to process food faster. Really good in making things simpler and expanding as I hit goals. I wish there would have been even more simplicity at the very beginning as there is a lot of initial information thrown on screen. And you used ReactJS as well! Nice.
+
+--------
+
+klaro:
+Really enjoyed this one! Figuring out when to switch from one growth area to another to optimize the feedback loop was very satisfying, and I liked investing in my little organism's future. It was also nice to have a change in mechanical interactions at each rung of the ladder to keep the gameplay interesting, while also inheriting synergies from the previous stages to make things a bit easier (which works great with the premise!).
+
+--------
+
+IChiu:
+Actually quite fun! Loved trying to optimize everything and plan what to focus on first. The bonuses at the end of each life is a really good mechanic as it encourages me to keep going. Great stuff!
+
+--------
+
+killerturt:
+Maannn I love these types of games, i got addicted for a couple of hours :)) really cool concept, I loved it
+
+--------
+
+Totally:
+I got absolutely addicted and spent like 2 hours maximizing everything and also messing around with other stuff
+
+--------
+
+mofka:
+Reallyyyyyyyy cool thing, quite challenging at some moments but not impossible. Got drawn in for half an hour.
+
+--------
+
+quietcoro:
+Really liked it. All the synergies were fun, and gives a reason to go back and reoptimize. Few things I figured out late, so messaging could be improved a bit (timers on buttons vs spam clicking. Time pauses when no actions going etc)
+
+--------
+
+Don Tnowe:
+The optimization aspect here is intense with lots of interdependency, both between same-stage actions so strategy and action order matters, and between stages so there’s the incremental optimization aspect. Love it!
+
+--------
+
+Milo:
+The game was cool , i like the idea.
+
+--------
+
+kornelf:
+Amazing!! This is the type of game, that I really love. I can't name any improvements.
+
+--------
+
+HiGuts:
+Fun concept and great game... my hand hurts :)
+
+--------
+
+ThatShroomGuy:
+I wish there was sound, Other than that, great game.
+
+--------
+
+Kog_Works:
+Super cool game I really enjoyed it. found myself lost in optimization concentration loop :D Great stuff!
+
+--------
+
+VaporFaze:
+I am fascinated by this idea, it would be cool to see more development on this game! I assume theres some real life biology behind this game?

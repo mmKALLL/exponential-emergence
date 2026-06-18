@@ -362,7 +362,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
         return res
       },
       // Prevent bulk up if the player doesn't have enough food to get energy back.
-      enabledCondition: (res: Resources['crustacean']) => res.food >= 50 + res.mass,
+      enabledCondition: (res: Resources['crustacean']) => res.food >= 50 + res.mass + 5,
     },
     // {
     //   name: 'Smarten up',
