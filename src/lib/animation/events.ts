@@ -4,9 +4,9 @@ export type ResourceDelta = { resource: string; amount: number }
 
 export type AnimationEvent =
   // gameplay — happens mid-run
-  | { kind: 'gameplay'; type: 'actionComplete'; actionId: string; deltas: ResourceDelta[] }
+  | { kind: 'gameplay'; type: 'actionComplete'; actionName: string; deltas: ResourceDelta[] }
   | { kind: 'gameplay'; type: 'goalMet'; goalId: string; label: string }
-  | { kind: 'gameplay'; type: 'actionUnlocked'; actionId: string }
+  | { kind: 'gameplay'; type: 'actionUnlocked'; actionName: string }
   | { kind: 'gameplay'; type: 'synergyApplied'; resource: string; amount: number }
   // stateChange — the run/game changes phase
   | { kind: 'stateChange'; type: 'runStart'; level: LevelName; generation: number }

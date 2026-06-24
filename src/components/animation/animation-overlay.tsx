@@ -81,7 +81,7 @@ function handleEvent(
 ): void {
   switch (event.type) {
     case 'actionComplete': {
-      const rect = rectFor(`action:${event.actionId}`)
+      const rect = rectFor(`action:${event.actionName}`)
       if (!rect) return
       let row = 0
       for (const d of event.deltas) {
@@ -111,7 +111,7 @@ function handleEvent(
       toast.success(event.label)
       return
     case 'actionUnlocked': {
-      const rect = rectFor(`action:${event.actionId}`)
+      const rect = rectFor(`action:${event.actionName}`)
       if (rect) addRing({ x: rect.left, y: rect.top, w: rect.width, h: rect.height })
       return
     }

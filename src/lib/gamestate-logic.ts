@@ -117,7 +117,7 @@ function handleGoalCompletion() {
 
     for (const a of Object.values(Game.currentLevel.actions)) {
       if (a.displayed && !displayedBefore.has(a.name)) {
-        emit({ kind: 'gameplay', type: 'actionUnlocked', actionId: a.name })
+        emit({ kind: 'gameplay', type: 'actionUnlocked', actionName: a.name })
       }
     }
 
@@ -159,7 +159,7 @@ function completeAction(action: Action) {
   emit({
     kind: 'gameplay',
     type: 'actionComplete',
-    actionId: action.name,
+    actionName: action.name,
     deltas: resourceDeltas(before, Game.currentLevel.resources as unknown as Record<string, number>),
   })
 
