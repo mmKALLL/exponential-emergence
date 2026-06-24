@@ -92,9 +92,35 @@ function handleGoalCompletion() {
   const currentGoal = Game.currentGoal
 
   if (currentAmount !== null && currentAmount >= currentGoal.requiredAmount) {
+    const displayedBefore = new Set(
+      Object.values(Game.currentLevel.actions)
+        .filter((a) => a.displayed)
+        .map((a) => a.name)
+    )
+    const levelsBefore = new Set(Game.unlockedLevels)
+    const levelBefore = gs.currentLevel
+
     currentGoal.onComplete(gs)
     invalidateActionCardCache()
     gs.levels[gs.currentLevel].goals[Game.currentGoalIdx].completed = true
+
+    emit({
+      kind: 'gameplay',
+      type: 'goalMet',
+      goalId: `${gs.currentLevel}:${currentGoal.resourceName}:${currentGoal.requiredAmount}`,
+      label: `Goal reached: ${currentGoal.requiredAmount} ${currentGoal.resourceName}`,
+    })
+
+    for (const a of Object.values(Game.currentLevel.actions)) {
+      if (a.displayed && !displayedBefore.has(a.name)) {
+        emit({ kind: 'gameplay', type: 'actionUnlocked', actionId: a.name })
+      }
+    }
+
+    const newLevels = Game.unlockedLevels.filter((l) => !levelsBefore.has(l))
+    if (newLevels.length > 0) {
+      emit({ kind: 'stateChange', type: 'levelUp', from: levelBefore, to: newLevels[newLevels.length - 1] })
+    }
   }
 }
 

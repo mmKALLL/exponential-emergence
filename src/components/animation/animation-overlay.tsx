@@ -13,9 +13,12 @@ import { FloatingNumber, type Floater } from './floating-number'
 let nextId = 0
 const MAX_FLOATERS = 40
 
+type Ring = { id: number; x: number; y: number; w: number; h: number }
+
 export function AnimationOverlay(): JSX.Element | null {
   const [intensity, setIntensity] = useState(getConfig().animation.intensity)
   const [floaters, setFloaters] = useState<Floater[]>([])
+  const [rings, setRings] = useState<Ring[]>([])
 
   useEffect(() => subscribeConfig(() => setIntensity(getConfig().animation.intensity)), [])
 
@@ -26,10 +29,12 @@ export function AnimationOverlay(): JSX.Element | null {
         const next = [...prev, { ...f, id: nextId++ }]
         return next.length > MAX_FLOATERS ? next.slice(next.length - MAX_FLOATERS) : next
       })
-    return subscribe((event) => handleEvent(event, addFloater))
+    const addRing = (r: Omit<Ring, 'id'>) => setRings((prev) => [...prev.slice(-10), { ...r, id: nextId++ }])
+    return subscribe((event) => handleEvent(event, addFloater, addRing))
   }, [intensity])
 
   const removeFloater = useCallback((id: number) => setFloaters((prev) => prev.filter((f) => f.id !== id)), [])
+  const removeRing = useCallback((id: number) => setRings((prev) => prev.filter((r) => r.id !== id)), [])
 
   if (intensity <= 0) return null
 
@@ -48,6 +53,14 @@ export function AnimationOverlay(): JSX.Element | null {
       {floaters.map((f) => (
         <FloatingNumber key={f.id} floater={f} onDone={removeFloater} />
       ))}
+      {rings.map((r) => (
+        <div
+          key={r.id}
+          className="animate-unlock-ring absolute rounded-xl"
+          style={{ left: r.x, top: r.y, width: r.w, height: r.h }}
+          onAnimationEnd={() => removeRing(r.id)}
+        />
+      ))}
       <RunEndTelegraph />
     </div>,
     document.body,
@@ -61,7 +74,11 @@ function RunEndTelegraph(): JSX.Element | null {
   return <div className="animate-pulse absolute inset-0 ring-4 ring-inset ring-red-500/30" />
 }
 
-function handleEvent(event: AnimationEvent, addFloater: (f: Omit<Floater, 'id'>) => void): void {
+function handleEvent(
+  event: AnimationEvent,
+  addFloater: (f: Omit<Floater, 'id'>) => void,
+  addRing: (r: Omit<Ring, 'id'>) => void
+): void {
   switch (event.type) {
     case 'actionComplete': {
       const rect = rectFor(`action:${event.actionId}`)
@@ -93,9 +110,11 @@ function handleEvent(event: AnimationEvent, addFloater: (f: Omit<Floater, 'id'>)
     case 'goalMet':
       toast.success(event.label)
       return
-    case 'actionUnlocked':
-      // Glow ring added in Task 8.
+    case 'actionUnlocked': {
+      const rect = rectFor(`action:${event.actionId}`)
+      if (rect) addRing({ x: rect.left, y: rect.top, w: rect.width, h: rect.height })
       return
+    }
     case 'levelUp':
       toast.success(`Evolved: ${event.from} → ${event.to}!`)
       return
