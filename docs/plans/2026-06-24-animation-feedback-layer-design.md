@@ -1,7 +1,7 @@
 # Animation / Visual-Feedback Layer — Design
 
 **Date:** 2026-06-24
-**Status:** Approved (brainstorming complete, ready for implementation plan)
+**Status:** Implemented (2026-06-25) — see `2026-06-24-animation-feedback-layer.md` for the executed plan
 **Scope:** Add a visual-feedback ("juice") layer so the game stops feeling like "text and numbers." Visual-only this pass, architected so audio can attach later with no rework.
 
 ---
