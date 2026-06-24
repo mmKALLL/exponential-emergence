@@ -1,3 +1,5 @@
+import { emit } from './animation/animation-bus'
+import type { ResourceDelta } from './animation/events'
 import { synergyDefinitions } from './data/synergy-definitions'
 import { initialGameState } from './gamestate-utils'
 import { load, save } from './saving'
@@ -110,10 +112,27 @@ export function canApplyAction(action: Action) {
   return action.enabledCondition(Game.currentLevel.resources)
 }
 
+function resourceDeltas(before: Record<string, number>, after: Record<string, number>): ResourceDelta[] {
+  const deltas: ResourceDelta[] = []
+  for (const key in after) {
+    const amount = (after[key] ?? 0) - (before[key] ?? 0)
+    if (amount !== 0) deltas.push({ resource: key, amount })
+  }
+  return deltas
+}
+
 function completeAction(action: Action) {
   if (!canApplyAction(action)) return
 
+  const before = { ...Game.currentLevel.resources } as Record<string, number>
   action.effect(Game.currentLevel.resources)
+  emit({
+    kind: 'gameplay',
+    type: 'actionComplete',
+    actionId: action.name,
+    deltas: resourceDeltas(before, Game.currentLevel.resources as unknown as Record<string, number>),
+  })
+
   action.progress = 0
   action.currentValue += 1
   action.currentSpeed = Math.min(action.currentSpeed + 0.2, 4)

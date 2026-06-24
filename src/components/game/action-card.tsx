@@ -7,6 +7,7 @@ import { ActionMiniChart } from './action-mini-chart'
 import { useUpdate } from '@/hooks/use-update'
 import { canApplyAction, Game } from '@/lib/gamestate-logic'
 import { useForceRefresh } from '@/hooks/use-force-refresh'
+import { useAnchor } from '@/components/animation/use-anchor'
 
 export function ActionCard({ actionName, index }: { actionName: string; index: number }): JSX.Element {
   // The reason we do this so much is due to performance reasons.
@@ -33,6 +34,8 @@ export function ActionCard({ actionName, index }: { actionName: string; index: n
   const bestValueUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.bestValue)
   const canToggle = useUpdate(() => canApplyAction(Game.getActionCard(actionName)))
 
+  const setAnchor = useAnchor(`action:${actionName}`)
+
   // Force refresh cards every second so the charts update for inactive actions
   useForceRefresh(1500)
 
@@ -41,7 +44,7 @@ export function ActionCard({ actionName, index }: { actionName: string; index: n
   }, [index, actionName])
 
   return (
-    <Card className="flex flex-col items-center justify-center p-4 pb-2 gap-4 w-52">
+    <Card ref={setAnchor} className="flex flex-col items-center justify-center p-4 pb-2 gap-4 w-52">
       <Progress value={(progress / maxActionTime) * 100} />
       <div className={cn('text-xs flex justify-center flex-wrap gap-2', description && '-mt-2')}>
         {takes?.map((t) => (
