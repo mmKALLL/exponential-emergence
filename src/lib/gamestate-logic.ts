@@ -37,7 +37,8 @@ function computeActionCards() {
 }
 
 function handleGameOver() {
-  gs.currentScreen = gs.triggerVictoryScreen ? 'victory' : 'rebirth'
+  const isVictory = gs.triggerVictoryScreen
+  gs.currentScreen = isVictory ? 'victory' : 'rebirth'
   gs.triggerVictoryScreen = false
   hotkeyMapping = {}
 
@@ -57,6 +58,9 @@ function handleGameOver() {
   }
 
   updateResourceRecords()
+
+  emit({ kind: 'stateChange', type: 'runEnd', reason: isVictory ? 'victory' : 'lifespan' })
+  if (isVictory) emit({ kind: 'stateChange', type: 'victory' })
 }
 
 function updateResourceRecords() {
@@ -372,6 +376,7 @@ export const Game = {
     invalidateActionCardCache()
 
     // Apply synergies for the new level
+    const beforeSynergy = { ...Game.currentLevel.resources } as Record<string, number>
     synergyDefinitions
       .filter((synergy) => synergy.affectedLevel === newLevelName)
       .forEach((synergy) => {
@@ -380,6 +385,17 @@ export const Game = {
           gs.levels[synergy.basedOn.level].resourceRecords[synergy.basedOn.resourceName as keyof Resources[LevelName]] || 0
         )
       })
+
+    emit({ kind: 'stateChange', type: 'runStart', level: newLevelName, generation: gs.generation })
+
+    // Defer carryover floaters one paint so the new screen's resource rows are mounted/anchored.
+    const afterSynergy = { ...Game.currentLevel.resources } as Record<string, number>
+    setTimeout(() => {
+      for (const key in afterSynergy) {
+        const amount = (afterSynergy[key] ?? 0) - (beforeSynergy[key] ?? 0)
+        if (amount > 0) emit({ kind: 'gameplay', type: 'synergyApplied', resource: key, amount })
+      }
+    }, 80)
   },
 
   toggleAction(action: Action) {
