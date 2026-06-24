@@ -1,7 +1,20 @@
 import type { JSX } from 'react'
+import { useAnchor } from '@/components/animation/use-anchor'
 import { useUpdate } from '@/hooks/use-update'
+import { useValuePulse } from '@/hooks/use-value-pulse'
 import { Game } from '@/lib/gamestate-logic'
 import { assertNever, capitalize, formatNumber } from '@/lib/utils'
+
+function ResourceRow({ name, amount }: { name: string; amount: number }): JSX.Element {
+  const setAnchor = useAnchor(`res:${name}`)
+  const pulse = useValuePulse(amount)
+  return (
+    <div ref={setAnchor} className="flex flex-row justify-between gap-8 w-full">
+      <span>{name === 'health' ? 'Health (HP)' : capitalize(name)}:</span>
+      <span className={pulse}>{formatNumber(amount)}</span>
+    </div>
+  )
+}
 
 export function ResourceDisplay(): JSX.Element {
   const resources = useUpdate(() => Game.resources)
@@ -13,9 +26,7 @@ export function ResourceDisplay(): JSX.Element {
         <h2 className="text-lg font-bold mb-2">Resources</h2>
         <div className="flex flex-col gap-2 w-full px-4">
           {resources.map(({ name, amount }) => (
-            <div key={name} className="flex flex-row justify-between gap-8 w-full">
-              <span>{name === 'health' ? 'Health (HP)' : capitalize(name)}:</span> <span>{formatNumber(amount)}</span>
-            </div>
+            <ResourceRow key={name} name={name} amount={amount} />
           ))}
         </div>
       </div>
