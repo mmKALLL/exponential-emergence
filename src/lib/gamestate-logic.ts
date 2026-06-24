@@ -1,4 +1,4 @@
-import { emit } from './animation/animation-bus'
+import { animationBus, emit } from './animation/animation-bus'
 import type { ResourceDelta } from './animation/events'
 import { synergyDefinitions } from './data/synergy-definitions'
 import { initialGameState } from './gamestate-utils'
@@ -408,9 +408,13 @@ export const Game = {
       return
     }
 
+    const wasActive = gs.currentActionName !== null
     gs.currentActionName = gs.currentActionName !== action.name ? action.name : null
     // Invalidate cache when action state changes
     invalidateActionCardCache()
+
+    if (gs.currentActionName === null) emit({ kind: 'stateChange', type: 'pause' })
+    else if (!wasActive) emit({ kind: 'stateChange', type: 'resume' })
   },
 
   addHotkey(actionName: string, index: number) {
@@ -458,12 +462,13 @@ export const Game = {
 
   start: () => {
     const loadedSave = load()
-    console.log('Loaded save:', loadedSave)
     if (loadedSave) {
+      animationBus.enabled = false
       for (const stateKey in loadedSave) {
         // @ts-expect-error TypeScript doesn't know that stateKey is a key of GameState
         gs[stateKey] = loadedSave[stateKey]
       }
+      animationBus.enabled = true
     }
     setInterval(() => {
       Game.gameTick()
