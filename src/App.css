@@ -139,3 +139,57 @@
     background-position: 0% 50%;
   }
 }
+
+/* --- Animation feedback layer --- */
+/* Effect prominence is driven by --fx-intensity, set on the overlay root. */
+@keyframes float-up {
+  0% {
+    opacity: var(--fx-opacity, 1);
+    transform: translate(-50%, 0) scale(var(--fx-scale, 1));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, calc(-1 * var(--fx-distance, 48px))) scale(var(--fx-scale, 1));
+  }
+}
+.animate-float-up {
+  animation: float-up 1.4s ease-out forwards;
+}
+
+@keyframes pulse-gain {
+  0% {
+    color: #86efac;
+  }
+  100% {
+    color: inherit;
+  }
+}
+.pulse-gain {
+  animation: pulse-gain 0.45s ease-out;
+}
+
+@keyframes pulse-cost {
+  0% {
+    color: #fca5a5;
+  }
+  100% {
+    color: inherit;
+  }
+}
+.pulse-cost {
+  animation: pulse-cost 0.45s ease-out;
+}
+
+@keyframes unlock-ring {
+  0% {
+    opacity: var(--fx-opacity, 1);
+    box-shadow: 0 0 0 0 rgba(134, 239, 172, 0.7);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: 0 0 0 12px rgba(134, 239, 172, 0);
+  }
+}
+.animate-unlock-ring {
+  animation: unlock-ring 0.9s ease-out forwards;
+}
