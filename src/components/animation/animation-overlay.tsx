@@ -8,7 +8,7 @@ import { Game } from '@/lib/gamestate-logic'
 import { formatNumber } from '@/lib/utils'
 import { useUpdate } from '@/hooks/use-update'
 import { rectFor } from './anchor-registry'
-import { FloatingNumber, type Floater } from './floating-number'
+import { FloatingNumber, type Floater, type FloaterPart } from './floating-number'
 
 let nextId = 0
 const MAX_FLOATERS = 40
@@ -83,21 +83,15 @@ function handleEvent(
     case 'actionComplete': {
       const rect = rectFor(`action:${event.actionName}`)
       if (!rect) return
-      // Gains float up the left side of the card, losses up the right side.
-      const gainX = rect.left + rect.width * 0.3
-      const lossX = rect.left + rect.width * 0.7
-      let gainRow = 0
-      let lossRow = 0
-      for (const d of event.deltas) {
-        if (d.amount === 0) continue
-        const isGain = d.amount > 0
-        addFloater({
-          x: isGain ? gainX : lossX,
-          y: rect.top + (isGain ? gainRow++ : lossRow++) * 18,
-          text: `${isGain ? '+' : ''}${formatNumber(d.amount)} ${d.resource}`,
-          tone: isGain ? 'gain' : 'cost',
-        })
-      }
+      // One centered line per action: gains (green) first, then losses (red).
+      const nonZero = event.deltas.filter((d) => d.amount !== 0)
+      const ordered = [...nonZero.filter((d) => d.amount > 0), ...nonZero.filter((d) => d.amount < 0)]
+      const parts: FloaterPart[] = ordered.map((d) => ({
+        text: `${d.amount > 0 ? '+' : ''}${formatNumber(d.amount)} ${d.resource}`,
+        tone: d.amount > 0 ? 'gain' : 'cost',
+      }))
+      if (parts.length === 0) return
+      addFloater({ x: rect.left + rect.width / 2, y: rect.top - 8, parts })
       return
     }
     case 'synergyApplied': {
@@ -106,8 +100,7 @@ function handleEvent(
       addFloater({
         x: rect.left + rect.width / 2,
         y: rect.top,
-        text: `+${formatNumber(event.amount)} (carried)`,
-        tone: 'carry',
+        parts: [{ text: `+${formatNumber(event.amount)} (carried)`, tone: 'carry' }],
       })
       return
     }
