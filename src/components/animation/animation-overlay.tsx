@@ -83,17 +83,17 @@ function handleEvent(
     case 'actionComplete': {
       const rect = rectFor(`action:${event.actionName}`)
       if (!rect) return
-      let row = 0
-      for (const d of event.deltas) {
-        if (d.amount === 0) continue
+      const centerX = rect.left + rect.width / 2
+      const centerY = rect.top + rect.height / 2
+      const deltas = event.deltas.filter((d) => d.amount !== 0)
+      deltas.forEach((d, i) => {
         addFloater({
-          x: rect.left + rect.width / 2,
-          y: rect.top + row * 18,
+          x: centerX,
+          y: centerY + (i - (deltas.length - 1) / 2) * 18,
           text: `${d.amount > 0 ? '+' : ''}${formatNumber(d.amount)} ${d.resource}`,
           tone: d.amount > 0 ? 'gain' : 'cost',
         })
-        row++
-      }
+      })
       return
     }
     case 'synergyApplied': {
@@ -101,7 +101,7 @@ function handleEvent(
       if (!rect) return
       addFloater({
         x: rect.left + rect.width / 2,
-        y: rect.top,
+        y: rect.top + rect.height / 2,
         text: `+${formatNumber(event.amount)} (carried)`,
         tone: 'carry',
       })
