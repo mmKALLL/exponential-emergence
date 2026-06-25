@@ -83,16 +83,21 @@ function handleEvent(
     case 'actionComplete': {
       const rect = rectFor(`action:${event.actionName}`)
       if (!rect) return
-      const centerX = rect.left + rect.width / 2
-      const deltas = event.deltas.filter((d) => d.amount !== 0)
-      deltas.forEach((d, i) => {
+      // Gains float up the left side of the card, losses up the right side.
+      const gainX = rect.left + rect.width * 0.3
+      const lossX = rect.left + rect.width * 0.7
+      let gainRow = 0
+      let lossRow = 0
+      for (const d of event.deltas) {
+        if (d.amount === 0) continue
+        const isGain = d.amount > 0
         addFloater({
-          x: centerX,
-          y: rect.top + i * 18,
-          text: `${d.amount > 0 ? '+' : ''}${formatNumber(d.amount)} ${d.resource}`,
-          tone: d.amount > 0 ? 'gain' : 'cost',
+          x: isGain ? gainX : lossX,
+          y: rect.top + (isGain ? gainRow++ : lossRow++) * 18,
+          text: `${isGain ? '+' : ''}${formatNumber(d.amount)} ${d.resource}`,
+          tone: isGain ? 'gain' : 'cost',
         })
-      })
+      }
       return
     }
     case 'synergyApplied': {

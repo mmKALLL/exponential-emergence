@@ -2,16 +2,31 @@ import type { JSX } from 'react'
 import { useAnchor } from '@/components/animation/use-anchor'
 import { useUpdate } from '@/hooks/use-update'
 import { useValuePulse } from '@/hooks/use-value-pulse'
+import { useResourceDelta } from '@/hooks/use-resource-delta'
 import { Game } from '@/lib/gamestate-logic'
 import { assertNever, capitalize, formatNumber } from '@/lib/utils'
 
 function ResourceRow({ name, amount }: { name: string; amount: number }): JSX.Element {
   const setAnchor = useAnchor(`res:${name}`)
   const pulse = useValuePulse(amount)
+  const delta = useResourceDelta(name)
   return (
     <div ref={setAnchor} className="flex flex-row justify-between gap-8 w-full">
       <span>{name === 'health' ? 'Health (HP)' : capitalize(name)}:</span>
-      <span className={pulse}>{formatNumber(amount)}</span>
+      <span className="relative">
+        <span className={pulse}>{formatNumber(amount)}</span>
+        {delta && (
+          <span
+            key={delta.nonce}
+            className={`animate-delta-fade pointer-events-none absolute left-full top-1/2 ml-1 whitespace-nowrap text-xs font-semibold ${
+              delta.amount > 0 ? 'text-green-400' : 'text-red-400'
+            }`}
+          >
+            {delta.amount > 0 ? '+' : ''}
+            {formatNumber(delta.amount)}
+          </span>
+        )}
+      </span>
     </div>
   )
 }

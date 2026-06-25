@@ -156,6 +156,21 @@
   animation: float-up 1.4s ease-out forwards;
 }
 
+/* Small inline gain/loss badge shown right of a resource amount. */
+@keyframes delta-fade {
+  0% {
+    opacity: 1;
+    transform: translateY(-50%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(calc(-50% - 8px));
+  }
+}
+.animate-delta-fade {
+  animation: delta-fade 1s ease-out forwards;
+}
+
 @keyframes pulse-gain {
   0% {
     color: #86efac;
