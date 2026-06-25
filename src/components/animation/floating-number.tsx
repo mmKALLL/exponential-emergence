@@ -23,7 +23,7 @@ export function FloatingNumber({ floater, onDone }: { floater: Floater; onDone: 
 
   return (
     <div
-      className={`animate-float-up absolute -translate-x-1/2 whitespace-nowrap text-sm font-semibold drop-shadow ${toneClass[floater.tone]}`}
+      className={`animate-float-up absolute whitespace-nowrap text-center text-sm font-semibold drop-shadow ${toneClass[floater.tone]}`}
       style={{ left: floater.x, top: floater.y }}
       onAnimationEnd={() => onDone(floater.id)}
     >

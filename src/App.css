@@ -145,11 +145,11 @@
 @keyframes float-up {
   0% {
     opacity: var(--fx-opacity, 1);
-    transform: translate(-50%, -50%) scale(var(--fx-scale, 1));
+    transform: translate(-50%, 0) scale(var(--fx-scale, 1));
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, calc(-50% - var(--fx-distance, 48px))) scale(var(--fx-scale, 1));
+    transform: translate(-50%, calc(-1 * var(--fx-distance, 48px))) scale(var(--fx-scale, 1));
   }
 }
 .animate-float-up {

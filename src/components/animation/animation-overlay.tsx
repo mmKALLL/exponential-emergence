@@ -84,12 +84,11 @@ function handleEvent(
       const rect = rectFor(`action:${event.actionName}`)
       if (!rect) return
       const centerX = rect.left + rect.width / 2
-      const centerY = rect.top + rect.height / 2
       const deltas = event.deltas.filter((d) => d.amount !== 0)
       deltas.forEach((d, i) => {
         addFloater({
           x: centerX,
-          y: centerY + (i - (deltas.length - 1) / 2) * 18,
+          y: rect.top + i * 18,
           text: `${d.amount > 0 ? '+' : ''}${formatNumber(d.amount)} ${d.resource}`,
           tone: d.amount > 0 ? 'gain' : 'cost',
         })
@@ -101,7 +100,7 @@ function handleEvent(
       if (!rect) return
       addFloater({
         x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
+        y: rect.top,
         text: `+${formatNumber(event.amount)} (carried)`,
         tone: 'carry',
       })
