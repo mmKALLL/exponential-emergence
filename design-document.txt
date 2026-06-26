@@ -1,0 +1,58 @@
+https://itch.io/jam/gmtk-2025
+
+https://findyourjam.team/gmtk/6543802059401253581
+https://findyourjam.team/gmtk/2541555266417487127
+
+
+Latest level hiearchy and definitions live in types.ts and level-definitions.ts
+
+export type LevelName = 'amoeba' | 'multicellular' | 'algae' | 'insect' | 'crustacean'
+// | 'mammal'
+// | 'human'
+// | 'tribe'
+// | 'town'
+// | 'clan'
+// | 'nation'
+// | 'planet'
+// | 'general intelligence'
+// | 'self improvement'
+// | 'human subjugation'
+// | 'solar system'
+// | 'galaxy'
+// | 'universe'
+// | 'reality'
+
+
+
+Loop idle with heavy focus on metaprogression, speedrunning, and automatization at different levels.
+
+You are a single cell trying to survive. Options: find and eat plankton (?), generate energy, develop defensive systems. The number of times you do these makes them faster. There's a timer that tells your lifespan. After a long enough lifespan you unlock a new option: use energy to divide. This unlocks the multicellular stage.
+
+In the multicellular stage, you try to build an organism that can survive both external and internal threats. Your ability to grow is limited by the division and lifespan of your cells, which you can go back and improve upon in the single cell level.
+
+Success in the multicellular stage unlocks an evolutionary stage, where you do the same thing trying to evolve into various plants, then animals, finally reaching ability to go on ground and become a human. Again bottlenecks are tied to the best scores in the previous stage.
+
+As a human, you try to live past age five, battling disease.
+Then past age 20, getting good enough scores in school, which depends on your ability to stay healthy.
+Then past age 40, trying to get a salary, find a partner and have a child. Which depends on education and health.
+
+However, if you're too good at multiplying cells you also need defense against cancer. In your lives, you gain the ability to specialize as a researcher in various fields, improving sanitation or economy etc irrespective of previous lives.
+
+After getting some babies to grow up, you get to build a clan. As hunter-foragers you have to balance getting food with other needs.
+
+After your clan stabilizes and lives through five generations successfully, you get to use it's results to build a nation. Waging war is good for the nation, but causes a new threat model for longevity of your future lives (since you don't know where you end up in). Fixing climate change is good for everybody, but puts a lot of resources. Raising taxes gets resources, but puts burdens on happiness. Spending money on education or healthcare helps people if that's your weak area.
+
+The ultimate goal: multiplanetary species. After finishing space travel tech, you get to colonize new planets, "rebirthing" while taking pieces of what worked. This puts you back into the clan state, but with new threats from a hostile environment.
+
+Or go for AI safety somehow? Although seems harder.
+
+
+
+
+I've had this idea for an incremental with emergence/evolution as the main themes. In short: the player starts as an amoeba and does cell-like things for one minute. Then they reincarnate as a multi-cellular organism and do multi-cellular things for a minute. However! The performance of their individual cells is based on the player's scores from the single-cell stage.
+
+This can then be extended upward, e.g. playing as an animal, with body parts depending on the player's focus area in the multi-cellular stage. Or as a group of animals, where the performance depends on the individual stage. And so on. Or it could be extended sideways, by adding more options and depth into each individual stage.
+
+It could be a pseudo-roguelite, if the player only gets one chance per stage. Or an idle game, if they can redo stages to optimize the overall performance. Either way, the player can't optimize for _everything_ - they need to decide what areas to focus or give up on as they climb the emergence ladder.
+
+I'm thinking of finally making it in this jam, possibly in the style of A Dark Room, Terraformental, Antimatter Dimensions, etc. Even if you don't want to team up, I'd be happy if we could give feedback to each other!
