@@ -62,3 +62,23 @@ export const clearSave = (): void => {
   localStorage.removeItem('gameState')
   window.location.reload() // Reload to reset the game state
 }
+
+// Human-readable JSON save string for sharing / testing speedrun strats.
+export const exportSave = (gameState: GameState): string => {
+  return JSON.stringify(fromGameStateToSave(gameState), null, 2)
+}
+
+// Validates and installs a pasted JSON save string into localStorage.
+// Returns true on success (caller should reload), false if the string is invalid.
+export const importSave = (text: string): boolean => {
+  try {
+    const parsed = JSON.parse(text)
+    if (!parsed || typeof parsed !== 'object' || !parsed.levels || !parsed.currentLevel) {
+      return false
+    }
+    localStorage.setItem('gameState', JSON.stringify(parsed))
+    return true
+  } catch {
+    return false
+  }
+}

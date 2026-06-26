@@ -1,9 +1,11 @@
 import { Button } from '@/components/ui/button'
 import { useUpdate } from '@/hooks/use-update'
 import { Game } from '@/lib/gamestate-logic'
+import { exportSave, importSave } from '@/lib/saving'
 import type { LevelName } from '@/lib/types'
 import { levelLabelPrefixed, typedObjectEntries } from '@/lib/utils'
 import type { JSX } from 'react'
+import { toast } from 'sonner'
 
 export function RebirthScreen(): JSX.Element {
   const currentLevel = useUpdate(() => Game.state.currentLevel)
@@ -17,6 +19,27 @@ export function RebirthScreen(): JSX.Element {
     algae: 'Reach 1000 cells to unlock',
     insect: 'Reach 1 meter length to unlock',
     crustacean: 'Reach 10k eggs to unlock',
+  }
+
+  const handleExport = async () => {
+    const code = exportSave(Game.state)
+    try {
+      await navigator.clipboard.writeText(code)
+      toast.success('Save copied to clipboard')
+    } catch {
+      // Clipboard unavailable (e.g. insecure context) — fall back to a manual-copy prompt
+      window.prompt('Copy your save string:', code)
+    }
+  }
+
+  const handleImport = () => {
+    const code = window.prompt('Paste a save string to import:')
+    if (!code) return
+    if (importSave(code)) {
+      window.location.reload()
+    } else {
+      toast.error('Invalid save string')
+    }
   }
 
   return (
@@ -38,6 +61,14 @@ export function RebirthScreen(): JSX.Element {
           </Button>
         )
       )}
+      <div className="mt-4 flex gap-4">
+        <Button variant="outline" className="select-none" onClick={handleExport}>
+          Export save
+        </Button>
+        <Button variant="outline" className="select-none" onClick={handleImport}>
+          Import save
+        </Button>
+      </div>
       {helpTextUnlocked && (
         <div className="text-lg mb-8 mt-7">
           You can now get synergy bonuses based on previous stages. <br />
