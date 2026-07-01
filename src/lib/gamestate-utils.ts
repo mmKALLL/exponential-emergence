@@ -4,6 +4,7 @@ import { mapObject } from './utils'
 
 const baseInitialGameState: GameState = {
   generation: 1,
+  algaePlays: 0,
   currentScreen: 'main-menu',
   currentLevel: 'amoeba',
   lifespanLeft: 60,
@@ -24,6 +25,7 @@ const baseInitialGameState: GameState = {
 // @ts-expect-error
 const debugInitialGameState: GameState = {
   ...baseInitialGameState,
+  algaePlays: 0,
   currentScreen: 'rebirth',
   currentLevel: 'multicellular',
   unlockedDisplaySections: {

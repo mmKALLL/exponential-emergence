@@ -32,7 +32,7 @@ function ResourceRow({ name, amount }: { name: string; amount: number }): JSX.El
 }
 
 export function ResourceDisplay(): JSX.Element {
-  const resources = useUpdate(() => Game.resources)
+  const resources = useUpdate(() => Game.orderedResources)
   const currentLevelName = useUpdate(() => Game.currentLevelName)
 
   return (

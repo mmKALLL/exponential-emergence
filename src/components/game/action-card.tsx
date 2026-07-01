@@ -33,6 +33,7 @@ export function ActionCard({ actionName, index }: { actionName: string; index: n
   const speedsUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.speeds)
   const bestValueUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.bestValue)
   const canToggle = useUpdate(() => canApplyAction(Game.getActionCard(actionName)))
+  const isActive = useUpdate(() => Game.state.currentActionName === actionName)
 
   const setAnchor = useAnchor(`action:${actionName}`)
 
@@ -44,7 +45,14 @@ export function ActionCard({ actionName, index }: { actionName: string; index: n
   }, [index, actionName])
 
   return (
-    <Card ref={setAnchor} className="flex flex-col items-center justify-center p-4 pb-2 gap-4 w-52">
+    <Card
+      ref={setAnchor}
+      className={cn(
+        'flex flex-col items-center justify-center p-4 pb-2 gap-4 w-52',
+        // Calm "running" highlight on the active action (not a green call-to-action).
+        isActive && 'ring-2 ring-sky-400/70 shadow-[0_0_10px_rgba(56,189,248,0.35)]'
+      )}
+    >
       <Progress value={(progress / maxActionTime) * 100} />
       <div className={cn('text-xs flex justify-center flex-wrap gap-2', description && '-mt-2')}>
         {takes?.map((t) => (

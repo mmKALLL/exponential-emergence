@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { useUpdate } from '@/hooks/use-update'
 import { Game } from '@/lib/gamestate-logic'
 import { exportSave, importSave } from '@/lib/saving'
+import { shareGame } from '@/lib/share'
 import type { LevelName } from '@/lib/types'
 import { levelLabelPrefixed, typedObjectEntries } from '@/lib/utils'
 import type { JSX } from 'react'
@@ -9,6 +10,7 @@ import { toast } from 'sonner'
 
 export function RebirthScreen(): JSX.Element {
   const currentLevel = useUpdate(() => Game.state.currentLevel)
+  const algaePlays = useUpdate(() => Game.state.algaePlays)
   const unlockedLevels = useUpdate(() => Game.unlockedLevels)
   const helpTextUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.synergyHelpText)
   const additionalHelpTextUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.synergyHelpTextAddition)
@@ -68,6 +70,11 @@ export function RebirthScreen(): JSX.Element {
         <Button variant="outline" className="select-none" onClick={handleImport}>
           Import save
         </Button>
+        {algaePlays >= 3 && (
+          <Button variant="outline" className="select-none" onClick={() => shareGame()}>
+            Share with a friend
+          </Button>
+        )}
       </div>
       {helpTextUnlocked && (
         <div className="text-lg mb-8 mt-7">

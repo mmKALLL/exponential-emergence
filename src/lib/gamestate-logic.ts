@@ -6,6 +6,10 @@ import { load, save } from './saving'
 import { MAX_LIFESPAN, TICK_LENGTH, type Action, type LevelName, type Resources } from './types'
 import { maxTime, typedObjectEntries } from './utils'
 
+// Flip to true to trace input/loop activity in the console when chasing the
+// "actions do nothing on a fresh save" bug (Win10/Firefox). Behaviour-neutral.
+const DEBUG = false
+
 const gs = { ...initialGameState }
 let hotkeyMapping: Record<string, string> = {}
 
@@ -13,6 +17,7 @@ window.addEventListener('keydown', (event) => {
   if (gs.currentScreen !== 'in-game') return
 
   const actionName = hotkeyMapping[event.key]
+  if (DEBUG) console.debug('[ee] keydown', event.key, '-> action:', actionName ?? '(none)', 'screen:', gs.currentScreen)
   if (actionName) {
     Game.toggleAction(Game.getActionCard(actionName))
   }
@@ -175,6 +180,30 @@ function completeAction(action: Action) {
 
 let lastUpdate = Date.now()
 
+let cachedResourceOrder: { level: LevelName; order: string[] } | null = null
+
+// Order resources by the first action (in definition order) whose effect changes them.
+// Probes effects with large values so multiplicative/conditional effects register a change.
+function computeResourceOrder(levelName: LevelName): string[] {
+  const level = gs.levels[levelName]
+  const keys = Object.keys(level.initialResources)
+  const order: string[] = []
+  for (const actionName in level.actions) {
+    const probe = Object.fromEntries(keys.map((k) => [k, 1e6])) as Record<string, number>
+    const before = { ...probe }
+    try {
+      level.actions[actionName].effect(probe as unknown as Resources[LevelName])
+    } catch {
+      // ignore effects that don't probe cleanly
+    }
+    for (const k of keys) {
+      if (probe[k] !== before[k] && !order.includes(k)) order.push(k)
+    }
+  }
+  for (const k of keys) if (!order.includes(k)) order.push(k)
+  return order
+}
+
 export const Game = {
   get state() {
     return gs
@@ -196,6 +225,15 @@ export const Game = {
 
   get resources() {
     return Object.entries(Game.currentLevel.resources).map(([name, amount]) => ({ name, amount }))
+  },
+
+  get orderedResources() {
+    const level = gs.currentLevel
+    if (!cachedResourceOrder || cachedResourceOrder.level !== level) {
+      cachedResourceOrder = { level, order: computeResourceOrder(level) }
+    }
+    const order = cachedResourceOrder.order
+    return Game.resources.sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name))
   },
 
   // Synergies that affect the current level, group by basedOn.level
@@ -370,6 +408,7 @@ export const Game = {
     gs.timesExtendedLifespan = 0
     gs.currentActionName = null
     gs.generation += 1
+    if (newLevelName === 'algae') gs.algaePlays += 1
     gs.currentScreen = 'in-game'
 
     // Invalidate cache when level changes
@@ -399,6 +438,12 @@ export const Game = {
   },
 
   toggleAction(action: Action) {
+    if (DEBUG)
+      console.debug('[ee] toggleAction', action?.name, {
+        screen: gs.currentScreen,
+        canApply: action ? canApplyAction(action) : false,
+        current: gs.currentActionName,
+      })
     if (gs.currentScreen !== 'in-game') return
 
     gs.runStarted = true
@@ -470,6 +515,13 @@ export const Game = {
       }
       animationBus.enabled = true
     }
+    if (DEBUG)
+      console.debug('[ee] start', {
+        loadedSave: !!loadedSave,
+        screen: gs.currentScreen,
+        runStarted: gs.runStarted,
+        currentAction: gs.currentActionName,
+      })
     setInterval(() => {
       Game.gameTick()
     }, TICK_LENGTH * 1000) // Convert TICK_LENGTH to milliseconds

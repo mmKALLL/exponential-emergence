@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { useUpdate } from '@/hooks/use-update'
 import { Game } from '@/lib/gamestate-logic'
+import { shareGame } from '@/lib/share'
 import type { JSX } from 'react'
 
 export function VictoryScreen(): JSX.Element {
@@ -23,6 +24,9 @@ export function VictoryScreen(): JSX.Element {
       </div>
       <Button variant="outline" className="w-80 select-none" size="lg" onClick={() => Game.rebirth('crustacean')}>
         Continue playing
+      </Button>
+      <Button variant="outline" className="w-80 select-none" size="lg" onClick={() => shareGame()}>
+        Share with a friend
       </Button>
     </div>
   )

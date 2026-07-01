@@ -124,6 +124,7 @@ export type Level<T extends LevelName> = {
 
 export type GameState = {
   generation: number
+  algaePlays: number // number of times an algae (stage 3) life has been started
   currentScreen: 'main-menu' | 'in-game' | 'rebirth' | 'victory'
   currentLevel: LevelName
   currentActionName: string | null
