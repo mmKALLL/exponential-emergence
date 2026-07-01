@@ -1,7 +1,6 @@
 import { toast } from 'sonner'
 
-// TODO(user): set these to the real published game URL and final share copy.
-export const SHARE_URL = 'https://itch.io/' // <-- replace with the game's itch.io page
+export const SHARE_URL = 'https://studio-esagames.itch.io/exponential-emergence'
 const SHARE_TEXT = 'I clawed my way up the tree of life in Exponential Emergence — how far can you get?'
 
 // Uses the native Web Share sheet when available (great on mobile),
