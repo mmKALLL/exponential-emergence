@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #000; }
+  #vroot { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; overflow: hidden; }
+  #fit { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; transform-origin: center center; }
+  #viewport { position: absolute; inset: 0; overflow: hidden; background: #050506; border-radius: 4px; }
+  #world { position: absolute; inset: 0; transform-origin: 0 0; }
+  canvas { display: block; image-rendering: pixelated; }
+  .gcard { position: absolute; background: #161618; border: 1px solid #2a2a2e; border-radius: 16px; }
+  .ptrack { width: 100%; height: 12px; background: #3a3a3e; border-radius: 6px; overflow: hidden; }
+  .pfill { height: 100%; background: #f4f4f5; border-radius: 6px; transition: width .4s ease; }
+  .tank { position: relative; border-radius: 10px; overflow: hidden; }
+  .scan::after { content:''; position:absolute; inset:0; pointer-events:none; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.16) 0 1px, transparent 2px 4px); animation: scan 8s linear infinite; }
+  .flow-dot { position:absolute; width:5px; height:5px; border-radius:1px; left:1px; }
+  @keyframes scan { from{transform:translateY(-4px)} to{transform:translateY(4px)} }
+  @keyframes flowDown { 0%{transform:translateY(-8px);opacity:0} 20%{opacity:1} 80%{opacity:1} 100%{transform:translateY(40px);opacity:0} }
+  @keyframes flowUp { 0%{transform:translateY(8px);opacity:0} 20%{opacity:1} 80%{opacity:1} 100%{transform:translateY(-40px);opacity:0} }
+  @keyframes floatUp { 0%{transform:translateY(0) scale(.9);opacity:0} 18%{opacity:1} 100%{transform:translateY(-52px) scale(1.05);opacity:0} }
+  @keyframes popN { 0%{transform:scale(1)} 45%{transform:scale(1.4)} 100%{transform:scale(1)} }
+  /* controls */
+  #bar { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); width: 1100px; max-width: 94vw; display: flex; align-items: center; gap: 16px; color: #cfcfd4; font-family: 'Press Start 2P', monospace; font-size: 9px; z-index: 5; }
+  #play { cursor: pointer; background: #1c1c20; border: 1px solid #34343a; color: #e7e7ea; width: 40px; height: 32px; border-radius: 8px; font-size: 12px; }
+  #scrub { flex: 1; accent-color: #3b82f6; }
+</style>
+</helmet>
+
+<div id="vroot" ref="{{ rootRef }}" data-screen-label="00s">
+  <div id="fit">
+    <div id="viewport">
+      <div id="world">
+
+        <!-- COMPANION (docked left of the lifespan/level card) -->
+        <div id="compWrap" style="position:absolute; left:44px; top:236px; width:196px;">
+          <div style="font-family:'Press Start 2P'; font-size:8px; letter-spacing:1px; color:#5f6168; margin:0 0 10px 2px;">COMPANION</div>
+          <div style="display:flex; gap:10px;">
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; width:26px;">
+              <div style="font-family:'Press Start 2P'; font-size:6px; color:#fbbf24;">FOOD</div>
+              <div style="position:relative; width:7px; height:44px;">
+                <div class="flow-dot" style="background:#fbbf24; animation:flowDown 1.4s linear infinite;"></div>
+                <div class="flow-dot" style="background:#fbbf24; animation:flowDown 1.4s linear infinite; animation-delay:.7s;"></div>
+              </div>
+              <div style="color:#fbbf24; font-size:11px;">&darr;</div>
+            </div>
+            <div id="compHop" style="position:relative; flex:1;">
+              <div class="tank scan" style="position:relative; width:120px; height:120px; margin:0 auto; background:radial-gradient(circle at 50% 35%,#0e1726,#070708); box-shadow:inset 0 0 22px rgba(59,130,246,.18), inset 0 0 0 3px rgba(59,130,246,.12);">
+                <canvas id="compCanvas" style="position:absolute; inset:0; margin:auto; filter:drop-shadow(0 0 6px rgba(59,130,246,.6));"></canvas>
+                <div id="evoBloom" style="position:absolute; left:50%; top:50%; width:120px; height:120px; transform:translate(-50%,-50%) scale(0.2); border-radius:50%; background:radial-gradient(circle,rgba(34,211,238,.9),rgba(59,130,246,.35) 45%,transparent 70%); opacity:0; pointer-events:none;"></div>
+                <div id="evoRays" style="position:absolute; left:50%; top:50%; width:240px; height:240px; transform:translate(-50%,-50%); opacity:0; pointer-events:none; background:repeating-conic-gradient(from 0deg, rgba(147,197,253,.5) 0deg 6deg, transparent 6deg 18deg); -webkit-mask:radial-gradient(circle, #000 0%, transparent 62%); mask:radial-gradient(circle, #000 0%, transparent 62%);"></div>
+                <div id="evoParticles" style="position:absolute; left:50%; top:50%; pointer-events:none;"></div>
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; width:26px;">
+              <div style="color:#22d3ee; font-size:11px;">&uarr;</div>
+              <div style="position:relative; width:7px; height:44px;">
+                <div class="flow-dot" style="background:#22d3ee; animation:flowUp 1.4s linear infinite;"></div>
+                <div class="flow-dot" style="background:#22d3ee; animation:flowUp 1.4s linear infinite; animation-delay:.7s;"></div>
+              </div>
+              <div style="font-family:'Press Start 2P'; font-size:5px; color:#22d3ee;">ENERGY</div>
+            </div>
+          </div>
+          <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+            <div id="compLabel" style="font-size:12px; color:#cfcfd6;">Amoeba</div>
+            <div id="compState" style="font-size:10px; color:#6b6b72;">idle</div>
+          </div>
+        </div>
+
+        <!-- LEVEL INFO CARD -->
+        <div class="gcard" style="left:280px; top:60px; width:560px; padding:26px 32px;">
+          <div style="text-align:center; color:#e7e7ea; font-size:20px;">Generation <span id="genText">1</span> - <span id="levelName">Amoeba</span></div>
+          <div id="goalText" style="text-align:center; font-size:30px; font-weight:700; color:#fff; margin:16px 0 14px;">Next goal: 2/4 nutrients</div>
+          <div class="ptrack"><div id="goalFill" class="pfill" style="width:50%;"></div></div>
+          <div style="text-align:center; color:#d4d4d8; font-size:19px; margin:22px 0 12px;">Lifespan: <span id="lifeText">42.0</span>s</div>
+          <div class="ptrack"><div id="lifeFill" class="pfill" style="width:70%; transition:none;"></div></div>
+          <!-- regular goal ring + chip -->
+          <div id="goalRing" style="position:absolute; inset:-6px; border-radius:22px; border:2px solid #34d399; opacity:0; pointer-events:none;"></div>
+          <div id="goalChip" style="position:absolute; right:18px; top:-14px; background:#0c2a1c; border:1px solid #1f7a4d; color:#6ee7b7; font-size:13px; font-weight:600; padding:5px 12px; border-radius:20px; opacity:0;">Goal reached &check;</div>
+        </div>
+
+        <!-- ACTION CARD 1 -->
+        <div class="gcard" style="left:280px; top:306px; width:262px; padding:18px;">
+          <div class="ptrack"><div id="af1" class="pfill" style="width:30%; transition:none;"></div></div>
+          <div id="d1" style="text-align:center; font-size:13px; margin:14px 0; min-height:16px;"><span style="color:#86efac;">+1 food</span></div>
+          <div id="btn1" style="text-align:center; background:#1c1c20; border:1px solid #34343a; border-radius:9px; padding:11px; color:#f4f4f5; font-size:15px; font-weight:600;">Catch food (0.5)</div>
+          <canvas id="chart1" width="226" height="58" style="display:block; margin-top:16px; image-rendering:auto;"></canvas>
+        </div>
+
+        <!-- ACTION CARD 2 -->
+        <div class="gcard" id="card2" style="left:560px; top:306px; width:262px; padding:18px;">
+          <div class="ptrack"><div id="af2" class="pfill" style="width:55%; transition:none;"></div></div>
+          <div id="d2" style="text-align:center; font-size:13px; margin:14px 0; min-height:16px;"><span style="color:#fca5a5;">-1 food</span> <span style="color:#86efac;">+1 nutrient</span></div>
+          <div id="btn2" style="text-align:center; background:#1c1c20; border:1px solid #34343a; border-radius:9px; padding:11px; color:#f4f4f5; font-size:15px; font-weight:600;">Absorb food (1.8)</div>
+          <canvas id="chart2" width="226" height="58" style="display:block; margin-top:16px; image-rendering:auto;"></canvas>
+        </div>
+
+        <!-- RESOURCES PANEL -->
+        <div class="gcard" style="left:1240px; top:60px; width:316px; padding:26px 28px;">
+          <div style="font-size:22px; font-weight:700; color:#fff; margin-bottom:18px;">Resources</div>
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div data-row="food" style="position:relative; display:flex; justify-content:space-between; font-size:19px; color:#e7e7ea;"><span id="lblFood">Food:</span><span class="rval" data-res="food">3</span></div>
+            <div data-row="energy" style="position:relative; display:flex; justify-content:space-between; font-size:19px; color:#e7e7ea;"><span>Energy:</span><span class="rval" data-res="energy">0</span></div>
+            <div data-row="nutrients" style="position:relative; display:flex; justify-content:space-between; font-size:19px; color:#e7e7ea;"><span>Nutrients:</span><span class="rval" data-res="nutrients">2</span></div>
+            <div data-row="divisions" style="position:relative; display:flex; justify-content:space-between; font-size:19px; color:#e7e7ea;"><span id="lblDiv">Divisions:</span><span class="rval" data-res="divisions">0</span></div>
+          </div>
+        </div>
+
+        <!-- CURSOR -->
+        <div id="cursor" style="position:absolute; left:0; top:0; width:26px; height:26px; pointer-events:none; transform:translate(-50%,-50%);">
+          <div id="cursorDot" style="width:26px; height:26px; border-radius:50%; border:2px solid rgba(255,255,255,.85); box-shadow:0 0 8px rgba(255,255,255,.4);"></div>
+        </div>
+
+      </div>
+
+      <!-- SCREEN-FIXED OVERLAYS -->
+      <div id="evoVignette" style="position:absolute; inset:0; pointer-events:none; opacity:0; box-shadow: inset 0 0 220px 40px rgba(34,130,246,.45), inset 0 0 90px rgba(34,211,238,.35);"></div>
+      <div id="evoBanner" style="position:absolute; left:0; right:0; top:64px; text-align:center; opacity:0; pointer-events:none;">
+        <div style="font-family:'Press Start 2P'; font-size:22px; color:#bfdbfe; text-shadow:0 0 18px rgba(59,130,246,.8);">&#10022; EVOLVED</div>
+        <div style="font-family:'Press Start 2P'; font-size:11px; color:#7fd0e8; margin-top:14px;">AMOEBA &rarr; MULTICELLULAR</div>
+      </div>
+      <div id="caption" style="position:absolute; left:50%; bottom:34px; transform:translateX(-50%); max-width:1100px; text-align:center; color:#e7e7ea; font-size:21px; font-weight:500; opacity:0; text-shadow:0 2px 14px #000; pointer-events:none;"></div>
+    </div>
+  </div>
+
+  <div id="bar">
+    <button id="play">&#10073;&#10073;</button>
+    <input id="scrub" type="range" min="0" max="27" step="0.01" value="0">
+    <div id="tlabel">0.0 / 27.0s</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() { return { rootRef: (el) => { this.rootEl = el; } }; }
+
+  componentDidMount() {
+    this.DUR = 27;
+    this.t = 0; this.playing = true; this.last = performance.now();
+    this.scrubbing = false; this.evoFired = false;
+    this.GX = 28; this.S = 4;
+    this.initSteps();
+    const init = () => {
+      const r = this.rootEl; if (!r) { requestAnimationFrame(init); return; }
+      this.el = {
+        fit: r.querySelector('#fit'), world: r.querySelector('#world'),
+        goalText: r.querySelector('#goalText'), goalFill: r.querySelector('#goalFill'),
+        lifeText: r.querySelector('#lifeText'), lifeFill: r.querySelector('#lifeFill'),
+        gen: r.querySelector('#genText'), levelName: r.querySelector('#levelName'),
+        af1: r.querySelector('#af1'), af2: r.querySelector('#af2'),
+        btn1: r.querySelector('#btn1'), btn2: r.querySelector('#btn2'),
+        d1: r.querySelector('#d1'), d2: r.querySelector('#d2'), card2: r.querySelector('#card2'),
+        cursor: r.querySelector('#cursor'), cursorDot: r.querySelector('#cursorDot'),
+        compHop: r.querySelector('#compHop'), compLabel: r.querySelector('#compLabel'), compState: r.querySelector('#compState'),
+        goalRing: r.querySelector('#goalRing'), goalChip: r.querySelector('#goalChip'),
+        evoBloom: r.querySelector('#evoBloom'), evoRays: r.querySelector('#evoRays'),
+        evoParticles: r.querySelector('#evoParticles'), evoVignette: r.querySelector('#evoVignette'),
+        evoBanner: r.querySelector('#evoBanner'), caption: r.querySelector('#caption'),
+        lblFood: r.querySelector('#lblFood'), lblDiv: r.querySelector('#lblDiv'),
+        play: r.querySelector('#play'), scrub: r.querySelector('#scrub'), tlabel: r.querySelector('#tlabel'),
+        res: {}, rows: {},
+      };
+      ['food','energy','nutrients','divisions'].forEach(k => {
+        this.el.res[k] = r.querySelector(`.rval[data-res="${k}"]`);
+        this.el.rows[k] = r.querySelector(`[data-row="${k}"]`);
+      });
+      this.setupCanvas(r.querySelector('#compCanvas'));
+      this.chart1 = r.querySelector('#chart1'); this.chart2 = r.querySelector('#chart2');
+      this.displayed = this.snapshot(0);
+      this.el.play.onclick = () => this.toggle();
+      this.el.scrub.oninput = (e) => { this.scrubbing = true; this.playing = false; this.el.play.innerHTML = '&#9658;'; this.t = parseFloat(e.target.value); this.evoFired = this.t > 15.3; this.update(this.t); };
+      this.el.scrub.onchange = () => { this.scrubbing = false; };
+      window.addEventListener('keydown', this.onKey = (e) => {
+        if (e.code === 'Space') { e.preventDefault(); this.toggle(); }
+        else if (e.code === 'ArrowRight') { this.t = Math.min(this.DUR, this.t + 0.5); this.update(this.t); }
+        else if (e.code === 'ArrowLeft') { this.t = Math.max(0, this.t - 0.5); this.update(this.t); }
+      });
+      this.fit(); window.addEventListener('resize', this.onResize = () => this.fit());
+      this.loop();
+    };
+    init();
+  }
+  componentWillUnmount() {
+    cancelAnimationFrame(this._raf);
+    window.removeEventListener('keydown', this.onKey);
+    window.removeEventListener('resize', this.onResize);
+  }
+
+  toggle() { this.playing = !this.playing; this.el.play.innerHTML = this.playing ? '&#10073;&#10073;' : '&#9658;'; this.last = performance.now(); }
+
+  fit() {
+    const s = Math.min(window.innerWidth / 1600, (window.innerHeight - 96) / 900);
+    const f = this.el.fit;
+    f.style.margin = '0';
+    f.style.position = 'absolute';
+    f.style.left = '50%';
+    f.style.top = '50%';
+    f.style.transformOrigin = 'center center';
+    f.style.transform = `translate(-50%,-50%) scale(${s})`;
+  }
+
+  setupCanvas(cv) {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2), S = this.S, G = this.GX;
+    cv.width = G * S * dpr; cv.height = G * S * dpr;
+    cv.style.width = G * S + 'px'; cv.style.height = G * S + 'px';
+    const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.imageSmoothingEnabled = false;
+    this.cctx = ctx;
+  }
+
+  // ---- timeline data ----
+  initSteps() {
+    this.steps = {
+      food:      [[0,3],[3.6,2],[4.8,3],[6.0,2]],
+      nutrients: [[0,2],[3.6,3],[6.0,4]],
+      energy:    [[0,0],[9.0,3],[10.0,6],[11.0,10]],
+      divisions: [[0,0],[12.8,1],[13.8,2],[14.8,3]],
+    };
+    this.actionTimes = [3.6,4.8,6.0, 9.0,10.0,11.0, 12.8,13.8,14.8];
+  }
+  stepVal(arr, t) { let v = arr[0][1]; for (const [a, val] of arr) { if (t >= a) v = val; else break; } return v; }
+  snapshot(t) { const o = {}; for (const k in this.steps) o[k] = this.stepVal(this.steps[k], t); return o; }
+
+  clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+  seg(t,a,b){return this.clamp((t-a)/(b-a),0,1);}
+  smooth(p){return p*p*(3-2*p);}
+  tri(t,a,b){return Math.sin(this.seg(t,a,b)*Math.PI);}
+  kf(t, arr) { // arr: [[t, ...vals]]
+    if (t <= arr[0][0]) return arr[0].slice(1);
+    if (t >= arr[arr.length-1][0]) return arr[arr.length-1].slice(1);
+    for (let i=0;i<arr.length-1;i++){ const a=arr[i],b=arr[i+1]; if(t>=a[0]&&t<=b[0]){ const p=this.smooth((t-a[0])/(b[0]-a[0])); return a.slice(1).map((v,j)=>v+(b[j+1]-v)*p);} }
+    return arr[arr.length-1].slice(1);
+  }
+
+  loop() {
+    const now = performance.now(); let dt = (now - this.last) / 1000; this.last = now;
+    if (dt > 0.1) dt = 0.1;
+    if (this.playing) {
+      this.t += dt;
+      if (this.t >= this.DUR) { this.t -= this.DUR; this.evoFired = false; this.displayed = this.snapshot(this.t); }
+    }
+    this.update(this.t);
+    if (!this.scrubbing) this.el.scrub.value = this.t;
+    this.el.tlabel.textContent = this.t.toFixed(1) + ' / 27.0s';
+    this._raf = requestAnimationFrame(() => this.loop());
+  }
+
+  update(t) {
+    const E = this.el;
+    E.fit.parentElement.setAttribute && this.rootEl.setAttribute('data-screen-label', String(Math.floor(t)).padStart(2,'0') + 's');
+
+    // CAMERA
+    const [fx, fy, sc] = this.kf(t, [
+      [0, 800,320,1.0], [1.8, 800,320,1.0], [2.8, 560,360,1.12], [3.4, 470,420,1.7], [7.6, 470,420,1.7],
+      [8.4, 540,240,1.45], [11.6, 540,240,1.45], [12.2, 470,420,1.7], [14.6, 470,420,1.7],
+      [15.2, 150,330,2.5], [19.4, 150,330,2.7], [21.0, 800,320,1.0], [27, 800,320,1.0],
+    ]);
+    const tx = 800 - fx * sc, ty = 450 - fy * sc;
+    E.world.style.transform = `translate(${tx}px,${ty}px) scale(${sc})`;
+
+    // ACTION INTENSITY + companion morph
+    let act = 0;
+    for (const at of this.actionTimes) act = Math.max(act, this.tri(t, at - 0.45, at + 0.55));
+    const morph = this.smooth(this.seg(t, 15.4, 18.2));
+    if (t > 15.0) act = 0;
+    this.drawCompanion(t, act, morph);
+
+    // companion hop on regular goals
+    const hop = this.tri(t, 6.0, 7.6) * 9 + this.tri(t, 11.0, 12.4) * 9;
+    E.compHop.style.transform = `translateY(${-hop}px)`;
+    E.compState.textContent = morph > 0.05 ? 'evolving!' : (act > 0.1 ? 'working' : 'idle');
+
+    // RESOURCES (count-up + pop + float on change)
+    const cur = this.snapshot(t);
+    for (const k in cur) {
+      E.res[k].textContent = cur[k];
+      if (this.displayed && cur[k] !== this.displayed[k]) {
+        const delta = cur[k] - this.displayed[k];
+        this.pop(E.res[k]);
+        this.spawnFloat(E.rows[k], (delta>0?'+':'') + delta, delta>0 ? '#86efac' : '#fca5a5');
+      }
+    }
+    this.displayed = cur;
+
+    // GOAL phases
+    let gt, gf;
+    if (t < 6.8) { gt = `Next goal: ${cur.nutrients}/4 nutrients`; gf = cur.nutrients/4; }
+    else if (t < 12.0) { gt = `Next goal: ${cur.energy}/10 energy`; gf = cur.energy/10; }
+    else if (t < 15.2) { gt = `Next goal: ${cur.divisions}/3 divisions`; gf = cur.divisions/3; }
+    else { gt = 'Evolving\u2026'; gf = 1; }
+    E.goalText.textContent = gt;
+    E.goalFill.style.width = (this.clamp(gf,0,1)*100) + '%';
+
+    // regular goal celebrations (contained)
+    const ring1 = this.tri(t, 6.0, 8.0), ring2 = this.tri(t, 11.0, 12.6);
+    const ring = Math.max(ring1, ring2);
+    E.goalRing.style.opacity = ring * 0.9;
+    E.goalRing.style.transform = `scale(${1 + ring * 0.04})`;
+    E.goalRing.style.boxShadow = `0 0 ${ring*26}px rgba(52,211,153,${ring*0.5})`;
+    E.goalChip.style.opacity = ring;
+    E.goalChip.style.transform = `translateY(${(1-ring)*8}px)`;
+
+    // LIFESPAN drain (resets at evolution = new life)
+    let life;
+    if (t < 15.2) life = 42 - (t/15.2)*30; else life = 60 - this.seg(t,15.2,27)*6;
+    E.lifeText.textContent = life.toFixed(1);
+    E.lifeFill.style.width = (life/60*100) + '%';
+    E.lifeFill.style.background = life < 12 ? '#ef4444' : (life < 24 ? '#fbbf24' : '#f4f4f5');
+
+    // ACTION CARD progress bars (sawtooth as action runs)
+    E.af1.style.width = (((t*1.7)%1)*100) + '%';
+    E.af2.style.width = (((t*1.1+0.3)%1)*100) + '%';
+
+    // CARD labels per phase
+    if (t >= 12.0) { E.btn1.textContent = 'Divide cell (3.0)'; E.d1.innerHTML = '<span style="color:#fca5a5;">-3 energy</span> <span style="color:#86efac;">+1 division</span>'; E.card2.style.opacity = 0.25; }
+    else if (t >= 6.8) { E.btn1.textContent = 'Generate energy (1.2)'; E.d1.innerHTML = '<span style="color:#fca5a5;">-1 nutrient</span> <span style="color:#86efac;">+1 energy</span>'; E.card2.style.opacity = 0.25; }
+    else { E.btn1.textContent = 'Catch food (0.5)'; E.d1.innerHTML = '<span style="color:#86efac;">+1 food</span>'; E.card2.style.opacity = 1; }
+
+    // CURSOR — moves to the active button before each action, clicks on it
+    const targetA = (t < 6.8) ? [670,430] : [411,430]; // absorb(card2) during nutrient phase else card1
+    let near = 999; for (const at of this.actionTimes) near = Math.min(near, Math.abs(t-at));
+    const clickP = this.tri(t, 0, 1) && near < 0.25 ? (1 - near/0.25) : 0;
+    const idle = [560 + Math.sin(t*0.7)*14, 470 + Math.cos(t*0.9)*10];
+    const cx = this.kfXY(t, targetA, idle, near);
+    E.cursor.style.transform = `translate(${cx[0]}px,${cx[1]}px) translate(-50%,-50%)`;
+    E.cursorDot.style.transform = `scale(${1 - clickP*0.35})`;
+    E.cursorDot.style.background = clickP > 0.1 ? 'rgba(255,255,255,.25)' : 'transparent';
+    E.cursor.style.opacity = t > 15 ? 0 : 1;
+
+    // EVOLUTION
+    const evo = this.seg(t, 15.2, 16.2) * (1 - this.seg(t, 19.4, 20.6));
+    const bloom = this.tri(t, 15.3, 17.0);
+    E.evoBloom.style.opacity = bloom * 0.95;
+    E.evoBloom.style.transform = `translate(-50%,-50%) scale(${0.2 + this.seg(t,15.3,17.2)*2.6})`;
+    E.evoRays.style.opacity = bloom * 0.6;
+    E.evoRays.style.transform = `translate(-50%,-50%) rotate(${t*40}deg) scale(${0.5 + bloom*0.8})`;
+    E.evoVignette.style.opacity = this.tri(t, 15.3, 19.0) * 0.5;
+    E.evoBanner.style.opacity = this.smooth(this.seg(t,16.0,16.8)) * (1 - this.seg(t,19.6,20.6));
+    E.evoBanner.style.transform = `translateY(${(1-this.smooth(this.seg(t,16.0,16.8)))*-10}px)`;
+    if (t > 15.3 && !this.evoFired) { this.evoFired = true; this.burst(); }
+
+    // post-evolution UI swap
+    if (t >= 16.6) { E.gen.textContent = '2'; E.levelName.textContent = 'Multicellular'; E.compLabel.textContent = 'Multicellular'; E.lblDiv.textContent = 'Cells:'; }
+    else { E.gen.textContent = '1'; E.levelName.textContent = 'Amoeba'; E.compLabel.textContent = 'Amoeba'; E.lblDiv.textContent = 'Divisions:'; }
+
+    // CAPTIONS
+    const caps = [
+      [0.4, 2.9, 'A living companion, docked beside your lifespan.'],
+      [3.1, 5.9, 'Every action ripples through the cards and resources.'],
+      [6.1, 8.4, 'Goal reached \u2192 a contained green glow. No full-screen flash.'],
+      [9.0, 11.6, 'Resources count up and pop \u2014 each gain feels like it landed.'],
+      [12.1, 14.8, 'Most goals are just milestones. Keep dividing\u2026'],
+      [15.6, 19.2, 'Only the FINAL goal evolves you \u2014 the big, dark-safe payoff.'],
+      [20.4, 26.6, 'A new generation. The time-loop continues.'],
+    ];
+    let capTxt = '', capOp = 0;
+    for (const [a,b,txt] of caps) { if (t>=a && t<=b) { capTxt = txt; capOp = this.tri(t, a, b) > 0.04 ? Math.min(1, this.seg(t,a,a+0.4))*(1-this.seg(t,b-0.4,b)) : 0; } }
+    if (capTxt) E.caption.textContent = capTxt;
+    E.caption.style.opacity = capOp;
+
+    this.drawChart(this.chart1, t, '#3b82f6', 0.0);
+    this.drawChart(this.chart2, t, '#3b82f6', 1.3);
+  }
+
+  kfXY(t, target, idle, near) {
+    const w = this.clamp(1 - near/1.2, 0, 1), p = this.smooth(w);
+    return [idle[0] + (target[0]-idle[0])*p, idle[1] + (target[1]-idle[1])*p];
+  }
+
+  pop(elx) { elx.style.animation = 'none'; void elx.offsetWidth; elx.style.animation = 'popN .45s ease-out'; elx.style.color = '#fff'; setTimeout(()=>{ elx.style.color = '#e7e7ea'; }, 260); }
+  spawnFloat(row, txt, color) {
+    if (!row) return;
+    const f = document.createElement('span');
+    f.textContent = txt;
+    f.style.cssText = `position:absolute; right:0; top:0; font-size:18px; font-weight:700; color:${color}; pointer-events:none; animation:floatUp 1s ease-out forwards;`;
+    row.appendChild(f); setTimeout(()=>f.remove(), 1000);
+  }
+  burst() {
+    const host = this.el.evoParticles; if (!host) return;
+    for (let i=0;i<14;i++){
+      const a = (i/14)*Math.PI*2, dist = 60 + Math.random()*40;
+      const d = document.createElement('div');
+      const col = i%2 ? '#22d3ee' : '#bfdbfe';
+      d.style.cssText = `position:absolute; left:0; top:0; width:5px; height:5px; border-radius:1px; background:${col}; box-shadow:0 0 6px ${col}; transition:transform 1s ease-out, opacity 1s ease-out; transform:translate(-50%,-50%);`;
+      host.appendChild(d);
+      requestAnimationFrame(()=>{ d.style.transform = `translate(${Math.cos(a)*dist}px,${Math.sin(a)*dist}px)`; d.style.opacity = '0'; });
+      setTimeout(()=>d.remove(), 1050);
+    }
+  }
+
+  // ---- pixel creatures ----
+  px(ctx,x,y,c){ ctx.fillStyle=c; ctx.fillRect(Math.round(x)*this.S, Math.round(y)*this.S, this.S, this.S); }
+  disc(ctx,cx,cy,r,c){ for(let y=Math.floor(cy-r);y<=cy+r;y++)for(let x=Math.floor(cx-r);x<=cx+r;x++){const dx=x-cx,dy=y-cy; if(dx*dx+dy*dy<=r*r)this.px(ctx,x,y,c);} }
+
+  drawCompanion(t, act, morph) {
+    const ctx = this.cctx, G = this.GX; if (!ctx) return;
+    ctx.clearRect(0,0,G*this.S,G*this.S);
+    if (morph < 1) { ctx.globalAlpha = 1 - morph; this.drawAmoeba(ctx, t, act); }
+    if (morph > 0) { ctx.globalAlpha = morph; this.drawCluster(ctx, t); }
+    ctx.globalAlpha = 1;
+  }
+  drawAmoeba(ctx, t, act) {
+    const G=this.GX, cx=G/2-0.5, cy=G/2-0.5, R=G*0.30;
+    const breathe=Math.sin(t*1.6)*0.8, reachAng=-0.35;
+    const body=['#3b82f6','#1e3a8a'], mem='#93c5fd', nuc='#22d3ee', vac='#bfdbfe', food='#fbbf24';
+    const ad=(a,b)=>{let d=a-b;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;return d;};
+    for(let y=0;y<G;y++)for(let x=0;x<G;x++){
+      const dx=x-cx,dy=y-cy,d=Math.hypot(dx,dy),ang=Math.atan2(dy,dx);
+      const wob=Math.sin(ang*3+t*1.8)*1.0+Math.cos(ang*2-t*1.3)*0.7;
+      const bump=act*3.4*Math.exp(-Math.pow(ad(ang,reachAng),2)/0.22);
+      const edge=R+breathe+wob+bump;
+      if(d<=edge){ if(d>edge-1.4)this.px(ctx,x,y,mem); else this.px(ctx,x,y,d<edge*0.5?body[1]:body[0]); }
+    }
+    this.disc(ctx,cx-2.5+Math.sin(t*0.9)*0.6,cy+2,1.6,vac);
+    this.disc(ctx,cx+3+Math.cos(t*1.1)*0.5,cy+3,1.2,vac);
+    this.disc(ctx,cx+1.5+Math.sin(t*0.7)*0.5,cy-1+Math.cos(t*0.8)*0.5,2.4,nuc);
+    if(act>0.05){ const fr=(R+6)*(1-act); this.disc(ctx,cx+Math.cos(reachAng)*fr,cy+Math.sin(reachAng)*fr,1.2,food); }
+  }
+  drawCluster(ctx, t) {
+    const G=this.GX, cx=G/2-0.5, cy=G/2-0.5, body=['#3b82f6','#1e3a8a'], nuc='#22d3ee';
+    const cells=[[0,0],[-3.4,-1.5],[3.2,-1.8],[-2,2.8],[2.6,2.6],[0,-3.6],[-4,1.6],[3.8,0.8]];
+    cells.forEach((o,i)=>{ const ox=o[0]+Math.sin(t*1.4+i)*0.5, oy=o[1]+Math.cos(t*1.5+i)*0.5, r=2.6+Math.sin(t*2+i)*0.3;
+      this.disc(ctx,cx+ox,cy+oy,r,body[0]); this.disc(ctx,cx+ox,cy+oy,r-1.4,body[1]); this.px(ctx,cx+ox,cy+oy,nuc); });
+  }
+
+  drawChart(cv, t, color, off) {
+    if (!cv) return; const ctx = cv.getContext('2d'), W=cv.width, H=cv.height;
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle='#2f6e3f'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,H-2); ctx.lineTo(W,H-2); ctx.stroke();
+    ctx.strokeStyle=color; ctx.lineWidth=2; ctx.beginPath();
+    for(let x=0;x<W;x++){ const ph=x/W*6+off; const v=Math.max(0,Math.sin(ph*0.8+t*0.6))*Math.min(1,(t+off)/8); const y=H-2-v*(H-8); if(x===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+    ctx.stroke();
+    ctx.fillStyle='rgba(59,130,246,.25)'; ctx.lineTo(W,H-2); ctx.lineTo(0,H-2); ctx.fill();
+  }
+}
+</script>
+</body>
+</html>

@@ -12,11 +12,11 @@ export function RebirthScreen(): JSX.Element {
   const currentLevel = useUpdate(() => Game.state.currentLevel)
   const algaePlays = useUpdate(() => Game.state.algaePlays)
   const unlockedLevels = useUpdate(() => Game.unlockedLevels)
-  const helpTextUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.synergyHelpText)
+  const synergyTextUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.synergyHelpText)
   const additionalHelpTextUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.synergyHelpTextAddition)
 
   const lockedTexts: Record<LevelName, string> = {
-    amoeba: 'Esa fucked up',
+    amoeba: 'Esa fucked up, email the devs',
     multicellular: 'Reach 3 divisions to unlock',
     algae: 'Reach 1000 cells to unlock',
     insect: 'Reach 1 meter length to unlock',
@@ -76,7 +76,7 @@ export function RebirthScreen(): JSX.Element {
           </Button>
         )}
       </div>
-      {helpTextUnlocked && (
+      {synergyTextUnlocked && (
         <div className="text-lg mb-8 mt-7">
           You can now get synergy bonuses based on previous stages. <br />
           Check them in the resource display's Synergies tab!

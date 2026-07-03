@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #000; }
+  #wrap { min-height: 100vh; background: #000; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 44px 28px 64px; }
+  .sect { width: 100%; max-width: 1320px; }
+  .sect h2 { font-family: 'Press Start 2P', monospace; font-size: 12px; letter-spacing: 2px; color: #8a8a92; margin: 30px 0 6px; }
+  .sect .sub { font-size: 12px; color: #5a5a62; font-family: 'Press Start 2P', monospace; letter-spacing: 1px; margin-bottom: 22px; }
+  .row { display: flex; flex-wrap: wrap; gap: 22px; }
+  .tile { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .stage { position: relative; width: 240px; height: 240px; background: #000; border: 1px solid #141416; border-radius: 6px; }
+  canvas { display: block; image-rendering: pixelated; position: absolute; inset: 0; margin: auto; }
+  .name { font-family: 'Press Start 2P', monospace; font-size: 9px; letter-spacing: 1px; color: #6b6b72; text-transform: uppercase; }
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" id="wrap">
+
+  <div class="sect">
+    <h2>I &middot; Single-cell &amp; invertebrate</h2>
+    <div class="sub">implemented</div>
+    <div class="row">
+      <sc-for list="{{ inverts }}" as="c" hint-placeholder-count="5">
+        <div class="tile"><div class="stage"><canvas data-creature="{{ c.kind }}"></canvas></div><div class="name">{{ c.label }}</div></div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div class="sect">
+    <h2>II &middot; Vertebrates</h2>
+    <div class="sub">fish &rarr; amphibian &rarr; reptile &rarr; mammal &rarr; primate</div>
+    <div class="row">
+      <sc-for list="{{ verts }}" as="c" hint-placeholder-count="5">
+        <div class="tile"><div class="stage"><canvas data-creature="{{ c.kind }}"></canvas></div><div class="name">{{ c.label }}</div></div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div class="sect">
+    <h2>III &middot; Human ages</h2>
+    <div class="sub">stone &rarr; agricultural &rarr; iron &rarr; medieval &rarr; industrial &rarr; modern</div>
+    <div class="row">
+      <sc-for list="{{ ages }}" as="c" hint-placeholder-count="6">
+        <div class="tile"><div class="stage"><canvas data-creature="{{ c.kind }}"></canvas></div><div class="name">{{ c.label }}</div></div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div class="sect">
+    <h2>IV &middot; Intelligence &amp; cosmos</h2>
+    <div class="sub">planet &rarr; AGI &rarr; self-improvement &rarr; subjugation &rarr; solar &rarr; galaxy &rarr; universe &rarr; reality</div>
+    <div class="row">
+      <sc-for list="{{ cosmic }}" as="c" hint-placeholder-count="8">
+        <div class="tile"><div class="stage"><canvas data-creature="{{ c.kind }}"></canvas></div><div class="name">{{ c.label }}</div></div>
+      </sc-for>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      rootRef: (el) => { this.rootEl = el; },
+      inverts: [
+        { kind: 'amoeba', label: 'Amoeba' }, { kind: 'multicellular', label: 'Multicellular' },
+        { kind: 'algae', label: 'Algae' }, { kind: 'insect', label: 'Insect' }, { kind: 'crustacean', label: 'Crustacean' },
+      ],
+      verts: [
+        { kind: 'fish', label: 'Fish' }, { kind: 'amphibian', label: 'Amphibian' }, { kind: 'reptile', label: 'Reptile' },
+        { kind: 'mammal', label: 'Mammal' }, { kind: 'primate', label: 'Primate' },
+      ],
+      ages: [
+        { kind: 'stone', label: 'Stone' }, { kind: 'agricultural', label: 'Agricultural' }, { kind: 'iron', label: 'Iron' },
+        { kind: 'medieval', label: 'Medieval' }, { kind: 'industrial', label: 'Industrial' }, { kind: 'modern', label: 'Modern' },
+      ],
+      cosmic: [
+        { kind: 'planet', label: 'Planet' }, { kind: 'agi', label: 'General Intelligence' }, { kind: 'selfimprove', label: 'Self-improvement' },
+        { kind: 'subjugation', label: 'Human Subjugation' }, { kind: 'solar', label: 'Solar System' }, { kind: 'galaxy', label: 'Galaxy' },
+        { kind: 'universe', label: 'Universe' }, { kind: 'reality', label: 'Reality' },
+      ],
+    };
+  }
+
+  componentDidMount() {
+    this.start = performance.now();
+    this.G = 40; this.S = 6;
+    this.cfg = {
+      amoeba:{mode:'wander',glow:'rgba(59,130,246,.55)'}, multicellular:{mode:'wander',glow:'rgba(34,211,238,.5)'},
+      algae:{mode:'rooted',glow:'rgba(52,211,153,.5)'}, insect:{mode:'wander',glow:'rgba(232,192,116,.55)'},
+      crustacean:{mode:'wander',glow:'rgba(249,115,22,.5)'},
+      fish:{mode:'wander',glow:'rgba(56,189,248,.55)'}, amphibian:{mode:'wander',glow:'rgba(74,222,128,.5)'},
+      reptile:{mode:'wander',glow:'rgba(132,204,22,.5)'}, mammal:{mode:'wander',glow:'rgba(245,158,11,.5)'},
+      primate:{mode:'wander',glow:'rgba(214,180,140,.45)'},
+      stone:{mode:'ground',glow:'rgba(216,162,106,.4)'}, agricultural:{mode:'scene',glow:'rgba(250,204,21,.4)'},
+      iron:{mode:'scene',glow:'rgba(251,146,60,.45)'}, medieval:{mode:'scene',glow:'rgba(226,232,240,.4)'},
+      industrial:{mode:'scene',glow:'rgba(148,163,184,.4)'}, modern:{mode:'scene',glow:'rgba(34,211,238,.45)'},
+      planet:{mode:'scene',glow:'rgba(125,211,252,.5)'}, agi:{mode:'scene',glow:'rgba(34,211,238,.55)'},
+      selfimprove:{mode:'scene',glow:'rgba(167,139,250,.55)'}, subjugation:{mode:'scene',glow:'rgba(239,68,68,.5)'},
+      solar:{mode:'scene',glow:'rgba(251,191,36,.5)'}, galaxy:{mode:'scene',glow:'rgba(191,219,254,.5)'},
+      universe:{mode:'scene',glow:'rgba(196,181,253,.45)'}, reality:{mode:'scene',glow:'rgba(244,114,182,.5)'},
+    };
+    // stable scene data
+    this.uni = []; for (let i=0;i<70;i++){ const a=(i*2.399); this.uni.push({a, r0:2+(i%17), spd:0.4+(i%5)*0.12, tw:i*0.7, hue:i%3}); }
+    this.creatures = [];
+    const init = () => {
+      const r = this.rootEl; if (!r) { this._t = setTimeout(init, 60); return; }
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      r.querySelectorAll('canvas[data-creature]').forEach((cv, i) => {
+        cv.width = this.G * this.S * dpr; cv.height = this.G * this.S * dpr;
+        cv.style.width = this.G * this.S + 'px'; cv.style.height = this.G * this.S + 'px';
+        const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.imageSmoothingEnabled = false;
+        const kind = cv.dataset.creature, cfg = this.cfg[kind] || {mode:'wander',glow:'rgba(255,255,255,.3)'};
+        cv.style.filter = `drop-shadow(0 0 7px ${cfg.glow})`;
+        this.creatures.push({ ctx, kind, cfg, phase: (i * 1.27) % 5 });
+      });
+      this.loop();
+    };
+    init();
+  }
+  componentWillUnmount() { cancelAnimationFrame(this._raf); clearTimeout(this._t); }
+
+  loop() {
+    const t = (performance.now() - this.start) / 1000;
+    for (const c of this.creatures) {
+      const ctx = c.ctx, G = this.G;
+      ctx.clearRect(0, 0, G * this.S, G * this.S);
+      const tt = t + c.phase;
+      const period = 4.6, dur = 1.4, ph = tt % period;
+      let act = 0; if (ph > period - dur) act = Math.sin(((ph - (period - dur)) / dur) * Math.PI);
+      const m = c.cfg.mode;
+      if (m === 'scene') { this.drawAt(ctx, G/2, G/2, false, () => this.dispatch(ctx, c.kind, tt, act)); continue; }
+      if (m === 'rooted') { this.drawAt(ctx, G/2, G-4, false, () => this.dispatch(ctx, c.kind, tt, act)); continue; }
+      if (m === 'ground') {
+        const pace = 9 * Math.sin(tt * 0.34), vx = Math.cos(tt * 0.34);
+        this.drawAt(ctx, G/2 + pace, G/2 + 4, vx < 0, () => this.dispatch(ctx, c.kind, tt, act));
+        continue;
+      }
+      // wander
+      const ax = 9, ay = 6, fx = 0.32, fy = 0.47;
+      const ox = ax * Math.sin(tt * fx), oy = ay * Math.sin(tt * fy + 1.3);
+      const vx = Math.cos(tt * fx);
+      const cy = (c.kind === 'insect') ? G/2 + 3 : G/2;
+      this.drawAt(ctx, G/2 + ox, cy + oy, vx < 0, () => this.dispatch(ctx, c.kind, tt, act));
+    }
+    this._raf = requestAnimationFrame(() => this.loop());
+  }
+
+  dispatch(ctx, kind, t, act) {
+    const f = {
+      amoeba:this.drawAmoeba, multicellular:this.drawCluster, algae:this.drawAlgae, insect:this.drawInsect, crustacean:this.drawCrustacean,
+      fish:this.drawFish, amphibian:this.drawAmphibian, reptile:this.drawReptile, mammal:this.drawMammal, primate:this.drawPrimate,
+      stone:this.drawStone, agricultural:this.drawAgri, iron:this.drawIron, medieval:this.drawMedieval, industrial:this.drawIndustrial, modern:this.drawModern,
+      planet:this.drawPlanet, agi:this.drawAgi, selfimprove:this.drawSelfImprove, subjugation:this.drawSubjugation,
+      solar:this.drawSolar, galaxy:this.drawGalaxy, universe:this.drawUniverse, reality:this.drawReality,
+    }[kind];
+    if (f) f.call(this, ctx, t, act);
+  }
+
+  drawAt(ctx, gx, gy, faceLeft, fn) { const S=this.S; ctx.save(); ctx.translate(gx*S, gy*S); if (faceLeft) ctx.scale(-1,1); fn(); ctx.restore(); }
+
+  // ---- primitives (centre-origin grid units) ----
+  px(ctx,x,y,c){ ctx.fillStyle=c; ctx.fillRect(Math.round(x)*this.S, Math.round(y)*this.S, this.S, this.S); }
+  pxa(ctx,x,y,c,a){ ctx.globalAlpha=a; this.px(ctx,x,y,c); ctx.globalAlpha=1; }
+  disc(ctx,cx,cy,r,c){ for(let y=Math.floor(cy-r);y<=cy+r;y++)for(let x=Math.floor(cx-r);x<=cx+r;x++){const dx=x-cx,dy=y-cy; if(dx*dx+dy*dy<=r*r)this.px(ctx,x,y,c);} }
+  ring(ctx,cx,cy,r,c){ for(let y=Math.floor(cy-r);y<=cy+r;y++)for(let x=Math.floor(cx-r);x<=cx+r;x++){const dx=x-cx,dy=y-cy,d=dx*dx+dy*dy; if(d<=r*r&&d>(r-1.3)*(r-1.3))this.px(ctx,x,y,c);} }
+  ell(ctx,cx,cy,rx,ry,c,topC){ for(let y=Math.floor(cy-ry);y<=cy+ry;y++)for(let x=Math.floor(cx-rx);x<=cx+rx;x++){const nx=(x-cx)/rx,ny=(y-cy)/ry; if(nx*nx+ny*ny<=1)this.px(ctx,x,y,(topC&&y<cy-ry*0.3)?topC:c);} }
+  rect(ctx,x,y,w,h,c){ for(let j=0;j<h;j++)for(let i=0;i<w;i++)this.px(ctx,x+i,y+j,c); }
+  line(ctx,x0,y0,x1,y1,c){ x0=Math.round(x0);y0=Math.round(y0);x1=Math.round(x1);y1=Math.round(y1); const dx=Math.abs(x1-x0),dy=Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1; let err=dx-dy; for(let n=0;n<90;n++){this.px(ctx,x0,y0,c); if(x0===x1&&y0===y1)break; const e2=2*err; if(e2>-dy){err-=dy;x0+=sx;} if(e2<dx){err+=dx;y0+=sy;}} }
+  hash(i){ const x=Math.sin(i*127.1)*43758.5; return x-Math.floor(x); }
+
+  // ================= INVERTEBRATES =================
+  drawAmoeba(ctx,t,act){
+    const R=7, breathe=Math.sin(t*1.6)*0.9, reach=-0.35, body=['#3b82f6','#1e3a8a'],mem='#93c5fd',nuc='#22d3ee',vac='#bfdbfe',food='#fbbf24';
+    const ad=(a,b)=>{let d=a-b;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;return d;};
+    for(let y=-15;y<=15;y++)for(let x=-15;x<=15;x++){const d=Math.hypot(x,y),ang=Math.atan2(y,x);const wob=Math.sin(ang*3+t*1.8)*1.1+Math.cos(ang*2-t*1.3)*0.8;const bump=act*3.8*Math.exp(-Math.pow(ad(ang,reach),2)/0.22);const edge=R+breathe+wob+bump;if(d<=edge)this.px(ctx,x,y,d>edge-1.5?mem:(d<edge*0.5?body[1]:body[0]));}
+    this.disc(ctx,-3+Math.sin(t*0.9)*0.6,2,1.7,vac); this.disc(ctx,3+Math.cos(t*1.1)*0.5,3,1.3,vac);
+    this.disc(ctx,1.5+Math.sin(t*0.7)*0.5,-1+Math.cos(t*0.8)*0.5,2.6,nuc);
+    if(act>0.05){const fr=(R+7)*(1-act);this.disc(ctx,Math.cos(reach)*fr,Math.sin(reach)*fr,1.3,food);}
+  }
+  drawCluster(ctx,t,act){
+    const body=['#3b82f6','#1e3a8a'],mem='#7dd3fc',nuc='#22d3ee',grow=1+act*0.16;
+    const cells=[[0,0],[-4.4,-1.9],[4.2,-2.3],[-2.5,3.6],[3.4,3.4],[0,-4.6],[-5.1,2.1],[5,1],[1.3,5.7]];
+    cells.forEach((o,i)=>{const ox=(o[0]+Math.sin(t*1.4+i)*0.6)*grow,oy=(o[1]+Math.cos(t*1.5+i)*0.6)*grow,r=(3.2+Math.sin(t*2+i)*0.4)*grow;this.disc(ctx,ox,oy,r,mem);this.disc(ctx,ox,oy,r-1.1,body[0]);this.disc(ctx,ox,oy,r-2.4,body[1]);this.px(ctx,ox,oy,nuc);});
+  }
+  drawAlgae(ctx,t,act){
+    const gA='#256e3c',gB='#3f9d5b',chl='#bbf7d0',H=30,topY=-(H-Math.round(act*3));
+    for(let y=0;y>=topY;y--){const frac=y/topY,sway=Math.sin(frac*3+t*1.4)*frac*4.6,thick=2.8-frac*1.9;for(let x=Math.floor(sway-thick);x<=sway+thick;x++)this.px(ctx,x,y,Math.abs(x-sway)>thick-1?gA:gB);if(y%5===0)this.px(ctx,sway+(y%2?1:-1),y,chl);}
+    [0.42,0.7].forEach((bf,k)=>{const by=Math.round(topY*bf),sway=Math.sin(bf*3+t*1.4)*bf*4.6,dir=k%2?1:-1;for(let s=1;s<=5;s++){const wob=Math.sin(t*1.6+s)*0.6;this.px(ctx,sway+dir*s,by-s*0.8+wob,s>3?gA:gB);if(s===5)this.px(ctx,sway+dir*s,by-s*0.8+wob-1,chl);}});
+    for(let x=-3;x<=3;x++)this.px(ctx,x,1,'#6b4423'); this.px(ctx,-4,0,'#6b4423'); this.px(ctx,4,0,'#6b4423');
+    if(act>0.05)for(let i=0;i<3;i++)this.px(ctx,-7+i*6,topY+((t*8+i*9)%Math.abs(topY)),'#fde047');
+  }
+  drawInsect(ctx,t,act){
+    const body='#c8862f',hi='#f3d28a',head='#b5772f',out='#e0a85a',eye='#1c1917',white='#fdf6e3',spot='#86521d',leg='#cda05a';
+    const bob=Math.abs(Math.sin(t*7))*0.5;
+    // 3 visible legs that sweep BACKWARD while planted (propels body forward)
+    for(let i=0;i<3;i++){const hx=-3.4+i*2.6, phase=t*7+i*2.094; const lift=Math.max(0,Math.sin(phase))*1.8; const fx=hx-Math.cos(phase)*1.7; const fy=4.4-lift; const kx=(hx+fx)/2-0.6,ky=2.6; this.line(ctx,hx,1.6-bob,kx,ky-bob,leg); this.line(ctx,kx,ky-bob,fx,fy-bob,leg);}
+    // plump round body + head (cute)
+    this.ell(ctx,-3,-bob,5.4,4.4,body,hi);
+    this.disc(ctx,-2.6,-bob-0.4,0.9,spot); this.disc(ctx,-4.4,-bob+0.6,0.7,spot);
+    this.disc(ctx,3.4,-bob,3.3,head);
+    // one big friendly eye + highlight
+    this.disc(ctx,4.4,-bob-0.5,1.7,white); this.disc(ctx,4.9,-bob-0.3,1.0,eye); this.px(ctx,4.4,-bob-1,white);
+    // little smile
+    this.px(ctx,3.4,-bob+2.4,spot); this.line(ctx,4,-bob+2.7,5.4,-bob+2.4,spot);
+    // bouncy antennae with bulb tips
+    const aw=Math.sin(t*5)*1.3;
+    this.line(ctx,4.4,-bob-2.8,6.4,-bob-5.2+aw,out); this.disc(ctx,6.4,-bob-5.2+aw,1,'#fde047');
+    this.line(ctx,2.8,-bob-3,3.2,-bob-5.6+aw,out); this.disc(ctx,3.2,-bob-5.6+aw,1,'#fde047');
+  }
+  drawCrustacean(ctx,t,act){
+    const shell='#f97316',dark='#c2410c',hi='#fdba74',eye='#22d3ee',fan='#fb923c',flick=act,seg=[];
+    for(let i=0;i<=9;i++){const s=i/9,bx=8-i*1.9,by=Math.sin(i*0.55-t*5)*(1+s*1.6)+s*s*(3.5-flick*4.5);seg.push([bx,by,3.2-i*0.27]);}
+    for(let i=2;i<9;i++){const[bx,by]=seg[i],paddle=Math.sin(t*7-i*0.9)*1.5;this.line(ctx,bx,by+1,bx-0.6,by+3+paddle,dark);}
+    for(let i=seg.length-1;i>=0;i--){const[bx,by,r]=seg[i];this.disc(ctx,bx,by,r,dark);this.disc(ctx,bx,by,r-1,shell);if(i<6)this.px(ctx,bx,by-r+1,hi);}
+    const[tx,ty]=seg[seg.length-1],spread=2.3+flick*1.6; for(let a=-1;a<=1;a++){this.line(ctx,tx,ty,tx-2.4,ty+a*spread,fan);this.px(ctx,tx-2.4,ty+a*spread,hi);}
+    const[hx,hy]=seg[0]; this.disc(ctx,hx,hy,1.3,eye); this.px(ctx,hx+0.6,hy-0.6,'#e0fbff'); this.line(ctx,hx+2,hy-1,hx+5,hy-2.4,dark);
+    for(let l=0;l<3;l++){const lx=hx-1-l*1.5,lp=Math.sin(t*6-l)*1;this.line(ctx,lx,hy+2,lx-0.5,hy+4+lp,dark);}
+    const aw=Math.sin(t*3)*1.9; this.line(ctx,hx+1,hy,hx+6,hy+4+aw,hi); this.line(ctx,hx+1,hy+1,hx+7,hy+7+aw,dark);
+  }
+
+  // ================= VERTEBRATES =================
+  drawFish(ctx,t,act){
+    const body='#38bdf8',back='#0ea5e9',belly='#e0f2fe',fin='#0284c7',eye='#0c4a6e',stripe='#0369a1';
+    const taily=Math.sin(t*6)*3, dart=act;
+    // tail
+    for(let i=0;i<=4;i++){const sx=-9-i, sp=(i+1)*1.0+dart; this.line(ctx,-8,0,sx,taily*0.5- sp,fin); this.line(ctx,-8,0,sx,taily*0.5+ sp,fin);}
+    this.ell(ctx,-1,0,9,5,body,back); this.ell(ctx,-1,2.4,8,2.4,belly);
+    // dorsal + pectoral fins
+    for(let x=-4;x<=2;x++)this.px(ctx,x,-5+Math.abs(x+1)*0.2,fin);
+    this.line(ctx,1,2,3+Math.sin(t*8),4,fin);
+    this.rect(ctx,2,-2,1,5,stripe);
+    this.disc(ctx,6,-1,1.4,'#f8fafc'); this.px(ctx,6.4,-1,eye);
+    if(act>0.2){this.px(ctx,9,-1,'#bfdbfe'); this.px(ctx,10,-1.4,'#bfdbfe');}
+  }
+  drawAmphibian(ctx,t,act){
+    const g='#4ade80',dk='#16a34a',belly='#d9f99d',iris='#fde047',eye='#052e16';
+    const kick=act, ph=Math.sin(t*4);
+    // back legs (big, kick)
+    this.line(ctx,-5,2,-8-kick*2,4-ph,dk); this.line(ctx,-8-kick*2,4-ph,-9-kick*3,1-ph,g);
+    this.line(ctx,-4,3,-6,6+ph,dk);
+    // front legs
+    this.line(ctx,5,2,7,5,dk); this.line(ctx,4,3,5,6,dk);
+    this.ell(ctx,0,0,8,5,g,dk); this.ell(ctx,0,2.6,6.5,2.2,belly);
+    // eyes: green domes with a full iris (incl. top), pupil + shine
+    this.disc(ctx,5,-3.4,2,dk);
+    this.disc(ctx,5,-3.7,1.5,iris); this.disc(ctx,5,-3.4,0.8,eye); this.px(ctx,4.5,-4.2,'#fffbe6'); this.px(ctx,5,-5.1,dk);
+    this.disc(ctx,2,-3,1.8,dk);
+    this.disc(ctx,2,-3.3,1.3,iris); this.disc(ctx,2,-3.0,0.7,eye); this.px(ctx,1.6,-3.8,'#fffbe6'); this.px(ctx,2,-4.6,dk);
+    this.line(ctx,3,1,7,1,'#0f5132'); // mouth
+    if(act>0.3){this.line(ctx,7,0,11,-1,'#f87171');this.px(ctx,11,-1,'#fca5a5');} // tongue
+  }
+  drawReptile(ctx,t,act){
+    const g='#84cc16',dk='#4d7c0f',belly='#bef264',eye='#fbbf24',spike='#3f6212';
+    const sway=Math.sin(t*3);
+    // tail
+    for(let i=0;i<=8;i++){const tx=-8-i*1.3, ty=Math.sin(i*0.5- t*4)*(0.6+i*0.25); this.disc(ctx,tx,ty,Math.max(0.6,2.4-i*0.25),i%2?g:dk);}
+    // legs splayed, animate
+    for(let s=-1;s<=1;s+=2){const f=s>0?1:-1; const p1=Math.sin(t*6)*1.4*f, p2=Math.sin(t*6+Math.PI)*1.4*f;
+      this.line(ctx,3,2,5,4+p1*0+ (s>0?3:-1),dk); }
+    this.line(ctx,4,3,6,6+Math.sin(t*6)*1.2,dk); this.line(ctx,4,3,6,-2+Math.sin(t*6)*1.2,dk);
+    this.line(ctx,-3,3,-5,6+Math.sin(t*6+2)*1.2,dk); this.line(ctx,-3,3,-5,-2+Math.sin(t*6+2)*1.2,dk);
+    this.ell(ctx,0,0,9,3.4,g,dk); this.ell(ctx,0,1.6,7,1.4,belly);
+    for(let x=-6;x<=6;x+=2)this.px(ctx,x,-3.4,spike); // dorsal spikes
+    this.ell(ctx,8,-0.4,3,2.2,g,dk); this.px(ctx,9.4,-1,eye); this.line(ctx,9,1,11,1,dk);
+    if(act>0.3){this.line(ctx,11,0.6,13,0.4,'#ef4444');}
+  }
+  drawMammal(ctx,t,act){
+    const fur='#f59e0b',dk='#b45309',belly='#fde68a',tip='#fff7ed',eye='#1c1917',nose='#7c2d12';
+    const trot=Math.sin(t*7),trot2=Math.sin(t*7+Math.PI);
+    // legs trot
+    this.line(ctx,4,3,5+trot*1.6,8,dk); this.line(ctx,2,3,3+trot2*1.6,8,dk);
+    this.line(ctx,-4,3,-3+trot2*1.6,8,dk); this.line(ctx,-6,3,-5+trot*1.6,8,dk);
+    // tail: arcs up off the back, then droops under gravity, with a soft flow
+    for(let i=0;i<=6;i++){const frac=i/6; const tx=-8-i*1.15; const ty=-2.5*Math.sin(frac*Math.PI)+frac*frac*5 + Math.sin(t*4 - i*0.35)*0.9*frac; this.disc(ctx,tx,ty,2.3-i*0.22,i>4?tip:fur);}
+    this.ell(ctx,-1,0,8,4,fur,dk); this.ell(ctx,-1,2,6,1.8,belly);
+    // head + ears + snout
+    this.disc(ctx,6,-2,3,fur); this.line(ctx,4.5,-5,4,-7,dk); this.px(ctx,4,-7,fur); this.line(ctx,7.5,-5,8,-7,dk); this.px(ctx,8,-7,fur);
+    this.ell(ctx,9,-1.4,2.2,1.6,fur); this.px(ctx,10.6,-1.2,nose); this.px(ctx,7,-2.4,eye);
+    if(act>0.3){this.px(ctx,12,-1.4,'#fde68a');} // little bark/breath
+  }
+  drawPrimate(ctx,t,act){
+    const fur='#b08968',dk='#8d6e5c',face='#e6cdab',eye='#1c1917',chest=act;
+    const sway=Math.sin(t*2)*1.2, knu=Math.sin(t*5);
+    // legs (short, bent)
+    this.line(ctx,2,4,3,10,dk); this.line(ctx,-2,4,-3,10,dk); this.disc(ctx,3,10,1.2,dk); this.disc(ctx,-3,10,1.2,dk);
+    // body
+    this.ell(ctx,sway*0.4,1,6,6,fur,dk);
+    // arms long to ground (knuckle walk) unless chest-beat
+    if(chest>0.3){ this.line(ctx,4,-2,3+knu,-6,fur); this.line(ctx,-4,-2,-3-knu,-6,fur); this.disc(ctx,3+knu,-6,1.3,dk); this.disc(ctx,-3-knu,-6,1.3,dk); }
+    else { this.line(ctx,4,-1,7+knu,8,fur); this.line(ctx,-4,-1,-7-knu,8,fur); this.disc(ctx,7+knu,9,1.4,dk); this.disc(ctx,-7-knu,9,1.4,dk); }
+    // head: fur dome, then a round face patch fully inset so fur frames it evenly (no bleed)
+    const hd=sway*0.4;
+    this.disc(ctx,hd,-6,3.4,fur);
+    this.disc(ctx,hd,-5.2,2.3,face);
+    this.px(ctx,hd-1,-5.6,eye); this.px(ctx,hd+1,-5.6,eye);
+    this.disc(ctx,hd,-4.4,0.6,'#a16207');
+    this.line(ctx,hd-1,-3.6,hd+1,-3.6,dk);
+    this.px(ctx,hd-1,-7,dk); this.px(ctx,hd,-7.2,dk); this.px(ctx,hd+1,-7,dk); // subtle brow within fur
+  }
+
+  // ================= HUMAN AGES =================
+  human(ctx,t,p){
+    const walk=5, swing=Math.sin(t*walk)*2.4, bob=Math.abs(Math.sin(t*walk))*0.6, yo=-bob;
+    const skin=p.skin, cloth=p.cloth;
+    this.line(ctx,0,3+yo,swing,12+yo,skin); this.line(ctx,0,3+yo,-swing,12+yo,skin); // legs
+    this.px(ctx,swing,12+yo,'#3a2a1a'); this.px(ctx,-swing,12+yo,'#3a2a1a'); // feet
+    this.rect(ctx,-2,-4+yo,5,8,cloth); // torso
+    if(p.vest)this.rect(ctx,-2,-4+yo,5,3,p.vest);
+    this.disc(ctx,0.5,-7+yo,2.6,skin); // head
+    if(p.helm){ this.disc(ctx,0.5,-7.6+yo,2.9,p.helm); this.rect(ctx,-2,-7+yo,5,1,'#1f2937'); }
+    else if(p.hair){ for(let x=-2;x<=3;x++)this.px(ctx,x,-9.4+yo,p.hair); this.px(ctx,-2,-8+yo,p.hair); this.px(ctx,3,-8+yo,p.hair); }
+    this.px(ctx,1.6,-7+yo,'#1c1917'); // eye
+    // back arm swings
+    this.line(ctx,0,-3+yo,-swing*0.8,2+yo,skin);
+    return yo; // front-hand work happens in age fn at (3, -1+yo)
+  }
+  drawStone(ctx,t,act){
+    const yo=this.human(ctx,t,{skin:'#d8a26a',cloth:'#8a5a2e',hair:'#6b5840'});
+    this.line(ctx,0,-3+yo,3,-1+yo,'#d8a26a'); // front arm to spear
+    this.line(ctx,2,-9+yo,4,5+yo,'#9a6a3a'); this.line(ctx,2,-9+yo,3.4,-11+yo,'#cbd5e1'); this.px(ctx,2.6,-10+yo,'#e2e8f0'); // spear+flint
+  }
+  // ---- isometric settlement helpers ----
+  iso(gx,gy,h){ return [(gx-gy)*1.7, (gx+gy)*0.85 - h]; }
+  fillPoly(ctx,pts,c){ let mn=Infinity,mx=-Infinity; for(const p of pts){if(p[1]<mn)mn=p[1];if(p[1]>mx)mx=p[1];} mn=Math.floor(mn);mx=Math.ceil(mx); for(let y=mn;y<=mx;y++){const yc=y+0.5,xs=[]; for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length]; if((a[1]<=yc)!==(b[1]<=yc))xs.push(a[0]+(yc-a[1])/(b[1]-a[1])*(b[0]-a[0]));} xs.sort((p,q)=>p-q); for(let k=0;k+1<xs.length;k+=2)for(let x=Math.round(xs[k]);x<=Math.round(xs[k+1]);x++)this.px(ctx,x,y,c);} }
+  isoBox(ctx,gx,gy,w,d,h,top,left,right){ const hw=w/2,hd=d/2; const Bt=this.iso(gx+hw,gy-hd,h),Ct=this.iso(gx+hw,gy+hd,h),Dt=this.iso(gx-hw,gy+hd,h),At=this.iso(gx-hw,gy-hd,h),Bb=this.iso(gx+hw,gy-hd,0),Cb=this.iso(gx+hw,gy+hd,0),Db=this.iso(gx-hw,gy+hd,0); this.fillPoly(ctx,[Bt,Ct,Cb,Bb],right); this.fillPoly(ctx,[Ct,Dt,Db,Cb],left); this.fillPoly(ctx,[At,Bt,Ct,Dt],top); }
+  roofGable(ctx,gx,gy,w,d,h,rh,col,dark){ const hw=w/2,hd=d/2; const Bt=this.iso(gx+hw,gy-hd,h),Ct=this.iso(gx+hw,gy+hd,h),Dt=this.iso(gx-hw,gy+hd,h); const apex=this.iso(gx,gy,h+rh); this.fillPoly(ctx,[Ct,Dt,apex],dark); this.fillPoly(ctx,[Bt,Ct,apex],col); }
+  winFace(ctx,c0,c1,c2,c3,nu,nv,t,seed){ for(let v=0;v<nv;v++)for(let u=0;u<nu;u++){const fu=(u+0.5)/nu,fv=(v+0.5)/nv; const tx=c0[0]+(c1[0]-c0[0])*fu,ty=c0[1]+(c1[1]-c0[1])*fu, bx=c3[0]+(c2[0]-c3[0])*fu,by=c3[1]+(c2[1]-c3[1])*fu; const x=tx+(bx-tx)*fv,y=ty+(by-ty)*fv; const lit=this.hash(u*7+v*13+seed+Math.floor(t*0.8))>0.42; this.px(ctx,x,y,lit?'#fde68a':'#1f2937');} }
+  villagers(ctx,t,n,skin,cloth,bound){ for(let i=0;i<n;i++){const ph=this.hash(i)*6.28,spd=0.5+this.hash(i+9)*0.7,rad=1+this.hash(i+3)*(bound-1),cx=(this.hash(i+1)-0.5)*bound,cy=(this.hash(i+2)-0.5)*bound; const gx=cx+Math.cos(t*spd+ph)*rad,gy=cy+Math.sin(t*spd*1.1+ph)*rad; const p=this.iso(gx,gy,0); const step=Math.sin(t*9+i)>0?0:1; this.px(ctx,p[0],p[1]-2,skin); this.px(ctx,p[0],p[1]-1,cloth); this.px(ctx,p[0]-step,p[1],cloth);} }
+  groundSlab(ctx,half,top,side){ this.isoBox(ctx,0,0,half*2,half*2,0.8,top,side,side); }
+
+  drawAgri(ctx,t,act){
+    this.groundSlab(ctx,5,'#3f6b32','#274d20');
+    for(let r=-2;r<=2;r++)for(let cc=0;cc<6;cc++){const gx=-4+cc*0.5,gy=r*0.7+1.4; const p=this.iso(gx,gy,0.9); this.px(ctx,p[0],p[1],(cc+r)%2?'#a3e635':'#65a30d');}
+    [[2.4,-1.6,'#9b6b3a'],[1.1,2.2,'#8a5a2e']].sort((a,b)=>(a[0]+a[1])-(b[0]+b[1])).forEach(([gx,gy,col])=>{ this.isoBox(ctx,gx,gy,2.4,2.4,3,col,'#6f4a26','#5a3c1e'); this.roofGable(ctx,gx,gy,2.8,2.8,3,2.4,'#b45309','#7c3a0a'); });
+    this.villagers(ctx,t,4,'#e6c8a0','#5b8f3a',5);
+  }
+  drawIron(ctx,t,act){
+    this.groundSlab(ctx,5,'#6b5a3f','#473a28');
+    this.isoBox(ctx,-2,-1,3,3,3.5,'#94a3b8','#475569','#334155');
+    this.isoBox(ctx,-1.2,-1.8,1,1,6,'#64748b','#3a4555','#2a323e');
+    const sp=this.iso(-1.2,-1.8,6); for(let i=0;i<4;i++){const yy=sp[1]-((t*5+i*3)%9); this.pxa(ctx,sp[0]+Math.sin(t*3+i)*1.5,yy,'#9ca3af',0.7-((t*5+i*3)%9)/13);}
+    const fg=this.iso(-2,0.6,1.2); this.disc(ctx,fg[0],fg[1],1.4,'#fb923c'); if(act>0.3)for(let i=0;i<3;i++){const a=this.hash(i+Math.floor(t*6))*6.28;this.px(ctx,fg[0]+Math.cos(a)*2.5,fg[1]+Math.sin(a)*2,i%2?'#fde047':'#f97316');}
+    [[2.2,1.4],[1.6,-2]].forEach(([gx,gy])=>{this.isoBox(ctx,gx,gy,2,2,2.6,'#9b6b3a','#6f4a26','#5a3c1e');this.roofGable(ctx,gx,gy,2.4,2.4,2.6,1.8,'#7c5c3a','#574026');});
+    this.villagers(ctx,t,4,'#e6c8a0','#7c4a2a',5);
+  }
+  drawMedieval(ctx,t,act){
+    this.groundSlab(ctx,5,'#4a6b3a','#2f4726');
+    this.isoBox(ctx,0,3,8,1,2.4,'#9aa3ad','#5c636d','#454b54');
+    this.isoBox(ctx,-3.5,0,1,7,2.4,'#9aa3ad','#5c636d','#454b54');
+    this.isoBox(ctx,0.5,-0.5,3,3,9,'#aab3bd','#5c636d','#3f454e');
+    this.roofGable(ctx,0.5,-0.5,3.2,3.2,9,2,'#3b82f6','#1e40af');
+    this.isoBox(ctx,3,-2.5,1.6,1.6,7,'#9aa3ad','#5c636d','#454b54');
+    const tp=this.iso(3,-2.5,7); this.line(ctx,tp[0],tp[1],tp[0],tp[1]-4,'#52525b'); const fw=Math.sin(t*5); this.fillPoly(ctx,[[tp[0],tp[1]-4],[tp[0]+3+fw,tp[1]-3.4],[tp[0],tp[1]-2.4]],'#ef4444');
+    [[-2,-2.5],[2,2.4]].forEach(([gx,gy])=>{this.isoBox(ctx,gx,gy,1.8,1.8,2.4,'#9b6b3a','#6f4a26','#5a3c1e');this.roofGable(ctx,gx,gy,2.2,2.2,2.4,1.6,'#b45309','#7c3a0a');});
+    this.villagers(ctx,t,4,'#e6c8a0','#b91c1c',4);
+  }
+  drawIndustrial(ctx,t,act){
+    this.groundSlab(ctx,5,'#3f3f46','#27272c');
+    this.isoBox(ctx,-1,-0.5,4,3,4,'#7c4a3a','#4a2c22','#371f18');
+    this.isoBox(ctx,2,2,2.4,2.4,3,'#8a5a3a','#5a3a26','#42291b');
+    [[-2.2,-1.6],[0.2,-1.8]].forEach(([gx,gy],k)=>{ this.isoBox(ctx,gx,gy,0.9,0.9,8,'#52525b','#3a3a42','#2a2a30'); const sp=this.iso(gx,gy,8); for(let i=0;i<4;i++){const yy=sp[1]-((t*4+i*3+k*1.5)%11); this.pxa(ctx,sp[0]+Math.sin(t*2+i+k)*2,yy,'#9ca3af',0.6-((t*4+i*3+k*1.5)%11)/18);} });
+    const g=this.iso(1.4,-1.4,2.5); this.disc(ctx,g[0],g[1],2,'#94a3b8'); this.disc(ctx,g[0],g[1],0.9,'#475569'); for(let k=0;k<6;k++){const a=t*2+k*1.047;this.px(ctx,g[0]+Math.cos(a)*2.6,g[1]+Math.sin(a)*2.6,'#cbd5e1');}
+    this.villagers(ctx,t,4,'#e6c8a0','#4b5563',4);
+  }
+  drawModern(ctx,t,act){
+    this.groundSlab(ctx,5,'#26262b','#161619');
+    const towers=[[-2.4,-2,2,2,13],[0.4,-0.6,2.2,2.2,16],[2.6,1.6,1.8,1.8,10],[-1.2,2.4,1.6,1.6,8]];
+    towers.sort((a,b)=>(a[0]+a[1])-(b[0]+b[1])).forEach(([gx,gy,w,d,h],idx)=>{ this.isoBox(ctx,gx,gy,w,d,h,'#cbd5e1','#1e293b','#0f172a'); const hw=w/2,hd=d/2; const Bt=this.iso(gx+hw,gy-hd,h),Ct=this.iso(gx+hw,gy+hd,h),Cb=this.iso(gx+hw,gy+hd,0),Bb=this.iso(gx+hw,gy-hd,0),Dt=this.iso(gx-hw,gy+hd,h),Db=this.iso(gx-hw,gy+hd,0); const nv=Math.max(2,Math.round(h/2.5)); this.winFace(ctx,Bt,Ct,Cb,Bb,2,nv,t,idx*5); this.winFace(ctx,Ct,Dt,Db,Cb,2,nv,t,idx*5+99); });
+    for(let i=0;i<3;i++){const u=((t*0.5+i*0.33)%1); const p=this.iso(-4+u*8,3.4,0.9); this.px(ctx,p[0],p[1],i%2?'#ef4444':'#fbbf24'); this.px(ctx,p[0]-1,p[1],'#fca5a5');}
+    this.villagers(ctx,t,3,'#e6c8a0','#94a3b8',4);
+  }
+
+  // ================= INTELLIGENCE & COSMOS =================
+  drawPlanet(ctx,t,act){
+    const R=14, rot=t*3, rot2=t*5;
+    for(let y=-R;y<=R;y++)for(let x=-R;x<=R;x++){const d=Math.hypot(x,y);if(d>R)continue;
+      if(Math.abs(y)>R-2.5){this.px(ctx,x,y,'#eaf4ff');continue;}
+      const n=Math.sin((x+rot)*0.45)+Math.sin(y*0.5)+Math.sin((x+rot)*0.18+y*0.4);
+      let c = n>0.7 ? (n>1.4?'#15803d':'#22c55e') : (d>R-2?'#1e40af':'#2563eb');
+      const m=Math.sin((x-rot2)*0.4+y*0.55)+Math.cos((y-rot2*0.3)*0.5);
+      if(m>1.25)c='#eef6ff';
+      this.px(ctx,x,y,c);
+    }
+    this.ring(ctx,0,0,R+1.2,'rgba(125,211,252,.5)');
+  }
+  drawAgi(ctx,t,act){
+    const pulse=0.5+0.5*Math.sin(t*3), core=pulse>0.5?'#a5f3fc':'#22d3ee';
+    // traces + pins (4 sides)
+    for(let s=0;s<4;s++){const dx=[1,-1,0,0][s],dy=[0,0,1,-1][s];for(let k=1;k<=3;k++){this.px(ctx,dx*(7+k*1.5),dy*(7+k*1.5),'#334155');}
+      this.rect(ctx,dx*12-0.5,dy*12-0.5,1.5,1.5,'#94a3b8');
+      // data packet moving outward
+      const pos=7+((t*4+s)%5); this.px(ctx,dx*pos,dy*pos,'#5eead4');
+    }
+    // core chip
+    this.rect(ctx,-6,-6,12,12,'#0f172a'); this.ring(ctx,0,0,6,'#475569');
+    this.disc(ctx,0,0,3.4,core); this.disc(ctx,0,0,1.6,'#ecfeff');
+    // inner circuit ticks
+    for(let k=0;k<4;k++){const a=k*1.5708+t*0.5;this.px(ctx,Math.cos(a)*5,Math.sin(a)*5,'#67e8f9');}
+  }
+  drawSelfImprove(ctx,t,act){
+    for(let i=0;i<6;i++){const prog=((t*0.45+i/6)%1),size=prog*17,a=prog*1.5708+t,al=1-prog;
+      const cols=['#ddd6fe','#c4b5fd','#a78bfa']; const c=cols[i%3];
+      // rotating square outline
+      const pts=[[-size,-size],[size,-size],[size,size],[-size,size]].map(([x,y])=>[x*Math.cos(a)-y*Math.sin(a),x*Math.sin(a)+y*Math.cos(a)]);
+      ctx.globalAlpha=al; for(let k=0;k<4;k++)this.line(ctx,pts[k][0],pts[k][1],pts[(k+1)%4][0],pts[(k+1)%4][1],c); ctx.globalAlpha=1;
+    }
+    const p=0.5+0.5*Math.sin(t*5); this.disc(ctx,0,0,2.6+p,'#ede9fe'); this.disc(ctx,0,0,1.4,'#f5f3ff');
+    // upward arrows hint
+    for(let k=-1;k<=1;k++){this.line(ctx,k*4,5,k*4,1,'#a78bfa');this.px(ctx,k*4-1,2,'#a78bfa');this.px(ctx,k*4+1,2,'#a78bfa');}
+  }
+  drawSubjugation(ctx,t,act){
+    // tiny humans cowering at bottom
+    const scan=Math.sin(t*1.5)*7;
+    for(let i=-2;i<=2;i++){const hx=i*4, c='#64748b'; this.disc(ctx,hx,13,1,c); this.rect(ctx,hx-0.5,14,1.5,2,c);}
+    // big robot head top
+    this.rect(ctx,-8,-15,16,11,'#475569'); this.rect(ctx,-8,-15,16,2,'#64748b');
+    this.line(ctx,0,-15,0,-18,'#94a3b8'); this.disc(ctx,0,-19,1,'#ef4444'); // antenna
+    // single scanning eye
+    const ex=scan*0.5; this.rect(ctx,-6,-11,12,3,'#1e293b'); this.disc(ctx,ex,-9.5,1.8,'#ef4444'); this.disc(ctx,ex,-9.5,0.9,'#fca5a5');
+    // red scan beam to humans
+    ctx.globalAlpha=0.4+0.3*Math.sin(t*4); this.line(ctx,ex,-8,scan,12,'#ef4444'); this.line(ctx,ex,-8,scan+1,12,'#b91c1c'); ctx.globalAlpha=1;
+  }
+  drawSolar(ctx,t,act){
+    const p=0.6+0.4*Math.sin(t*3); this.disc(ctx,0,0,4,'#fbbf24'); this.disc(ctx,0,0,4.8*p,'rgba(253,224,71,.4)'); this.disc(ctx,0,0,2.4,'#fff7ed');
+    const planets=[[7,'#60a5fa',1.3],[11,'#f97316',0.9],[15,'#a78bfa',0.6],[18,'#34d399',0.42]];
+    planets.forEach(([rd,col,spd],i)=>{ this.ring(ctx,0,0,rd,'rgba(51,65,85,.6)'); const a=t*spd+i*1.7; this.disc(ctx,Math.cos(a)*rd,Math.sin(a)*rd*0.6,1.5,col); });
+  }
+  drawGalaxy(ctx,t,act){
+    for(let i=0;i<150;i++){const a0=i*0.16, r=Math.sqrt(i)*1.35, a=a0+t*0.3-r*0.04; const x=Math.cos(a)*r,y=Math.sin(a)*r*0.6;
+      const tw=0.6+0.4*Math.sin(t*4+i); const c = r<5?'#fff7ed':(r<12?'#fde68a':'#bfdbfe'); this.pxa(ctx,x,y,c,Math.min(1,tw));}
+    this.disc(ctx,0,0,2.4,'#fffbeb'); this.disc(ctx,0,0,1.2,'#ffffff');
+  }
+  drawUniverse(ctx,t,act){
+    // expanding galaxies + faint web
+    const pts=this.uni.map(g=>{const r=(g.r0 + t*g.spd)%19; return [Math.cos(g.a)*r, Math.sin(g.a)*r*0.85, r, g];});
+    // web lines between sequential close points
+    ctx.globalAlpha=0.18; for(let i=0;i<pts.length-1;i++){const A=pts[i],B=pts[i+1];if(Math.hypot(A[0]-B[0],A[1]-B[1])<7)this.line(ctx,A[0],A[1],B[0],B[1],'#6d28d9');} ctx.globalAlpha=1;
+    pts.forEach(([x,y,r,g])=>{const tw=0.5+0.5*Math.sin(t*3+g.tw),col=['#c4b5fd','#a5b4fc','#f0abfc'][g.hue];this.pxa(ctx,x,y,col,Math.min(1,tw*(0.4+r/19)));});
+    this.disc(ctx,0,0,1.4,'#ede9fe');
+  }
+  drawReality(ctx,t,act){
+    const glitch = (Math.sin(t*1.3)>0.85) || act>0.5;
+    const yaw=t*0.6, pit=t*0.4, V=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
+    const E=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+    const sc=8, hueT=Math.floor(t*2);
+    const proj=V.map((v,idx)=>{let[x,y,z]=v; let x1=x*Math.cos(yaw)-z*Math.sin(yaw),z1=x*Math.sin(yaw)+z*Math.cos(yaw); let y1=y*Math.cos(pit)-z1*Math.sin(pit); let gx=x1*sc, gy=y1*sc; if(glitch){gx+=(this.hash(idx+hueT)-0.5)*10; gy+=(this.hash(idx*3+hueT)-0.5)*10;} return [gx,gy];});
+    const cols=glitch?['#f472b6','#22d3ee','#a3e635']:['#f9a8d4','#67e8f9','#e9d5ff'];
+    E.forEach((e,i)=>this.line(ctx,proj[e[0]][0],proj[e[0]][1],proj[e[1]][0],proj[e[1]][1],cols[i%cols.length]));
+    proj.forEach(p=>this.disc(ctx,p[0],p[1],1,'#ffffff'));
+    if(glitch)for(let i=0;i<10;i++)this.pxa(ctx,(this.hash(i+hueT)-0.5)*30,(this.hash(i*7+hueT)-0.5)*30,cols[i%3],0.7);
+  }
+}
+</script>
+</body>
+</html>

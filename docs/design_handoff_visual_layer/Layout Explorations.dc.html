@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+  canvas { display: block; image-rendering: pixelated; }
+  .lbl { font-family: 'Press Start 2P', monospace; font-size: 11px; letter-spacing: 1px; color: #6b6b72; text-transform: uppercase; margin: 0 0 14px 2px; }
+  .note { font-size: 14px; color: #8a8a92; line-height: 1.55; margin-top: 14px; max-width: 1880px; }
+  .scr { position: relative; background: #08080a; border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; overflow: hidden; box-shadow: 0 14px 50px rgba(0,0,0,.55); }
+  .gcard { background: #161618; border: 1px solid #2a2a2e; border-radius: 14px; }
+  .track { height: 9px; background: #3a3a3e; border-radius: 5px; overflow: hidden; }
+  .fill { height: 100%; background: #f4f4f5; border-radius: 5px; }
+  .btn { text-align: center; background: #1c1c20; border: 1px solid #34343a; border-radius: 9px; color: #f4f4f5; font-weight: 600; }
+  .tank { position: relative; border-radius: 12px; overflow: hidden; background: radial-gradient(circle at 50% 35%,#0e1726,#070708); box-shadow: inset 0 0 26px rgba(59,130,246,.16), inset 0 0 0 3px rgba(59,130,246,.10); }
+  .tank::after { content:''; position:absolute; inset:0; pointer-events:none; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.14) 0 1px, transparent 2px 4px); }
+  .flow { position:relative; width:7px; }
+  .fd { position:absolute; left:1px; width:5px; height:5px; border-radius:1px; }
+  .tab { flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; font-size:11px; padding:10px 0; color:#6b6b72; }
+  .tab.on { color:#93c5fd; }
+  .pill { font-family:'Press Start 2P'; font-size:7px; }
+  @keyframes fdn { 0%{transform:translateY(-7px);opacity:0} 25%{opacity:1} 80%{opacity:1} 100%{transform:translateY(38px);opacity:0} }
+  @keyframes fup { 0%{transform:translateY(7px);opacity:0} 25%{opacity:1} 80%{opacity:1} 100%{transform:translateY(-38px);opacity:0} }
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="position:absolute; inset:0;">
+
+  <!-- HEADER -->
+  <div data-drags-parent="1" style="position:absolute; left:40px; top:0; width:1840px;">
+    <div class="gcard" style="padding:26px 32px; background:linear-gradient(135deg,#0d0d10,#08080a);">
+      <div style="font-family:'Press Start 2P'; font-size:17px; color:#f2f2f4;">Layout &amp; IA explorations</div>
+      <div class="note">Three desktop arrangements (1920&times;1080, no scrolling) that differ in where the companion lives. Goal / lifespan / optional secondary bar (e.g. Sunlight) stack at the top; the grid fits up to 10 actions. Plus a mobile IA split into views. Companions are breathing live.</div>
+    </div>
+  </div>
+
+  <!-- ================= DESKTOP A: LEFT RAIL ================= -->
+  <div data-drags-parent="1" style="position:absolute; left:40px; top:150px;">
+    <div class="lbl">Desktop A &middot; Companion in a left rail</div>
+    <div class="scr" style="width:1920px; height:1080px; padding:28px; display:grid; grid-template-columns:230px 1fr 340px; gap:24px;">
+      <!-- left rail companion -->
+      <div style="display:flex; flex-direction:column; gap:18px;">
+        <div class="pill" style="color:#5f6168; font-size:9px;">COMPANION</div>
+        <div class="tank" style="width:174px; height:174px; align-self:center;">
+          <canvas data-creature="amoeba" data-s="6" style="position:absolute; inset:0; margin:auto; filter:drop-shadow(0 0 6px rgba(59,130,246,.55));"></canvas>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:14px; color:#cfcfd6;"><span>Amoeba</span><span style="color:#6b6b72;">Gen 1</span></div>
+        <div style="display:flex; gap:10px; font-size:12px;">
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;"><span class="pill" style="color:#fbbf24;">FOOD&darr;</span><div class="flow" style="height:40px;"><div class="fd" style="background:#fbbf24; animation:fdn 1.4s linear infinite;"></div><div class="fd" style="background:#fbbf24; animation:fdn 1.4s linear infinite; animation-delay:.7s;"></div></div></div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;"><span class="pill" style="color:#22d3ee;">&uarr;ENRG</span><div class="flow" style="height:40px;"><div class="fd" style="background:#22d3ee; animation:fup 1.4s linear infinite;"></div><div class="fd" style="background:#22d3ee; animation:fup 1.4s linear infinite; animation-delay:.7s;"></div></div></div>
+        </div>
+        <div style="margin-top:auto; font-size:12px; color:#6b6b72;">Permanent: +0.5&times; avg speed</div>
+      </div>
+      <!-- main: stacked status bars + up to 10 actions -->
+      <div style="display:flex; flex-direction:column; gap:24px; min-height:0;">
+        <div class="gcard" style="padding:20px 28px;">
+          <div style="text-align:center; font-size:15px; color:#cfcfd6; margin-bottom:15px;">Generation 1 - Amoeba</div>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:16px; margin-bottom:6px;"><span style="color:#fff; font-weight:700;">Next goal</span><span style="color:#cfcfd6;">3 / 4 nutrients</span></div>
+              <div class="track" style="height:12px;"><div class="fill" style="width:75%;"></div></div>
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:15px; margin-bottom:6px;"><span style="color:#cfcfd6;">Lifespan</span><span style="color:#9a9aa2;">41.0s</span></div>
+              <div class="track" style="height:12px;"><div class="fill" style="width:68%; background:#22d3ee;"></div></div>
+            </div>
+            <div title="Stage-dependent secondary bar">
+              <div style="display:flex; justify-content:space-between; font-size:15px; margin-bottom:6px;"><span style="color:#fbbf24;">Sunlight</span><span style="color:#9a9aa2;">6 / 10</span></div>
+              <div class="track" style="height:12px;"><div class="fill" style="width:60%; background:#fbbf24;"></div></div>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1; display:grid; grid-template-columns:repeat(5,1fr); grid-template-rows:1fr 1fr; gap:16px; min-height:0;">
+          <sc-for list="{{ actionsDesktop }}" as="a" hint-placeholder-count="10">
+            <div class="gcard" style="padding:14px; display:flex; flex-direction:column; gap:10px;">
+              <div class="track"><div class="fill" style="width:55%;"></div></div>
+              <div style="display:flex; gap:6px; justify-content:center; font-size:11px; min-height:13px;"><span style="color:#fca5a5;">{{ a.take }}</span><span style="color:#86efac;">{{ a.give }}</span></div>
+              <div class="btn" style="padding:10px; font-size:14px;">{{ a.name }} ({{ a.t }})</div>
+              <canvas data-spark="1" data-i="{{ $index }}" width="240" height="52" style="width:100%; height:52px; margin-top:auto;"></canvas>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <!-- resources -->
+      <div class="gcard" style="padding:24px 26px; display:flex; flex-direction:column;">
+        <div style="font-size:20px; font-weight:700; color:#fff; margin-bottom:18px;">Resources</div>
+        <div style="display:flex; flex-direction:column; gap:14px; font-size:18px; color:#e7e7ea;">
+          <div style="display:flex; justify-content:space-between;"><span>Food</span><span>3</span></div>
+          <div style="display:flex; justify-content:space-between;"><span>Energy</span><span>0</span></div>
+          <div style="display:flex; justify-content:space-between;"><span>Nutrients</span><span>3</span></div>
+          <div style="display:flex; justify-content:space-between;"><span>Divisions</span><span>0</span></div>
+        </div>
+        <div style="margin-top:24px; font-size:13px; color:#7f7f87; text-transform:uppercase; letter-spacing:1px;">Synergies</div>
+        <div style="margin-top:10px; font-size:14px; color:#9a9aa2; line-height:1.5;">Convert food into energy. Earn experience to evolve.</div>
+        <div style="margin-top:auto; font-size:12px; color:#6b6b72;">Reset life &nbsp;&middot;&nbsp; Delete save</div>
+      </div>
+    </div>
+    <div class="note">Goal, lifespan, and an optional stage-specific bar (e.g. Sunlight) now stack at the top; the left rail is the companion's permanent home. The action grid is 5&times;2, fitting up to 10 actions at 1080p.</div>
+  </div>
+
+  <!-- ================= DESKTOP B: CORNER COMPANION ================= -->
+  <div data-drags-parent="1" style="position:absolute; left:40px; top:1410px;">
+    <div class="lbl">Desktop B &middot; Floating corner tamagotchi</div>
+    <div class="scr" style="width:1920px; height:1080px; padding:28px; display:grid; grid-template-columns:1fr 340px; grid-template-rows:auto 1fr; gap:24px;">
+      <div class="gcard" style="grid-column:1 / 2; padding:20px 28px;">
+        <div style="text-align:center; font-size:15px; color:#cfcfd6; margin-bottom:15px;">Generation 1 - Amoeba</div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:16px; margin-bottom:6px;"><span style="color:#fff; font-weight:700;">Next goal</span><span style="color:#cfcfd6;">3 / 4 nutrients</span></div>
+            <div class="track" style="height:12px;"><div class="fill" style="width:75%;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:15px; margin-bottom:6px;"><span style="color:#cfcfd6;">Lifespan</span><span style="color:#9a9aa2;">41.0s</span></div>
+            <div class="track" style="height:12px;"><div class="fill" style="width:68%; background:#22d3ee;"></div></div>
+          </div>
+          <div title="Stage-dependent secondary bar">
+            <div style="display:flex; justify-content:space-between; font-size:15px; margin-bottom:6px;"><span style="color:#fbbf24;">Sunlight</span><span style="color:#9a9aa2;">6 / 10</span></div>
+            <div class="track" style="height:12px;"><div class="fill" style="width:60%; background:#fbbf24;"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="gcard" style="grid-column:2 / 3; grid-row:1 / 3; padding:24px 26px; display:flex; flex-direction:column;">
+        <div style="font-size:20px; font-weight:700; color:#fff; margin-bottom:18px;">Resources</div>
+        <div style="display:flex; flex-direction:column; gap:14px; font-size:18px; color:#e7e7ea;">
+          <div style="display:flex; justify-content:space-between;"><span>Food</span><span>3</span></div>
+          <div style="display:flex; justify-content:space-between;"><span>Energy</span><span>0</span></div>
+          <div style="display:flex; justify-content:space-between;"><span>Nutrients</span><span>3</span></div>
+          <div style="display:flex; justify-content:space-between;"><span>Divisions</span><span>0</span></div>
+        </div>
+        <div style="margin-top:24px; font-size:13px; color:#7f7f87; text-transform:uppercase; letter-spacing:1px;">Synergies</div>
+        <div style="margin-top:10px; font-size:14px; color:#9a9aa2; line-height:1.5;">Cells from past lives boost energy gain. Reach the goal to evolve.</div>
+      </div>
+      <!-- actions area (leaves bottom-left for companion) -->
+      <div style="grid-column:1 / 2; grid-row:2 / 3; position:relative; display:grid; grid-template-columns:repeat(5,1fr); grid-template-rows:1fr 1fr; gap:16px; min-height:0;">
+        <sc-for list="{{ actionsDesktop }}" as="a" hint-placeholder-count="10">
+          <div class="gcard" style="padding:14px; display:flex; flex-direction:column; gap:10px;">
+            <div class="track"><div class="fill" style="width:55%;"></div></div>
+            <div style="display:flex; gap:6px; justify-content:center; font-size:11px; min-height:13px;"><span style="color:#fca5a5;">{{ a.take }}</span><span style="color:#86efac;">{{ a.give }}</span></div>
+            <div class="btn" style="padding:10px; font-size:14px;">{{ a.name }} ({{ a.t }})</div>
+            <canvas data-spark="1" data-i="{{ $index }}" width="240" height="52" style="width:100%; height:52px; margin-top:auto;"></canvas>
+          </div>
+        </sc-for>
+        <!-- floating companion -->
+        <div style="position:absolute; left:-6px; bottom:-6px; display:flex; align-items:flex-end; gap:14px; background:rgba(10,12,18,.82); backdrop-filter:blur(6px); border:1px solid rgba(59,130,246,.25); border-radius:16px; padding:14px 18px; box-shadow:0 12px 40px rgba(0,0,0,.6);">
+          <div class="tank" style="width:120px; height:120px;"><canvas data-creature="amoeba" data-s="4" style="position:absolute; inset:0; margin:auto; filter:drop-shadow(0 0 6px rgba(59,130,246,.55));"></canvas></div>
+          <div style="display:flex; flex-direction:column; gap:8px; padding-bottom:6px;">
+            <div style="font-size:15px; color:#e7e7ea;">Amoeba <span style="color:#6b6b72; font-size:12px;">Gen 1</span></div>
+            <div style="display:flex; gap:8px; font-size:11px;"><span style="color:#fbbf24;">food &darr;</span><span style="color:#22d3ee;">energy &uarr;</span></div>
+            <div style="font-size:11px; color:#6b6b72;">absorbing&hellip;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note">A true &ldquo;pet in the corner&rdquo;: companion floats over the play area, bottom-left. Goal / lifespan / Sunlight stack top-left; the 5&times;2 grid holds up to 10 actions (companion reserves one corner).</div>
+  </div>
+
+  <!-- ================= DESKTOP C: COMPANION IN HEADER ================= -->
+  <div data-drags-parent="1" style="position:absolute; left:40px; top:2670px;">
+    <div class="lbl">Desktop C &middot; Companion in the header bar</div>
+    <div class="scr" style="width:1920px; height:1080px; padding:28px; display:flex; flex-direction:column; gap:24px;">
+      <!-- header bar: companion + goal + resources inline -->
+      <div class="gcard" style="display:flex; align-items:center; gap:28px; padding:18px 26px;">
+        <div class="tank" style="width:118px; height:118px; flex-shrink:0;"><canvas data-creature="amoeba" data-s="4" style="position:absolute; inset:0; margin:auto; filter:drop-shadow(0 0 6px rgba(59,130,246,.55));"></canvas></div>
+        <div style="flex:1;">
+          <div style="font-size:15px; color:#cfcfd6;">Generation 1 - Amoeba</div>
+          <div style="font-size:26px; font-weight:700; color:#fff; margin:8px 0 12px;">Next goal: 3/4 nutrients</div>
+          <div class="track" style="height:10px;"><div class="fill" style="width:75%;"></div></div>
+          <div style="display:flex; align-items:center; gap:10px; margin-top:12px;"><span style="font-size:13px; color:#9a9aa2; width:74px;">Lifespan</span><div class="track" style="flex:1; height:7px;"><div class="fill" style="width:68%; background:#22d3ee;"></div></div><span style="font-size:12px; color:#9a9aa2; width:48px; text-align:right;">41.0s</span></div>
+          <div style="display:flex; align-items:center; gap:10px; margin-top:8px;"><span style="font-size:13px; color:#fbbf24; width:74px;">Sunlight</span><div class="track" style="flex:1; height:7px;"><div class="fill" style="width:60%; background:#fbbf24;"></div></div><span style="font-size:12px; color:#9a9aa2; width:48px; text-align:right;">6/10</span></div>
+        </div>
+        <div style="display:flex; gap:30px; font-size:17px; color:#e7e7ea; padding-left:14px; border-left:1px solid #2a2a2e;">
+          <div style="text-align:center;"><div style="color:#6b6b72; font-size:12px; margin-bottom:6px;">FOOD</div>3</div>
+          <div style="text-align:center;"><div style="color:#6b6b72; font-size:12px; margin-bottom:6px;">ENERGY</div>0</div>
+          <div style="text-align:center;"><div style="color:#6b6b72; font-size:12px; margin-bottom:6px;">NUTR</div>3</div>
+          <div style="text-align:center;"><div style="color:#6b6b72; font-size:12px; margin-bottom:6px;">DIV</div>0</div>
+        </div>
+      </div>
+      <!-- full-width 5x2 action grid (up to 10) -->
+      <div style="flex:1; display:grid; grid-template-columns:repeat(5,1fr); grid-template-rows:1fr 1fr; gap:18px; min-height:0;">
+        <sc-for list="{{ actionsDesktop }}" as="a" hint-placeholder-count="10">
+          <div class="gcard" style="padding:16px; display:flex; flex-direction:column; gap:11px;">
+            <div class="track"><div class="fill" style="width:55%;"></div></div>
+            <div style="display:flex; gap:8px; justify-content:center; font-size:12px; min-height:14px;"><span style="color:#fca5a5;">{{ a.take }}</span><span style="color:#86efac;">{{ a.give }}</span></div>
+            <div class="btn" style="padding:11px; font-size:15px;">{{ a.name }} ({{ a.t }})</div>
+            <canvas data-spark="1" data-i="{{ $index }}" width="280" height="64" style="width:100%; height:64px; margin-top:auto;"></canvas>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div class="note">Companion + goal collapse into one status bar; goal / lifespan / Sunlight stack inside it. The full-width 5&times;2 grid gives the up-to-10 actions the most room and biggest charts.</div>
+  </div>
+
+  <!-- ================= MOBILE PORTRAIT: LIFE TAB ================= -->
+  <div data-drags-parent="1" style="position:absolute; left:2040px; top:150px;">
+    <div class="lbl">Mobile A &middot; Portrait &mdash; Life tab</div>
+    <div class="scr" style="width:412px; height:868px; padding:14px; border-radius:46px; background:#1a1a1c; box-shadow:0 20px 60px rgba(0,0,0,.6);">
+      <div style="position:relative; width:100%; height:100%; border-radius:34px; overflow:hidden; background:#08080a; display:flex; flex-direction:column;">
+        <div style="position:absolute; left:50%; top:10px; transform:translateX(-50%); width:120px; height:26px; background:#000; border-radius:14px; z-index:3;"></div>
+        <div style="flex:1; overflow:hidden; display:flex; flex-direction:column; gap:14px; padding:42px 16px 12px;">
+          <div class="tank" style="width:100%; height:170px;">
+            <canvas data-creature="amoeba" data-s="6" style="position:absolute; inset:0; margin:auto; filter:drop-shadow(0 0 7px rgba(59,130,246,.6));"></canvas>
+            <div style="position:absolute; left:12px; bottom:10px; font-size:13px; color:#cfcfd6;">Amoeba &middot; Gen 1</div>
+            <div style="position:absolute; right:12px; top:12px; display:flex; gap:8px; font-size:10px;"><span style="color:#fbbf24;">food&darr;</span><span style="color:#22d3ee;">enrg&uarr;</span></div>
+          </div>
+          <div class="gcard" style="padding:14px 16px; text-align:center;">
+            <div style="font-size:13px; color:#cfcfd6; margin-bottom:8px;">Next goal: 3/4 nutrients</div>
+            <div class="track"><div class="fill" style="width:75%;"></div></div>
+            <div style="display:flex; align-items:center; gap:8px; margin-top:12px;"><span style="font-size:11px; color:#9a9aa2; white-space:nowrap;">Life 41s</span><div class="track" style="flex:1; height:6px;"><div class="fill" style="width:68%; background:#22d3ee;"></div></div></div>
+          </div>
+          <div style="font-size:11px; color:#7f7f87; text-transform:uppercase; letter-spacing:1px; margin-top:2px;">Actions</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <sc-for list="{{ actionsMobile }}" as="a" hint-placeholder-count="5">
+              <div class="gcard" style="display:flex; align-items:center; gap:12px; padding:11px 13px;">
+                <div style="flex:1;">
+                  <div style="font-size:14px; color:#f4f4f5; font-weight:600;">{{ a.name }}</div>
+                  <div style="font-size:11px; margin-top:3px;"><span style="color:#fca5a5;">{{ a.take }}</span> <span style="color:#86efac;">{{ a.give }}</span></div>
+                  <div class="track" style="height:5px; margin-top:7px;"><div class="fill" style="width:55%;"></div></div>
+                </div>
+                <div class="btn" style="padding:9px 11px; font-size:13px; font-weight:600; white-space:nowrap;">{{ a.t }}s</div>
+              </div>
+            </sc-for>
+            <div style="text-align:center; font-size:11px; color:#5f6168; padding:4px;">&darr; 3 more actions</div>
+          </div>
+        </div>
+        <div style="display:flex; border-top:1px solid #1f1f23; background:#0c0c0e; padding-bottom:8px;">
+          <div class="tab on"><span style="font-size:16px;">&#9679;</span>Life</div>
+          <div class="tab"><span style="font-size:16px;">&#9632;</span>Stats</div>
+          <div class="tab"><span style="font-size:16px;">&#10022;</span>Evolve</div>
+        </div>
+      </div>
+    </div>
+    <div class="note">Companion is the hero up top; actions scroll vertically below (never sideways).</div>
+  </div>
+
+  <!-- ================= MOBILE PORTRAIT: STATS TAB ================= -->
+  <div data-drags-parent="1" style="position:absolute; left:2510px; top:150px;">
+    <div class="lbl">Mobile B &middot; Portrait &mdash; Stats tab</div>
+    <div class="scr" style="width:412px; height:868px; padding:14px; border-radius:46px; background:#1a1a1c; box-shadow:0 20px 60px rgba(0,0,0,.6);">
+      <div style="position:relative; width:100%; height:100%; border-radius:34px; overflow:hidden; background:#08080a; display:flex; flex-direction:column;">
+        <div style="position:absolute; left:50%; top:10px; transform:translateX(-50%); width:120px; height:26px; background:#000; border-radius:14px; z-index:3;"></div>
+        <div style="flex:1; overflow:hidden; display:flex; flex-direction:column; gap:16px; padding:50px 16px 12px;">
+          <div style="font-size:20px; font-weight:700; color:#fff;">Resources</div>
+          <div class="gcard" style="padding:16px; display:flex; flex-direction:column; gap:14px; font-size:17px; color:#e7e7ea;">
+            <div style="display:flex; justify-content:space-between;"><span>Food</span><span>3</span></div>
+            <div style="display:flex; justify-content:space-between;"><span>Energy</span><span>0</span></div>
+            <div style="display:flex; justify-content:space-between;"><span>Nutrients</span><span>3</span></div>
+            <div style="display:flex; justify-content:space-between;"><span>Divisions</span><span>0</span></div>
+          </div>
+          <div style="font-size:12px; color:#7f7f87; text-transform:uppercase; letter-spacing:1px;">Production over life</div>
+          <div class="gcard" style="padding:16px;"><canvas data-spark="1" data-i="2" width="360" height="120" style="width:100%; height:120px;"></canvas></div>
+          <div style="font-size:12px; color:#7f7f87; text-transform:uppercase; letter-spacing:1px;">Synergies</div>
+          <div class="gcard" style="padding:14px 16px; font-size:14px; color:#9a9aa2; line-height:1.55;">Cells from past lives boost energy. Reach 4 nutrients to unlock energy generation.</div>
+        </div>
+        <div style="display:flex; border-top:1px solid #1f1f23; background:#0c0c0e; padding-bottom:8px;">
+          <div class="tab"><span style="font-size:16px;">&#9679;</span>Life</div>
+          <div class="tab on"><span style="font-size:16px;">&#9632;</span>Stats</div>
+          <div class="tab"><span style="font-size:16px;">&#10022;</span>Evolve</div>
+        </div>
+      </div>
+    </div>
+    <div class="note">Resources, charts &amp; synergies live on their own tab &mdash; keeps the Life screen clean.</div>
+  </div>
+
+  <!-- ================= MOBILE PORTRAIT: EVOLVE TAB ================= -->
+  <div data-drags-parent="1" style="position:absolute; left:2980px; top:150px;">
+    <div class="lbl">Mobile C &middot; Portrait &mdash; Evolve / Rebirth tab</div>
+    <div class="scr" style="width:412px; height:868px; padding:14px; border-radius:46px; background:#1a1a1c; box-shadow:0 20px 60px rgba(0,0,0,.6);">
+      <div style="position:relative; width:100%; height:100%; border-radius:34px; overflow:hidden; background:#08080a; display:flex; flex-direction:column;">
+        <div style="position:absolute; left:50%; top:10px; transform:translateX(-50%); width:120px; height:26px; background:#000; border-radius:14px; z-index:3;"></div>
+        <div style="flex:1; overflow:hidden; display:flex; flex-direction:column; gap:18px; padding:50px 16px 12px; align-items:center;">
+          <div style="font-size:20px; font-weight:700; color:#fff; align-self:flex-start;">Rebirth</div>
+          <div class="tank" style="width:200px; height:200px; border-radius:50%;">
+            <canvas data-creature="amoeba" data-s="7" style="position:absolute; inset:0; margin:auto; filter:drop-shadow(0 0 9px rgba(34,211,238,.6));"></canvas>
+          </div>
+          <div style="text-align:center; font-size:13px; color:#9a9aa2; line-height:1.5;">Reborn keeps your permanent speed bonuses and resets the level.</div>
+          <div class="gcard" style="width:100%; padding:16px; display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; justify-content:space-between; font-size:14px; color:#e7e7ea;"><span>Permanent speed</span><span style="color:#6ee7b7;">+0.1&times; to 8 actions</span></div>
+            <div style="display:flex; justify-content:space-between; font-size:14px; color:#e7e7ea;"><span>Generation</span><span>1 &rarr; 2</span></div>
+          </div>
+          <div class="btn" style="width:100%; padding:16px; font-size:17px; background:#10261c; border-color:#1f7a4d; color:#6ee7b7;">&#10022; Rebirth</div>
+        </div>
+        <div style="display:flex; border-top:1px solid #1f1f23; background:#0c0c0e; padding-bottom:8px;">
+          <div class="tab"><span style="font-size:16px;">&#9679;</span>Life</div>
+          <div class="tab"><span style="font-size:16px;">&#9632;</span>Stats</div>
+          <div class="tab on"><span style="font-size:16px;">&#10022;</span>Evolve</div>
+        </div>
+      </div>
+    </div>
+    <div class="note">Per your note, bonuses are shown as an aggregate (&ldquo;+0.1&times; to 8 actions&rdquo;) instead of a long per-action list.</div>
+  </div>
+
+  <!-- ================= MOBILE LANDSCAPE ================= -->
+  <div data-drags-parent="1" style="position:absolute; left:2040px; top:1180px;">
+    <div class="lbl">Mobile D &middot; Landscape &mdash; everything on one screen, no scroll</div>
+    <div class="scr" style="width:892px; height:440px; padding:14px; border-radius:42px; background:#1a1a1c; box-shadow:0 20px 60px rgba(0,0,0,.6);">
+      <div style="position:relative; width:100%; height:100%; border-radius:30px; overflow:hidden; background:#08080a; display:flex; gap:14px; padding:16px;">
+        <!-- left: companion + goal -->
+        <div style="width:210px; display:flex; flex-direction:column; gap:12px;">
+          <div class="tank" style="width:100%; height:150px;"><canvas data-creature="amoeba" data-s="5" style="position:absolute; inset:0; margin:auto; filter:drop-shadow(0 0 7px rgba(59,130,246,.6));"></canvas></div>
+          <div class="gcard" style="padding:11px 13px;">
+            <div style="font-size:12px; color:#cfcfd6; margin-bottom:7px;">Goal: 3/4 nutrients</div>
+            <div class="track" style="height:7px;"><div class="fill" style="width:75%;"></div></div>
+            <div style="display:flex; align-items:center; gap:7px; margin-top:9px;"><span style="font-size:10px; color:#9a9aa2;">41s</span><div class="track" style="flex:1; height:5px;"><div class="fill" style="width:68%; background:#22d3ee;"></div></div></div>
+          </div>
+        </div>
+        <!-- center: actions 2x4 -->
+        <div style="flex:1; display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:1fr; gap:9px; min-height:0;">
+          <sc-for list="{{ actions }}" as="a" hint-placeholder-count="8">
+            <div class="gcard" style="display:flex; align-items:center; gap:9px; padding:8px 10px;">
+              <div style="flex:1; min-width:0;">
+                <div style="font-size:12px; color:#f4f4f5; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ a.name }}</div>
+                <div class="track" style="height:4px; margin-top:6px;"><div class="fill" style="width:55%;"></div></div>
+              </div>
+              <div class="btn" style="padding:6px 8px; font-size:11px;">{{ a.t }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <!-- right: resources -->
+        <div style="width:118px; display:flex; flex-direction:column; gap:9px;">
+          <div style="font-size:12px; color:#7f7f87; text-transform:uppercase; letter-spacing:1px;">Res</div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:#e7e7ea;"><span>Food</span><span>3</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:#e7e7ea;"><span>Enrg</span><span>0</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:#e7e7ea;"><span>Nutr</span><span>3</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:#e7e7ea;"><span>Div</span><span>0</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="note">Landscape mirrors the desktop three-column split &mdash; companion + goal, action grid, resources &mdash; so nothing needs scrolling. Downside: small touch targets and most phones are held in portrait. My recommendation: <b>portrait with tabs</b> as the primary, landscape as a bonus.</div>
+  </div>
+
+  <!-- ================= MOBILE PORTRAIT: DENSE LIFE ================= -->
+  <div data-drags-parent="1" style="position:absolute; left:3460px; top:150px;">
+    <div class="lbl">Mobile A2 &middot; Portrait &mdash; dense Life (2-col actions &middot; speeds &middot; resources)</div>
+    <div class="scr" style="width:412px; height:868px; padding:14px; border-radius:46px; background:#1a1a1c; box-shadow:0 20px 60px rgba(0,0,0,.6);">
+      <div style="position:relative; width:100%; height:100%; border-radius:34px; overflow:hidden; background:#08080a; display:flex; flex-direction:column;">
+        <div style="position:absolute; left:50%; top:10px; transform:translateX(-50%); width:120px; height:26px; background:#000; border-radius:14px; z-index:3;"></div>
+        <div style="flex:1; overflow:hidden; display:flex; flex-direction:column; gap:12px; padding:46px 14px 10px;">
+          <div style="display:flex; gap:12px;">
+            <div class="tank" style="width:118px; height:118px; flex-shrink:0;"><canvas data-creature="amoeba" data-s="4" style="position:absolute; inset:0; margin:auto; filter:drop-shadow(0 0 7px rgba(59,130,246,.6));"></canvas></div>
+            <div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:7px;">
+              <div style="display:flex; justify-content:space-between; font-size:12px; color:#cfcfd6;"><span>Amoeba</span><span style="color:#6b6b72;">Gen 1</span></div>
+              <div style="font-size:15px; font-weight:700; color:#fff;">Goal: 3/4 nutrients</div>
+              <div class="track" style="height:8px;"><div class="fill" style="width:75%;"></div></div>
+              <div style="display:flex; align-items:center; gap:7px;"><span style="font-size:10px; color:#9a9aa2; white-space:nowrap;">Life 41s</span><div class="track" style="flex:1; height:5px;"><div class="fill" style="width:68%; background:#22d3ee;"></div></div></div>
+            </div>
+          </div>
+          <div class="gcard" style="padding:11px 13px; display:grid; grid-template-columns:1fr 1fr; gap:7px 18px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between;"><span style="color:#9a9aa2;">Food</span><span style="color:#e7e7ea;">3</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:#9a9aa2;">Nutrients</span><span style="color:#e7e7ea;">3</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:#9a9aa2;">Energy</span><span style="color:#e7e7ea;">0</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:#9a9aa2;">Divisions</span><span style="color:#e7e7ea;">0</span></div>
+          </div>
+          <div style="font-size:11px; color:#7f7f87; text-transform:uppercase; letter-spacing:1px;">Actions</div>
+          <div style="flex:1; display:grid; grid-template-columns:1fr 1fr; gap:9px; align-content:start; min-height:0;">
+            <sc-for list="{{ actions }}" as="a" hint-placeholder-count="8">
+              <div class="gcard" style="padding:9px 10px; display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; justify-content:space-between; align-items:baseline; gap:6px;">
+                  <span style="font-size:12px; color:#f4f4f5; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ a.name }}</span>
+                  <span style="font-size:10px; color:#9a9aa2; white-space:nowrap;">{{ a.t }}s</span>
+                </div>
+                <div style="font-size:9px; min-height:11px;"><span style="color:#fca5a5;">{{ a.take }}</span> <span style="color:#86efac;">{{ a.give }}</span></div>
+                <div class="track" style="height:4px;"><div class="fill" style="width:55%;"></div></div>
+                <div style="display:flex; justify-content:space-between; font-size:9px; color:#6f7078;">
+                  <span>cur <b style="color:#cfcfd6;">{{ a.cur }}&times;</b></span>
+                  <span>perm <b style="color:#93c5fd;">{{ a.perm }}&times;</b></span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex; border-top:1px solid #1f1f23; background:#0c0c0e; padding-bottom:8px;">
+          <div class="tab on"><span style="font-size:16px;">&#9679;</span>Life</div>
+          <div class="tab"><span style="font-size:16px;">&#9632;</span>Stats</div>
+          <div class="tab"><span style="font-size:16px;">&#10022;</span>Evolve</div>
+        </div>
+      </div>
+    </div>
+    <div class="note">Denser Life: 2-col actions each showing <b>current / permanent speed</b>, a 2-col resource grid up top, and companion + goal sharing a row &mdash; all on one screen, no scroll. Resources could also fold under the companion or behind a tap.</div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const actions = [
+      { name: 'Catch food', t: '0.5', give: '+1 food', take: '', cur: '1.00', perm: '0.50' },
+      { name: 'Absorb food', t: '1.8', give: '+1 nutrient', take: '-1 food', cur: '1.20', perm: '0.85' },
+      { name: 'Generate energy', t: '1.2', give: '+1 energy', take: '-1 nutr', cur: '0.90', perm: '0.40' },
+      { name: 'Divide cell', t: '3.0', give: '+1 division', take: '-3 energy', cur: '0.75', perm: '0.30' },
+      { name: 'Strengthen', t: '2.4', give: '+1 efficiency', take: '-2 energy', cur: '1.10', perm: '0.60' },
+      { name: 'Filter waste', t: '1.5', give: '+1 nutrient', take: '', cur: '1.30', perm: '0.70' },
+      { name: 'Reinforce', t: '2.0', give: '+1 hardness', take: '-1 energy', cur: '0.95', perm: '0.45' },
+      { name: 'Specialize', t: '4.0', give: '+1 cell', take: '-5 energy', cur: '0.80', perm: '0.25' },
+    ];
+    const actionsDesktop = actions.concat([
+      { name: 'Move', t: '1.0', give: '+1 position', take: '-1 energy', cur: '1.05', perm: '0.55' },
+      { name: 'Sense', t: '0.8', give: '+1 signal', take: '', cur: '1.15', perm: '0.65' },
+    ]);
+    return { rootRef: (el) => { this.rootEl = el; }, actions, actionsDesktop, actionsMobile: actions.slice(0, 5) };
+  }
+
+  componentDidMount() {
+    this.start = performance.now();
+    this.companions = [];
+    const init = () => {
+      const r = this.rootEl; if (!r) { this._t = setTimeout(init, 60); return; }
+      // sparklines (static, drawn once)
+      r.querySelectorAll('canvas[data-spark]').forEach((cv) => this.drawSpark(cv, +cv.dataset.i || 0));
+      // companions (animated)
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      r.querySelectorAll('canvas[data-creature]').forEach((cv, i) => {
+        const S = +cv.dataset.s || 5, G = 26;
+        cv.width = G * S * dpr; cv.height = G * S * dpr;
+        cv.style.width = G * S + 'px'; cv.style.height = G * S + 'px';
+        const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.imageSmoothingEnabled = false;
+        this.companions.push({ ctx, S, G, phase: i * 0.7 });
+      });
+      this.loop();
+    };
+    init();
+  }
+  componentWillUnmount() { cancelAnimationFrame(this._raf); clearTimeout(this._t); }
+
+  loop() {
+    const t = (performance.now() - this.start) / 1000;
+    for (const c of this.companions) {
+      c.ctx.clearRect(0, 0, c.G * c.S, c.G * c.S);
+      this.drawAmoeba(c.ctx, c.G, c.S, t + c.phase);
+    }
+    this._raf = requestAnimationFrame(() => this.loop());
+  }
+
+  px(ctx, x, y, S, col) { ctx.fillStyle = col; ctx.fillRect(Math.round(x) * S, Math.round(y) * S, S, S); }
+  disc(ctx, cx, cy, r, S, col) { for (let y = Math.floor(cy - r); y <= cy + r; y++) for (let x = Math.floor(cx - r); x <= cx + r; x++) { const dx = x - cx, dy = y - cy; if (dx * dx + dy * dy <= r * r) this.px(ctx, x, y, S, col); } }
+
+  drawAmoeba(ctx, G, S, t) {
+    const cx = G / 2 - 0.5, cy = G / 2 - 0.5, R = G * 0.30;
+    const breathe = Math.sin(t * 1.6) * 0.8;
+    const body = ['#3b82f6', '#1e3a8a'], mem = '#93c5fd', nuc = '#22d3ee', vac = '#bfdbfe';
+    for (let y = 0; y < G; y++) for (let x = 0; x < G; x++) {
+      const dx = x - cx, dy = y - cy, d = Math.hypot(dx, dy), ang = Math.atan2(dy, dx);
+      const wob = Math.sin(ang * 3 + t * 1.8) * 1.0 + Math.cos(ang * 2 - t * 1.3) * 0.7;
+      const edge = R + breathe + wob;
+      if (d <= edge) { if (d > edge - 1.4) this.px(ctx, x, y, S, mem); else this.px(ctx, x, y, S, d < edge * 0.5 ? body[1] : body[0]); }
+    }
+    this.disc(ctx, cx - 2.5 + Math.sin(t * 0.9) * 0.6, cy + 2, 1.6, S, vac);
+    this.disc(ctx, cx + 3 + Math.cos(t * 1.1) * 0.5, cy + 3, 1.2, S, vac);
+    this.disc(ctx, cx + 1.5 + Math.sin(t * 0.7) * 0.5, cy - 1 + Math.cos(t * 0.8) * 0.5, 2.4, S, nuc);
+  }
+
+  drawSpark(cv, seed) {
+    const ctx = cv.getContext('2d'), W = cv.width, H = cv.height;
+    ctx.clearRect(0, 0, W, H);
+    ctx.strokeStyle = '#2f6e3f'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, H - 2); ctx.lineTo(W, H - 2); ctx.stroke();
+    const N = 40; let v = 0.1; const pts = [];
+    for (let i = 0; i < N; i++) { v += (Math.sin(i * 0.6 + seed * 1.7) * 0.5 + 0.5) * 0.06; v = Math.min(1, v); const bump = Math.max(0, Math.sin((i / N) * Math.PI + seed)) ; pts.push(Math.min(1, v * 0.5 + bump * 0.5)); }
+    ctx.beginPath();
+    for (let i = 0; i < N; i++) { const x = (i / (N - 1)) * W, y = H - 3 - pts[i] * (H - 8); if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
+    ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.lineTo(W, H - 2); ctx.lineTo(0, H - 2); ctx.closePath();
+    const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, 'rgba(59,130,246,.35)'); g.addColorStop(1, 'rgba(59,130,246,0)');
+    ctx.fillStyle = g; ctx.fill();
+  }
+}
+</script>
+</body>
+</html>

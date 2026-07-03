@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'IBM Plex Mono', monospace; }
+  canvas { display: block; image-rendering: pixelated; }
+  .lbl { font-family: 'Press Start 2P', monospace; font-size: 9px; letter-spacing: 1px; color: #6b6b72; text-transform: uppercase; margin: 0 0 12px 2px; }
+  .card { background: #0b0b0d; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
+  .tank { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
+  .scan::after { content:''; position:absolute; inset:0; pointer-events:none; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px, transparent 2px, transparent 4px); animation: scan 8s linear infinite; }
+  .dmg::after { content:''; position:absolute; inset:0; pointer-events:none; background: repeating-linear-gradient(0deg, rgba(15,56,15,0.10) 0 3px, transparent 3px 4px), repeating-linear-gradient(90deg, rgba(15,56,15,0.10) 0 3px, transparent 3px 4px); }
+  .flow-dot { position:absolute; width:4px; height:4px; border-radius:1px; }
+  @keyframes scan { from{transform:translateY(-4px)} to{transform:translateY(4px)} }
+  @keyframes flowDown { 0%{transform:translateY(-6px);opacity:0} 20%{opacity:1} 80%{opacity:1} 100%{transform:translateY(34px);opacity:0} }
+  @keyframes flowUp { 0%{transform:translateY(6px);opacity:0} 20%{opacity:1} 80%{opacity:1} 100%{transform:translateY(-34px);opacity:0} }
+  @keyframes lifeDrain { 0%{width:100%;background:#22d3ee} 70%{background:#fbbf24} 92%{width:6%;background:#ef4444} 96%{width:100%;background:#22d3ee} 100%{width:100%} }
+  @keyframes floatUp { 0%{transform:translateY(0) scale(.9);opacity:0} 15%{opacity:1} 100%{transform:translateY(-46px) scale(1.05);opacity:0} }
+  @keyframes popNum { 0%{transform:scale(1)} 40%{transform:scale(1.35);color:#fff} 100%{transform:scale(1)} }
+  @keyframes blink { 50%{opacity:.25} }
+  /* evolve */
+  @keyframes evoAmoeba { 0%,36%{opacity:1;transform:scale(1)} 46%{opacity:0;transform:scale(1.5)} 100%{opacity:0} }
+  @keyframes evoFlash { 0%,41%{opacity:0} 46%{opacity:.95} 57%{opacity:0} 100%{opacity:0} }
+  @keyframes evoCluster { 0%,49%{opacity:0;transform:scale(.5)} 60%{opacity:1;transform:scale(1)} 93%{opacity:1} 99%{opacity:0} 100%{opacity:0} }
+  @keyframes evoLabel { 0%,52%{opacity:0;transform:translateY(8px)} 63%{opacity:1;transform:translateY(0)} 90%{opacity:1} 100%{opacity:0} }
+  @keyframes evoRing { 0%,45%{opacity:0;transform:translate(-50%,-50%) scale(.2)} 47%{opacity:.9} 72%{opacity:0;transform:translate(-50%,-50%) scale(2.6)} 100%{opacity:0} }
+  @keyframes evoSpark { 0%,46%{opacity:0;transform:translateY(0) scale(1)} 49%{opacity:1} 70%{opacity:0;transform:translateY(-44px) scale(.4)} 100%{opacity:0} }
+  /* rebirth */
+  @keyframes rbBar { 0%{width:100%;background:#22d3ee} 40%{background:#fbbf24} 47%{width:0%;background:#ef4444} 78%{width:0%} 82%{width:100%;background:#34d399} 100%{width:100%;background:#34d399} }
+  @keyframes rbCreature { 0%,34%{opacity:1;filter:none;transform:translateY(0) rotate(0deg)} 50%{opacity:0;filter:grayscale(1) brightness(.4);transform:translateY(12px) rotate(22deg)} 74%{opacity:0} 88%{opacity:1;transform:translateY(0) rotate(0deg)} 100%{opacity:1} }
+  @keyframes rbText { 0%,52%{opacity:0;transform:scale(.8)} 63%{opacity:1;transform:scale(1)} 78%{opacity:1} 86%{opacity:0} 100%{opacity:0} }
+  @keyframes rbHalo { 0%,76%{opacity:0;transform:translate(-50%,-50%) scale(.3)} 82%{opacity:.8} 100%{opacity:0;transform:translate(-50%,-50%) scale(2.2)} }
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="position:absolute; inset:0; width:1260px; height:1640px; font-family:'IBM Plex Mono',monospace; color:#e7e7ea;">
+
+  <!-- ===== HEADER ===== -->
+  <div data-drags-parent="1" style="position:absolute; left:0; top:0; width:1180px;">
+    <div class="card" style="padding:26px 30px; background:linear-gradient(135deg,#0d0d10,#08080a);">
+      <div style="font-family:'Press Start 2P',monospace; font-size:18px; line-height:1.5; color:#f2f2f4;">Visual&nbsp;Layer&nbsp;&mdash;&nbsp;exploration&nbsp;board</div>
+      <div style="margin-top:14px; font-size:13px; color:#8a8a92; max-width:760px; line-height:1.7;">A living pixel companion in the corner, plus juice for the moments that matter. Everything below is animating in real time &mdash; idle breathing, the creature playing its current action, resource flow, and the death &rarr; rebirth &rarr; evolve loop. Pan around. Tell me which direction to take all the way.</div>
+    </div>
+  </div>
+
+  <!-- ===== ROW 1: PIXEL STYLE DIRECTIONS ===== -->
+  <div data-drags-parent="1" style="position:absolute; left:0; top:200px;">
+    <div class="lbl">01 &middot; Game Boy DMG</div>
+    <div class="card" style="padding:22px; width:300px;">
+      <div class="tank dmg" style="width:256px; height:256px; margin:0 auto; background:#8bac0f; box-shadow:inset 0 0 0 6px #6b8a0c, inset 0 0 24px rgba(15,56,15,.5);">
+        <canvas data-creature="amoeba" data-style="gameboy" style="position:absolute; inset:0; margin:auto;"></canvas>
+      </div>
+      <div style="margin-top:16px; font-size:11px; color:#9a9aa2; line-height:1.6;">4-shade dot-matrix. Nostalgic, ultra-cheap to render, reads instantly at any size. Pairs oddly with your dark UI though.</div>
+    </div>
+  </div>
+
+  <div data-drags-parent="1" style="position:absolute; left:380px; top:200px;">
+    <div class="lbl">02 &middot; NES palette</div>
+    <div class="card" style="padding:22px; width:300px;">
+      <div class="tank scan" style="width:256px; height:256px; margin:0 auto; background:radial-gradient(circle at 50% 40%,#13263a,#0a1422); box-shadow:inset 0 0 0 4px #1c3350;">
+        <canvas data-creature="amoeba" data-style="nes" style="position:absolute; inset:0; margin:auto;"></canvas>
+      </div>
+      <div style="margin-top:16px; font-size:11px; color:#9a9aa2; line-height:1.6;">Limited retro palette with a couple of accent hues. Warmer, more characterful, but a step away from your monochrome theme.</div>
+    </div>
+  </div>
+
+  <div data-drags-parent="1" style="position:absolute; left:760px; top:200px;">
+    <div class="lbl">03 &middot; Modern neon &mdash; recommended</div>
+    <div class="card" style="padding:22px; width:300px; box-shadow:0 8px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(59,130,246,.25);">
+      <div class="tank scan" style="width:256px; height:256px; margin:0 auto; background:radial-gradient(circle at 50% 35%,#0e1726,#070708); box-shadow:inset 0 0 30px rgba(59,130,246,.18), inset 0 0 0 4px rgba(59,130,246,.12);">
+        <canvas data-creature="amoeba" data-style="modern" style="position:absolute; inset:0; margin:auto; filter:drop-shadow(0 0 6px rgba(59,130,246,.55));"></canvas>
+      </div>
+      <div style="margin-top:16px; font-size:11px; color:#a9b6c8; line-height:1.6;">Pixel art + soft glow + faint scanlines. Sits perfectly on your near-black theme and reuses your blue chart accent.</div>
+    </div>
+  </div>
+
+  <!-- ===== ROW 2: CORNER COMPANION ACROSS THE ARC ===== -->
+  <div data-drags-parent="1" style="position:absolute; left:0; top:560px;">
+    <div class="lbl">The corner companion &mdash; amoeba</div>
+    <div class="card" style="padding:18px; width:300px;">
+      <div style="display:flex; gap:14px;">
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; width:30px;">
+          <div style="font-family:'Press Start 2P'; font-size:7px; color:#fbbf24;">FOOD</div>
+          <div style="position:relative; width:6px; height:38px;">
+            <div class="flow-dot" style="left:1px; background:#fbbf24; animation:flowDown 1.4s linear infinite;"></div>
+            <div class="flow-dot" style="left:1px; background:#fbbf24; animation:flowDown 1.4s linear infinite; animation-delay:.7s;"></div>
+          </div>
+          <div style="color:#fbbf24; font-size:10px;">&darr;</div>
+        </div>
+        <div class="tank scan" style="position:relative; width:174px; height:174px; background:radial-gradient(circle at 50% 35%,#0e1726,#070708); box-shadow:inset 0 0 24px rgba(59,130,246,.16);">
+          <canvas data-creature="amoeba" data-style="modern" style="position:absolute; inset:0; margin:auto; filter:drop-shadow(0 0 5px rgba(59,130,246,.5));"></canvas>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; width:30px;">
+          <div style="color:#22d3ee; font-size:10px;">&uarr;</div>
+          <div style="position:relative; width:6px; height:38px;">
+            <div class="flow-dot" style="left:1px; background:#22d3ee; animation:flowUp 1.4s linear infinite;"></div>
+            <div class="flow-dot" style="left:1px; background:#22d3ee; animation:flowUp 1.4s linear infinite; animation-delay:.7s;"></div>
+          </div>
+          <div style="font-family:'Press Start 2P'; font-size:6px; color:#22d3ee;">ENERGY</div>
+        </div>
+      </div>
+      <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-size:11px; color:#cfcfd6;">Amoeba &middot; Gen&nbsp;1</div>
+        <div style="font-size:10px; color:#6b6b72;">absorbing&hellip;</div>
+      </div>
+      <div style="margin-top:6px; height:4px; border-radius:2px; background:#1a1a1e; overflow:hidden;">
+        <div style="height:100%; animation:lifeDrain 14s linear infinite;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div data-drags-parent="1" style="position:absolute; left:380px; top:560px;">
+    <div class="lbl">&hellip;the algae</div>
+    <div class="card" style="padding:18px; width:300px;">
+      <div style="display:flex; gap:14px;">
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; width:30px;">
+          <div style="font-family:'Press Start 2P'; font-size:6px; color:#fde047;">SUN</div>
+          <div style="position:relative; width:6px; height:38px;">
+            <div class="flow-dot" style="left:1px; background:#fde047; animation:flowDown 1.4s linear infinite;"></div>
+            <div class="flow-dot" style="left:1px; background:#fde047; animation:flowDown 1.4s linear infinite; animation-delay:.7s;"></div>
+          </div>
+          <div style="color:#fde047; font-size:10px;">&darr;</div>
+        </div>
+        <div class="tank scan" style="position:relative; width:174px; height:174px; background:radial-gradient(circle at 50% 20%,#0c1f1a,#05100a);">
+          <canvas data-creature="algae" data-style="modern" style="position:absolute; inset:0; margin:auto; filter:drop-shadow(0 0 5px rgba(52,211,153,.45));"></canvas>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; width:30px;">
+          <div style="color:#34d399; font-size:10px;">&uarr;</div>
+          <div style="position:relative; width:6px; height:38px;">
+            <div class="flow-dot" style="left:1px; background:#34d399; animation:flowUp 1.4s linear infinite;"></div>
+            <div class="flow-dot" style="left:1px; background:#34d399; animation:flowUp 1.4s linear infinite; animation-delay:.7s;"></div>
+          </div>
+          <div style="font-family:'Press Start 2P'; font-size:6px; color:#34d399;">CHLR</div>
+        </div>
+      </div>
+      <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-size:11px; color:#cfcfd6;">Algae &middot; Gen&nbsp;7</div>
+        <div style="font-size:10px; color:#6b6b72;">growing&hellip;</div>
+      </div>
+      <div style="margin-top:6px; height:4px; border-radius:2px; background:#1a1a1e; overflow:hidden;">
+        <div style="height:100%; animation:lifeDrain 14s linear infinite; animation-delay:-5s;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div data-drags-parent="1" style="position:absolute; left:760px; top:560px;">
+    <div class="lbl">&hellip;the insect</div>
+    <div class="card" style="padding:18px; width:300px;">
+      <div style="display:flex; gap:14px;">
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; width:30px;">
+          <div style="font-family:'Press Start 2P'; font-size:7px; color:#fbbf24;">FOOD</div>
+          <div style="position:relative; width:6px; height:38px;">
+            <div class="flow-dot" style="left:1px; background:#fbbf24; animation:flowDown 1.4s linear infinite;"></div>
+            <div class="flow-dot" style="left:1px; background:#fbbf24; animation:flowDown 1.4s linear infinite; animation-delay:.7s;"></div>
+          </div>
+          <div style="color:#fbbf24; font-size:10px;">&darr;</div>
+        </div>
+        <div class="tank scan" style="position:relative; width:174px; height:174px; background:radial-gradient(circle at 50% 60%,#1a130b,#0a0705);">
+          <canvas data-creature="insect" data-style="modern" style="position:absolute; inset:0; margin:auto; filter:drop-shadow(0 0 4px rgba(202,161,90,.4));"></canvas>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; width:30px;">
+          <div style="color:#f472b6; font-size:10px;">&uarr;</div>
+          <div style="position:relative; width:6px; height:38px;">
+            <div class="flow-dot" style="left:1px; background:#f472b6; animation:flowUp 1.4s linear infinite;"></div>
+            <div class="flow-dot" style="left:1px; background:#f472b6; animation:flowUp 1.4s linear infinite; animation-delay:.7s;"></div>
+          </div>
+          <div style="font-family:'Press Start 2P'; font-size:6px; color:#f472b6;">EGGS</div>
+        </div>
+      </div>
+      <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-size:11px; color:#cfcfd6;">Insect &middot; Gen&nbsp;19</div>
+        <div style="font-size:10px; color:#6b6b72;">foraging&hellip;</div>
+      </div>
+      <div style="margin-top:6px; height:4px; border-radius:2px; background:#1a1a1e; overflow:hidden;">
+        <div style="height:100%; animation:lifeDrain 14s linear infinite; animation-delay:-9s;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ROW 3: JUICE MOMENTS ===== -->
+  <div data-drags-parent="1" style="position:absolute; left:0; top:980px;">
+    <div class="lbl">Juice &middot; resource count-up + particles</div>
+    <div class="card" style="padding:22px; width:300px;">
+      <div style="position:relative; padding:6px 4px;">
+        <div data-cu-row="food" style="display:flex; justify-content:space-between; padding:9px 8px; border-bottom:1px solid rgba(255,255,255,.06); font-size:14px;">
+          <span style="color:#cfcfd6;">Food</span><span data-cu="food" style="color:#fbbf24; font-variant-numeric:tabular-nums;">0</span>
+        </div>
+        <div data-cu-row="nutrients" style="display:flex; justify-content:space-between; padding:9px 8px; border-bottom:1px solid rgba(255,255,255,.06); font-size:14px;">
+          <span style="color:#cfcfd6;">Nutrients</span><span data-cu="nutrients" style="color:#34d399; font-variant-numeric:tabular-nums;">0</span>
+        </div>
+        <div data-cu-row="energy" style="display:flex; justify-content:space-between; padding:9px 8px; font-size:14px;">
+          <span style="color:#cfcfd6;">Energy</span><span data-cu="energy" style="color:#22d3ee; font-variant-numeric:tabular-nums;">0</span>
+        </div>
+      </div>
+      <div style="margin-top:16px; font-size:11px; color:#9a9aa2; line-height:1.6;">Every gain pops the number and floats a <span style="color:#fbbf24;">+N</span> off it. Tiny, but it makes each click feel like it landed.</div>
+    </div>
+  </div>
+
+  <div data-drags-parent="1" style="position:absolute; left:380px; top:980px;">
+    <div class="lbl">Juice &middot; evolve / goal reached</div>
+    <div class="card" style="padding:22px; width:340px;">
+      <div class="tank" style="position:relative; width:296px; height:230px; margin:0 auto; background:radial-gradient(circle at 50% 40%,#0e1726,#070708); overflow:hidden;">
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+          <canvas data-creature="amoeba" data-style="modern" data-cycle="idle" style="animation:evoAmoeba 6s ease-in-out infinite; filter:drop-shadow(0 0 5px rgba(59,130,246,.5));"></canvas>
+        </div>
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+          <canvas data-creature="cluster" data-style="modern" data-cycle="idle" style="animation:evoCluster 6s ease-in-out infinite; filter:drop-shadow(0 0 6px rgba(34,211,238,.5));"></canvas>
+        </div>
+        <div style="position:absolute; left:50%; top:50%; width:30px; height:30px; border-radius:50%; border:2px solid #93c5fd; animation:evoRing 6s ease-out infinite;"></div>
+        <div data-evo-sparks style="position:absolute; left:50%; top:50%;"></div>
+        <div style="position:absolute; inset:0; background:#dbeafe; mix-blend-mode:screen; animation:evoFlash 6s ease-in-out infinite;"></div>
+        <div style="position:absolute; left:0; right:0; bottom:14px; text-align:center; font-family:'Press Start 2P'; font-size:9px; color:#bfdbfe; animation:evoLabel 6s ease-in-out infinite;">AMOEBA &rarr; MULTICELLULAR</div>
+      </div>
+      <div style="margin-top:16px; font-size:11px; color:#9a9aa2; line-height:1.6;">Goal met &rarr; flash, burst ring, and the organism visibly becomes the next life form. The big payoff beat.</div>
+    </div>
+  </div>
+
+  <div data-drags-parent="1" style="position:absolute; left:760px; top:980px;">
+    <div class="lbl">Juice &middot; death &amp; rebirth loop</div>
+    <div class="card" style="padding:22px; width:300px;">
+      <div class="tank" style="position:relative; width:256px; height:200px; margin:0 auto; background:radial-gradient(circle at 50% 40%,#0e1726,#070708); overflow:hidden;">
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; animation:rbCreature 6s ease-in-out infinite;">
+          <canvas data-creature="amoeba" data-style="modern" data-cycle="idle" style="filter:drop-shadow(0 0 5px rgba(59,130,246,.5));"></canvas>
+        </div>
+        <div style="position:absolute; left:50%; top:50%; width:36px; height:36px; border-radius:50%; border:2px solid #34d399; animation:rbHalo 6s ease-out infinite;"></div>
+        <div style="position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); text-align:center; animation:rbText 6s ease-in-out infinite;">
+          <div style="font-family:'Press Start 2P'; font-size:11px; color:#34d399;">&#10022; REBORN</div>
+          <div style="margin-top:8px; font-size:11px; color:#a7f3d0;">+0.1&times; permanent speed</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;">
+        <div style="display:flex; justify-content:space-between; font-size:10px; color:#9a9aa2; margin-bottom:5px;"><span>Lifespan</span><span>60s</span></div>
+        <div style="height:6px; border-radius:3px; background:#1a1a1e; overflow:hidden;">
+          <div style="height:100%; animation:rbBar 6s ease-in-out infinite;"></div>
+        </div>
+      </div>
+      <div style="margin-top:14px; font-size:11px; color:#9a9aa2; line-height:1.6;">Lifespan drains, the creature fades, then snaps back reborn with its permanent bonus. Closes the time-loop.</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return { rootRef: (el) => { this.rootEl = el; } };
+  }
+
+  componentDidMount() {
+    this.start = performance.now();
+    this.canvases = [];
+    const tryInit = () => {
+      const root = this.rootEl || document;
+      const list = root.querySelectorAll('canvas[data-creature]');
+      if (!list.length) { this._t = setTimeout(tryInit, 60); return; }
+      list.forEach((cv, i) => {
+        const kind = cv.dataset.creature;
+        const spec = this.specs()[kind];
+        const S = spec.S;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        cv.width = spec.gx * S * dpr;
+        cv.height = spec.gy * S * dpr;
+        cv.style.width = spec.gx * S + 'px';
+        cv.style.height = spec.gy * S + 'px';
+        const ctx = cv.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.imageSmoothingEnabled = false;
+        this.canvases.push({ cv, ctx, kind, spec, S,
+          style: cv.dataset.style || 'modern',
+          cycle: cv.dataset.cycle !== 'idle',
+          phase: (i * 1.7) % 4.6 });
+      });
+      this.loop();
+      this.initCountUp(root);
+      this.initSparks(root);
+    };
+    tryInit();
+  }
+  componentWillUnmount() {
+    cancelAnimationFrame(this._raf); clearTimeout(this._t);
+    clearInterval(this._cu); clearInterval(this._sp);
+  }
+
+  specs() {
+    return {
+      amoeba:  { gx: 28, gy: 28, S: 6 },
+      algae:   { gx: 26, gy: 30, S: 6 },
+      insect:  { gx: 32, gy: 24, S: 5 },
+      cluster: { gx: 28, gy: 28, S: 6 },
+    };
+  }
+
+  pal(style) {
+    if (style === 'gameboy') return { bg:'#8bac0f', body:['#306230','#0f380f'], mem:'#9bbc0f', nuc:'#0f380f', vac:'#9bbc0f', food:'#0f380f' };
+    if (style === 'nes') return { bg:'#0a1422', body:['#3b82a8','#1f4d6b'], mem:'#7fd0e8', nuc:'#e76f51', vac:'#9be7f5', food:'#e9c46a' };
+    return { bg:'#070708', body:['#3b82f6','#1e3a8a'], mem:'#93c5fd', nuc:'#22d3ee', vac:'#bfdbfe', food:'#fbbf24' };
+  }
+
+  loop() {
+    const t = (performance.now() - this.start) / 1000;
+    for (const c of this.canvases) {
+      let act = 0;
+      if (c.cycle) {
+        const period = 4.6, dur = 1.5;
+        const ph = (t + c.phase) % period;
+        if (ph > period - dur) act = Math.sin(((ph - (period - dur)) / dur) * Math.PI);
+      }
+      const ctx = c.ctx, S = c.S, p = this.pal(c.style), sp = c.spec;
+      ctx.clearRect(0, 0, sp.gx * S, sp.gy * S);
+      if (c.style !== 'modern') { ctx.fillStyle = p.bg; ctx.fillRect(0, 0, sp.gx * S, sp.gy * S); }
+      if (c.kind === 'amoeba') this.drawAmoeba(ctx, sp, S, t, p, act);
+      else if (c.kind === 'algae') this.drawAlgae(ctx, sp, S, t, p, act);
+      else if (c.kind === 'insect') this.drawInsect(ctx, sp, S, t, p, act);
+      else if (c.kind === 'cluster') this.drawCluster(ctx, sp, S, t, p);
+    }
+    this._raf = requestAnimationFrame(() => this.loop());
+  }
+
+  px(ctx, x, y, S, c) { ctx.fillStyle = c; ctx.fillRect(Math.round(x) * S, Math.round(y) * S, S, S); }
+  disc(ctx, cx, cy, r, S, c) {
+    for (let y = Math.floor(cy - r); y <= cy + r; y++)
+      for (let x = Math.floor(cx - r); x <= cx + r; x++) {
+        const dx = x - cx, dy = y - cy;
+        if (dx * dx + dy * dy <= r * r) this.px(ctx, x, y, S, c);
+      }
+  }
+  line(ctx, x0, y0, x1, y1, S, c) {
+    x0 = Math.round(x0); y0 = Math.round(y0); x1 = Math.round(x1); y1 = Math.round(y1);
+    const dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+    let err = dx - dy;
+    for (let n = 0; n < 64; n++) {
+      this.px(ctx, x0, y0, S, c);
+      if (x0 === x1 && y0 === y1) break;
+      const e2 = 2 * err;
+      if (e2 > -dy) { err -= dy; x0 += sx; }
+      if (e2 < dx) { err += dx; y0 += sy; }
+    }
+  }
+
+  drawAmoeba(ctx, sp, S, t, p, act) {
+    const cx = sp.gx / 2 - 0.5, cy = sp.gy / 2 - 0.5, R = sp.gx * 0.30;
+    const breathe = Math.sin(t * 1.6) * 0.8;
+    const reachAng = -0.35;
+    const ad = (a, b) => { let d = a - b; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return d; };
+    for (let y = 0; y < sp.gy; y++)
+      for (let x = 0; x < sp.gx; x++) {
+        const dx = x - cx, dy = y - cy, d = Math.hypot(dx, dy), ang = Math.atan2(dy, dx);
+        const wob = Math.sin(ang * 3 + t * 1.8) * 1.0 + Math.cos(ang * 2 - t * 1.3) * 0.7;
+        const bump = act * 3.4 * Math.exp(-Math.pow(ad(ang, reachAng), 2) / 0.22);
+        const edge = R + breathe + wob + bump;
+        if (d <= edge) {
+          if (d > edge - 1.4) this.px(ctx, x, y, S, p.mem);
+          else this.px(ctx, x, y, S, d < edge * 0.5 ? p.body[1] : p.body[0]);
+        }
+      }
+    // vacuoles
+    this.disc(ctx, cx - 2.5 + Math.sin(t * 0.9) * 0.6, cy + 2, 1.6, S, p.vac);
+    this.disc(ctx, cx + 3 + Math.cos(t * 1.1) * 0.5, cy + 3, 1.2, S, p.vac);
+    // nucleus
+    this.disc(ctx, cx + 1.5 + Math.sin(t * 0.7) * 0.5, cy - 1 + Math.cos(t * 0.8) * 0.5, 2.4, S, p.nuc);
+    // food speck flying in during action
+    if (act > 0.05) {
+      const fr = (R + 6) * (1 - act);
+      this.disc(ctx, cx + Math.cos(reachAng) * fr, cy + Math.sin(reachAng) * fr, 1.2, S, p.food);
+    }
+  }
+
+  drawCluster(ctx, sp, S, t, p) {
+    const cx = sp.gx / 2 - 0.5, cy = sp.gy / 2 - 0.5;
+    const cells = [[0,0],[-3.4,-1.5],[3.2,-1.8],[-2,2.8],[2.6,2.6],[0,-3.6],[-4,1.6],[3.8,0.8]];
+    cells.forEach((o, i) => {
+      const ox = o[0] + Math.sin(t * 1.4 + i) * 0.5;
+      const oy = o[1] + Math.cos(t * 1.5 + i) * 0.5;
+      const r = 2.6 + Math.sin(t * 2 + i) * 0.3;
+      this.disc(ctx, cx + ox, cy + oy, r, S, p.body[0]);
+      this.disc(ctx, cx + ox, cy + oy, r - 1.4, S, p.body[1]);
+      this.px(ctx, cx + ox, cy + oy, S, p.nuc);
+    });
+  }
+
+  drawAlgae(ctx, sp, S, t, p, act) {
+    const bx = sp.gx / 2 - 0.5, H = sp.gy;
+    const greenA = '#256e3c', greenB = '#3f9d5b', chl = '#bbf7d0';
+    const topY = 3 - Math.round(act * 1.5);
+    for (let y = H - 4; y >= topY; y--) {
+      const frac = (H - 4 - y) / (H - 4 - topY);
+      const sway = Math.sin(frac * 3 + t * 1.4) * frac * 3.2;
+      const cxh = bx + sway;
+      const thick = 2.4 - frac * 1.6;
+      for (let x = Math.floor(cxh - thick); x <= cxh + thick; x++) {
+        const edge = Math.abs(x - cxh) > thick - 0.9;
+        this.px(ctx, x, y, S, edge ? greenA : greenB);
+      }
+      if ((y % 5 === 0)) this.px(ctx, cxh + (y % 2 ? 1 : -1), y, S, chl);
+    }
+    // branches
+    [0.45, 0.72].forEach((bf, k) => {
+      const by = Math.round((H - 4) - bf * (H - 4 - topY));
+      const sway = Math.sin(bf * 3 + t * 1.4) * bf * 3.2;
+      const bxh = bx + sway;
+      const dir = k % 2 ? 1 : -1;
+      for (let s = 1; s <= 4; s++) {
+        const wob = Math.sin(t * 1.6 + s) * 0.5;
+        this.px(ctx, bxh + dir * s, by - s * 0.7 + wob, S, s > 2 ? greenA : greenB);
+        if (s === 4) this.px(ctx, bxh + dir * s, by - s * 0.7 + wob - 1, S, chl);
+      }
+    });
+    // holdfast
+    for (let x = -2; x <= 2; x++) this.px(ctx, bx + x, H - 3, S, '#6b4423');
+    this.px(ctx, bx - 3, H - 2, S, '#6b4423'); this.px(ctx, bx + 3, H - 2, S, '#6b4423');
+    // sunlight particles during action
+    if (act > 0.05) {
+      for (let i = 0; i < 3; i++) {
+        const sxp = bx - 6 + i * 5;
+        const syp = ((t * 8 + i * 9) % H);
+        this.px(ctx, sxp, syp, S, '#fde047');
+      }
+    }
+  }
+
+  drawInsect(ctx, sp, S, t, p, act) {
+    const wander = Math.sin(t * 0.8) * 2.2 + act * 2.5 * Math.sin(t * 6);
+    const cx = sp.gx / 2 - 0.5 + wander;
+    const cy = sp.gy / 2 + Math.sin(t * 4) * 0.5;
+    const dark = '#2a1d12', body = '#5a3d22', hi = '#caa15a', eye = '#e76f51';
+    // legs
+    for (let i = 0; i < 4; i++) {
+      const hx = cx - 4 + i * 2.4, hy = cy + 1.6;
+      const phase = t * 7 + i * 1.7;
+      const lift = Math.max(0, Math.sin(phase)) * 1.6;
+      const fx = hx + 1.4 + Math.cos(phase) * 1.6;
+      const fy = cy + 4.5 - lift;
+      const kx = (hx + fx) / 2 + 1, ky = (hy + fy) / 2;
+      this.line(ctx, hx, hy, kx, ky, S, dark);
+      this.line(ctx, kx, ky, fx, fy, S, dark);
+    }
+    // abdomen / thorax / head (ellipses)
+    const ell = (ecx, ecy, rx, ry, col) => {
+      for (let y = Math.floor(ecy - ry); y <= ecy + ry; y++)
+        for (let x = Math.floor(ecx - rx); x <= ecx + rx; x++) {
+          const nx = (x - ecx) / rx, ny = (y - ecy) / ry;
+          if (nx * nx + ny * ny <= 1) this.px(ctx, x, y, S, (y < ecy - ry * 0.3) ? hi : col);
+        }
+    };
+    ell(cx - 4.5, cy, 5, 3.4, body);   // abdomen
+    ell(cx + 0.5, cy - 0.2, 2.6, 2.4, body); // thorax
+    ell(cx + 4.5, cy - 0.6, 2, 1.8, dark);   // head
+    this.px(ctx, cx + 5.4, cy - 1, S, eye);
+    // mandibles + carried food during action
+    this.px(ctx, cx + 6.2, cy, S, dark);
+    if (act > 0.1) this.disc(ctx, cx + 7.4, cy, 1.2, S, p.food);
+    // antennae
+    const aw = Math.sin(t * 5) * 1.2;
+    this.line(ctx, cx + 5, cy - 1.5, cx + 7.5, cy - 4 + aw, S, dark);
+    this.line(ctx, cx + 5, cy - 1.5, cx + 8, cy - 2.5 + aw, S, dark);
+  }
+
+  initSparks(root) {
+    const host = root.querySelector('[data-evo-sparks]');
+    if (!host) return;
+    for (let i = 0; i < 10; i++) {
+      const a = (i / 10) * Math.PI * 2;
+      const d = document.createElement('div');
+      const hue = i % 2 ? '#22d3ee' : '#bfdbfe';
+      d.style.cssText = `position:absolute; left:0; top:0; width:4px; height:4px; border-radius:1px; background:${hue}; transform:translate(${Math.cos(a)*46}px,${Math.sin(a)*46}px); animation:evoSpark 6s ease-out infinite; animation-delay:${(i%3)*0.04}s;`;
+      host.appendChild(d);
+    }
+  }
+
+  initCountUp(root) {
+    const vals = { food: 0, nutrients: 0, energy: 0 };
+    const order = ['food', 'food', 'nutrients', 'energy', 'energy', 'food'];
+    let i = 0;
+    const colors = { food: '#fbbf24', nutrients: '#34d399', energy: '#22d3ee' };
+    this._cu = setInterval(() => {
+      const key = order[i % order.length]; i++;
+      const inc = key === 'energy' ? 1 + Math.floor(Math.random() * 3) : 1;
+      vals[key] += inc;
+      if (vals.energy > 240) { vals.food = 0; vals.nutrients = 0; vals.energy = 0; }
+      const span = root.querySelector(`[data-cu="${key}"]`);
+      if (span) {
+        span.textContent = vals[key];
+        span.style.animation = 'none'; void span.offsetWidth;
+        span.style.animation = 'popNum .45s ease-out';
+        const row = root.querySelector(`[data-cu-row="${key}"]`);
+        if (row) {
+          const f = document.createElement('span');
+          f.textContent = '+' + inc;
+          f.style.cssText = `position:absolute; right:14px; top:8px; font-size:13px; font-weight:600; color:${colors[key]}; pointer-events:none; animation:floatUp 1s ease-out forwards;`;
+          row.style.position = 'relative';
+          row.appendChild(f);
+          setTimeout(() => f.remove(), 1000);
+        }
+      }
+    }, 650);
+  }
+}
+</script>
+</body>
+</html>
