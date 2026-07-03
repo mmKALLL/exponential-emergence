@@ -63,7 +63,7 @@ export function AnimationOverlay(): JSX.Element | null {
       ))}
       <RunEndTelegraph />
     </div>,
-    document.body,
+    document.body
   )
 }
 
@@ -74,11 +74,7 @@ function RunEndTelegraph(): JSX.Element | null {
   return <div className="animate-pulse absolute inset-0 ring-4 ring-inset ring-red-500/30" />
 }
 
-function handleEvent(
-  event: AnimationEvent,
-  addFloater: (f: Omit<Floater, 'id'>) => void,
-  addRing: (r: Omit<Ring, 'id'>) => void
-): void {
+function handleEvent(event: AnimationEvent, addFloater: (f: Omit<Floater, 'id'>) => void, addRing: (r: Omit<Ring, 'id'>) => void): void {
   switch (event.type) {
     case 'actionComplete': {
       const rect = rectFor(`action:${event.actionName}`)
@@ -105,7 +101,6 @@ function handleEvent(
       return
     }
     case 'goalMet':
-      toast.success(event.label)
       return
     case 'actionUnlocked': {
       const rect = rectFor(`action:${event.actionName}`)

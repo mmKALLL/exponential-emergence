@@ -1,6 +1,7 @@
 import { useUpdate } from '@/hooks/use-update'
 import { Card } from '../ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
+import { CompanionTank } from './companion-tank'
 import { ResourceDisplay } from './resource-display'
 import { SynergiesDisplay } from './synergies-display'
 import { Game } from '@/lib/gamestate-logic'
@@ -11,12 +12,14 @@ export function SidePanel() {
   if (!hasSynergies) {
     return (
       <Card className="flex flex-col items-center p-4 gap-4 w-60 h-full">
+        <CompanionTank />
         <ResourceDisplay />
       </Card>
     )
   }
   return (
     <Card className="flex flex-col items-center p-4 gap-4 w-60 h-full">
+      <CompanionTank />
       <Tabs defaultValue="resources" className="w-full h-full">
         <TabsList className="w-52">
           <TabsTrigger value="resources">Resources</TabsTrigger>

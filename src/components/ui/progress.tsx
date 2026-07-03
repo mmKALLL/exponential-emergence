@@ -3,7 +3,13 @@ import * as ProgressPrimitive from '@radix-ui/react-progress'
 
 import { cn } from '@/lib/utils'
 
-function Progress({ className, value, max, ...props }: React.ComponentProps<typeof ProgressPrimitive.Root>) {
+function Progress({
+  className,
+  value,
+  max,
+  indicatorColor,
+  ...props
+}: React.ComponentProps<typeof ProgressPrimitive.Root> & { indicatorColor?: string }) {
   return (
     <ProgressPrimitive.Root
       data-slot="progress"
@@ -13,7 +19,10 @@ function Progress({ className, value, max, ...props }: React.ComponentProps<type
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"
         className="bg-primary h-full w-full flex-1 transition-all"
-        style={{ transform: `translateX(-${100 - ((value || -1) / (max || 100)) * 100}%)` }}
+        style={{
+          transform: `translateX(-${100 - ((value || -1) / (max || 100)) * 100}%)`,
+          backgroundColor: indicatorColor,
+        }}
       />
     </ProgressPrimitive.Root>
   )

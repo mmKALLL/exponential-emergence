@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -85,6 +86,16 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --accent-cyan: #22d3ee;
+  --accent-blue: #3b82f6;
+  --goal-success: #34d399;
+  --warn: #fbbf24;
+  --danger: #ef4444;
+  --resource-food: #fbbf24;
+  --resource-nutrients: #34d399;
+  --resource-energy: #22d3ee;
+  --positive: #86efac;
+  --negative: #fca5a5;
 }
 
 .dark {
@@ -207,4 +218,17 @@
 }
 .animate-unlock-ring {
   animation: unlock-ring 0.9s ease-out forwards;
+}
+
+@keyframes goal-celebrate {
+  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+  30% { box-shadow: 0 0 26px 2px rgba(52, 211, 153, 0.5); outline: 2px solid var(--goal-success); outline-offset: 2px; }
+  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); outline-color: transparent; }
+}
+.animate-goal-celebrate { animation: goal-celebrate 1.8s ease-out; }
+
+.font-pixel {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
