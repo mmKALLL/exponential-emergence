@@ -26,7 +26,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
     actions: generatedActions.amoeba,
     goals: [
       {
-        requiredAmount: 5,
+        requiredAmount: 4,
         resourceName: 'food',
         onComplete: (gs) => {
           gs.levels.amoeba.actions['Absorb food'].displayed = true
@@ -34,7 +34,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
         },
       },
       {
-        requiredAmount: 4,
+        requiredAmount: 6,
         resourceName: 'nutrients',
         onComplete: (gs) => {
           gs.levels.amoeba.actions['Generate energy'].displayed = true
@@ -106,8 +106,8 @@ export const initialLevelDefinitions: GameState['levels'] = {
         },
       },
       {
-        requiredAmount: 60,
-        resourceName: 'energy',
+        requiredAmount: 600,
+        resourceName: 'food',
         onComplete: (gs) => {
           gs.levels.multicellular.actions['Multiply'].displayed = true
           return gs
@@ -122,7 +122,7 @@ export const initialLevelDefinitions: GameState['levels'] = {
         },
       },
       {
-        requiredAmount: 4,
+        requiredAmount: 5,
         resourceName: 'efficiency',
         onComplete: (gs) => gs,
       },

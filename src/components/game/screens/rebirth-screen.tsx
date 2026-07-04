@@ -50,7 +50,7 @@ export function RebirthScreen(): JSX.Element {
       <div className="text-lg mb-8 mt-7">
         Such is the cycle of life. However, don't fret!
         <br />
-        Your achievements as {levelLabelPrefixed(currentLevel)} will provide bonuses to all your future lives.
+        Your actions provide permanent bonuses to all of your future lives.
       </div>
       {typedObjectEntries(lockedTexts).map(([name, lockedText]) =>
         unlockedLevels.includes(name) ? (

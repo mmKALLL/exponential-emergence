@@ -13,8 +13,14 @@ const DEBUG = false
 const gs = { ...initialGameState }
 let hotkeyMapping: Record<string, string> = {}
 
+// Action that was running when a tutorial popup suspended the run, restored on close.
+let suspendedActionName: string | null = null
+// True while a tutorial popup is open; blocks hotkeys so input can't desync the stash.
+let tutorialSuspended = false
+
 window.addEventListener('keydown', (event) => {
   if (gs.currentScreen !== 'in-game') return
+  if (tutorialSuspended) return // input blocked while a tutorial popup is open
 
   const actionName = hotkeyMapping[event.key]
   if (DEBUG) console.debug('[ee] keydown', event.key, '-> action:', actionName ?? '(none)', 'screen:', gs.currentScreen)
@@ -467,6 +473,29 @@ export const Game = {
     console.log(`Hotkey for action "${actionName}" set to "${index}"`)
   },
 
+  // Tutorial popups suspend the run: remember the active action and stop the tick loop
+  // from advancing it or draining lifespan while a message is open.
+  suspendForTutorial() {
+    suspendedActionName = gs.currentActionName
+    gs.currentActionName = null
+    tutorialSuspended = true
+  },
+  resumeAfterTutorial() {
+    gs.currentActionName = suspendedActionName
+    suspendedActionName = null
+    tutorialSuspended = false
+  },
+
+  markTutorialSeen(id: string) {
+    if (!gs.seenTutorials.includes(id)) {
+      gs.seenTutorials.push(id)
+      save(Game.state)
+    }
+  },
+  hasSeenTutorial(id: string) {
+    return gs.seenTutorials.includes(id)
+  },
+
   resetRun: () => {
     handleGameOver()
   },
@@ -515,6 +544,14 @@ export const Game = {
       }
       animationBus.enabled = true
     }
+    // Tutorial reset helper for players/devs
+    ;(window as unknown as { resetTutorials?: () => void }).resetTutorials = () => {
+      gs.seenTutorials = []
+      save(Game.state)
+      console.log('Tutorials reset — they will show again as you play.')
+    }
+    console.log('%cTip: run resetTutorials() in the console to replay the onboarding popups.', 'color:#8a8a92')
+
     if (DEBUG)
       console.debug('[ee] start', {
         loadedSave: !!loadedSave,

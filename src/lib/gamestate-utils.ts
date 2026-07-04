@@ -20,6 +20,7 @@ const baseInitialGameState: GameState = {
     synergyHelpText: false,
     synergyHelpTextAddition: false,
   },
+  seenTutorials: [],
 }
 
 // @ts-expect-error
@@ -28,6 +29,7 @@ const debugInitialGameState: GameState = {
   algaePlays: 0,
   currentScreen: 'rebirth',
   currentLevel: 'multicellular',
+  seenTutorials: [],
   unlockedDisplaySections: {
     speeds: true,
     bestValue: true,

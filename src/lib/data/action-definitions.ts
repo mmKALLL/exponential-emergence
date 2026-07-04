@@ -7,7 +7,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
   amoeba: [
     {
       name: 'Catch food',
-      baseTime: 4,
+      baseTime: 6,
       effect: (res: Resources['amoeba']) => {
         res.food += 1
         return res
@@ -17,7 +17,7 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
     },
     {
       name: 'Absorb food',
-      baseTime: 6,
+      baseTime: 4,
       effect: (res: Resources['amoeba']) => {
         res.food -= 1
         res.nutrients += 1
@@ -117,14 +117,14 @@ export const actionDefinitions: { [T in LevelName]: ActionConfig<T>[] } = {
       name: 'Specialize',
       baseTime: 2,
       effect: (res: Resources['multicellular']) => {
-        res.energy -= 20
+        res.energy -= 30
         res.efficiency += 1
         return res
       },
-      enabledCondition: (res: Resources['multicellular']) => res.energy >= 20,
+      enabledCondition: (res: Resources['multicellular']) => res.energy >= 30,
       description: 'Makes Multiply cheaper',
       gives: ['+1 efficiency'],
-      takes: ['-20 energy'],
+      takes: ['-30 energy'],
     },
   ],
 

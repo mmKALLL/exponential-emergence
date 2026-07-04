@@ -140,4 +140,5 @@ export type GameState = {
     crustacean: Level<'crustacean'>
   }
   unlockedDisplaySections: UnlockedDisplaySections
+  seenTutorials: string[] // ids of tutorial messages the player has already seen
 }
