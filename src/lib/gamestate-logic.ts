@@ -8,7 +8,7 @@ import { maxTime, typedObjectEntries } from './utils'
 
 // Flip to true to trace input/loop activity in the console when chasing the
 // "actions do nothing on a fresh save" bug (Win10/Firefox). Behaviour-neutral.
-const DEBUG = false
+const debugLogging = true
 
 const gs = { ...initialGameState }
 let hotkeyMapping: Record<string, string> = {}
@@ -23,7 +23,7 @@ window.addEventListener('keydown', (event) => {
   if (tutorialSuspended) return // input blocked while a tutorial popup is open
 
   const actionName = hotkeyMapping[event.key]
-  if (DEBUG) console.debug('[ee] keydown', event.key, '-> action:', actionName ?? '(none)', 'screen:', gs.currentScreen)
+  if (debugLogging) console.debug('[ee] keydown', event.key, '-> action:', actionName ?? '(none)', 'screen:', gs.currentScreen)
   if (actionName) {
     Game.toggleAction(Game.getActionCard(actionName))
   }
@@ -444,7 +444,7 @@ export const Game = {
   },
 
   toggleAction(action: Action) {
-    if (DEBUG)
+    if (debugLogging)
       console.debug('[ee] toggleAction', action?.name, {
         screen: gs.currentScreen,
         canApply: action ? canApplyAction(action) : false,
@@ -552,7 +552,7 @@ export const Game = {
     }
     console.log('%cTip: run resetTutorials() in the console to replay the onboarding popups.', 'color:#8a8a92')
 
-    if (DEBUG)
+    if (debugLogging)
       console.debug('[ee] start', {
         loadedSave: !!loadedSave,
         screen: gs.currentScreen,

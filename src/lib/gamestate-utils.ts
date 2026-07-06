@@ -23,7 +23,6 @@ const baseInitialGameState: GameState = {
   seenTutorials: [],
 }
 
-// @ts-expect-error
 const debugInitialGameState: GameState = {
   ...baseInitialGameState,
   algaePlays: 0,
@@ -125,4 +124,4 @@ const debugInitialGameState: GameState = {
   },
 }
 
-export const initialGameState: GameState = baseInitialGameState
+export const initialGameState: GameState = debugInitialGameState

@@ -106,6 +106,11 @@ export const initialLevelDefinitions: GameState['levels'] = {
         },
       },
       {
+        requiredAmount: 4,
+        resourceName: 'food multiplier',
+        onComplete: (gs) => gs
+      },
+      {
         requiredAmount: 600,
         resourceName: 'food',
         onComplete: (gs) => {

@@ -13,12 +13,13 @@ import { FloatingNumber, type Floater, type FloaterPart } from './floating-numbe
 let nextId = 0
 const MAX_FLOATERS = 40
 
-type Ring = { id: number; x: number; y: number; w: number; h: number }
+// A one-shot glow ring that pulses around a newly-unlocked action card (the actionUnlocked event).
+type UnlockRing = { id: number; x: number; y: number; w: number; h: number }
 
 export function AnimationOverlay(): JSX.Element | null {
   const [intensity, setIntensity] = useState(getConfig().animation.intensity)
   const [floaters, setFloaters] = useState<Floater[]>([])
-  const [rings, setRings] = useState<Ring[]>([])
+  const [unlockRings, setUnlockRings] = useState<UnlockRing[]>([])
 
   useEffect(() => subscribeConfig(() => setIntensity(getConfig().animation.intensity)), [])
 
@@ -29,12 +30,12 @@ export function AnimationOverlay(): JSX.Element | null {
         const next = [...prev, { ...f, id: nextId++ }]
         return next.length > MAX_FLOATERS ? next.slice(next.length - MAX_FLOATERS) : next
       })
-    const addRing = (r: Omit<Ring, 'id'>) => setRings((prev) => [...prev.slice(-10), { ...r, id: nextId++ }])
-    return subscribe((event) => handleEvent(event, addFloater, addRing))
+    const addUnlockRing = (r: Omit<UnlockRing, 'id'>) => setUnlockRings((prev) => [...prev.slice(-10), { ...r, id: nextId++ }])
+    return subscribe((event) => handleEvent(event, addFloater, addUnlockRing))
   }, [intensity])
 
   const removeFloater = useCallback((id: number) => setFloaters((prev) => prev.filter((f) => f.id !== id)), [])
-  const removeRing = useCallback((id: number) => setRings((prev) => prev.filter((r) => r.id !== id)), [])
+  const removeUnlockRing = useCallback((id: number) => setUnlockRings((prev) => prev.filter((r) => r.id !== id)), [])
 
   if (intensity <= 0) return null
 
@@ -53,12 +54,12 @@ export function AnimationOverlay(): JSX.Element | null {
       {floaters.map((f) => (
         <FloatingNumber key={f.id} floater={f} onDone={removeFloater} />
       ))}
-      {rings.map((r) => (
+      {unlockRings.map((ring) => (
         <div
-          key={r.id}
+          key={ring.id}
           className="animate-unlock-ring absolute rounded-xl"
-          style={{ left: r.x, top: r.y, width: r.w, height: r.h }}
-          onAnimationEnd={() => removeRing(r.id)}
+          style={{ left: ring.x, top: ring.y, width: ring.w, height: ring.h }}
+          onAnimationEnd={() => removeUnlockRing(ring.id)}
         />
       ))}
       <RunEndTelegraph />
@@ -74,15 +75,15 @@ function RunEndTelegraph(): JSX.Element | null {
   return <div className="animate-pulse absolute inset-0 ring-4 ring-inset ring-red-500/30" />
 }
 
-function handleEvent(event: AnimationEvent, addFloater: (f: Omit<Floater, 'id'>) => void, addRing: (r: Omit<Ring, 'id'>) => void): void {
+function handleEvent(event: AnimationEvent, addFloater: (f: Omit<Floater, 'id'>) => void, addUnlockRing: (r: Omit<UnlockRing, 'id'>) => void): void {
   switch (event.type) {
     case 'actionComplete': {
       const rect = rectFor(`action:${event.actionName}`)
       if (!rect) return
       // One centered line per action: gains (green) first, then losses (red).
       const nonZero = event.deltas.filter((d) => d.amount !== 0)
-      const ordered = [...nonZero.filter((d) => d.amount > 0), ...nonZero.filter((d) => d.amount < 0)]
-      const parts: FloaterPart[] = ordered.map((d) => ({
+      // const ordered = [...nonZero.filter((d) => d.amount > 0), ...nonZero.filter((d) => d.amount < 0)]
+      const parts: FloaterPart[] = nonZero.map((d) => ({
         text: `${d.amount > 0 ? '+' : ''}${formatNumber(d.amount)} ${d.resource}`,
         tone: d.amount > 0 ? 'gain' : 'cost',
       }))
@@ -90,21 +91,11 @@ function handleEvent(event: AnimationEvent, addFloater: (f: Omit<Floater, 'id'>)
       addFloater({ x: rect.left + rect.width / 2, y: rect.top - 8, parts })
       return
     }
-    case 'synergyApplied': {
-      const rect = rectFor(`res:${event.resource}`)
-      if (!rect) return
-      addFloater({
-        x: rect.left + rect.width / 2,
-        y: rect.top,
-        parts: [{ text: `+${formatNumber(event.amount)} (carried)`, tone: 'carry' }],
-      })
-      return
-    }
     case 'goalMet':
       return
     case 'actionUnlocked': {
       const rect = rectFor(`action:${event.actionName}`)
-      if (rect) addRing({ x: rect.left, y: rect.top, w: rect.width, h: rect.height })
+      if (rect) addUnlockRing({ x: rect.left, y: rect.top, w: rect.width, h: rect.height })
       return
     }
     case 'levelUp':

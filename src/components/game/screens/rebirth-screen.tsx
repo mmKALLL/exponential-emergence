@@ -4,12 +4,11 @@ import { Game } from '@/lib/gamestate-logic'
 import { exportSave, importSave } from '@/lib/saving'
 import { shareGame } from '@/lib/share'
 import type { LevelName } from '@/lib/types'
-import { levelLabelPrefixed, typedObjectEntries } from '@/lib/utils'
+import { typedObjectEntries } from '@/lib/utils'
 import type { JSX } from 'react'
 import { toast } from 'sonner'
 
 export function RebirthScreen(): JSX.Element {
-  const currentLevel = useUpdate(() => Game.state.currentLevel)
   const algaePlays = useUpdate(() => Game.state.algaePlays)
   const unlockedLevels = useUpdate(() => Game.unlockedLevels)
   const synergyTextUnlocked = useUpdate(() => Game.state.unlockedDisplaySections.synergyHelpText)
