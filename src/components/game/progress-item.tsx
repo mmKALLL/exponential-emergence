@@ -7,17 +7,19 @@ export function ProgressItem({
   children,
   className = '',
   indicatorColor,
+  danger,
 }: {
   value: number
   max: number
   children: (JSX.Element | string | number | boolean | null)[] | JSX.Element | string | number | boolean | null
   className?: string
   indicatorColor?: string
+  danger?: boolean
 }): JSX.Element {
   return (
     <div className={`flex flex-col items-center gap-2 ${className}`}>
       {children}
-      <Progress value={value} max={max} indicatorColor={indicatorColor} />
+      <Progress value={value} max={max} indicatorColor={indicatorColor} danger={danger} />
     </div>
   )
 }

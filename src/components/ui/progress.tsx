@@ -8,12 +8,13 @@ function Progress({
   value,
   max,
   indicatorColor,
+  danger,
   ...props
-}: React.ComponentProps<typeof ProgressPrimitive.Root> & { indicatorColor?: string }) {
+}: React.ComponentProps<typeof ProgressPrimitive.Root> & { indicatorColor?: string; danger?: boolean }) {
   return (
     <ProgressPrimitive.Root
       data-slot="progress"
-      className={cn('bg-primary/20 relative h-2 w-full overflow-hidden rounded-full', className)}
+      className={cn('bg-primary/20 relative h-2 w-full overflow-hidden rounded-full', danger && 'animate-lifespan-danger', className)}
       {...props}
     >
       <ProgressPrimitive.Indicator

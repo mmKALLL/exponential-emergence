@@ -274,14 +274,19 @@ function actionProgress(): number {
 type PixelCreatureProps = {
   kind: LevelName
   size: number
+  wander?: boolean
 }
 
-export function PixelCreature({ kind, size }: PixelCreatureProps) {
+export function PixelCreature({ kind, size, wander = true }: PixelCreatureProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   // Keep the latest kind in a ref so the rAF loop always dispatches the current
   // creature without restarting the loop.
   const kindRef = useRef(kind)
   kindRef.current = kind
+  // When false, the creature stays centred (no wander drift) — e.g. on the rebirth
+  // screen, where it's rotated in place and drifting would off-centre the rotation.
+  const wanderRef = useRef(wander)
+  wanderRef.current = wander
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -314,6 +319,10 @@ export function PixelCreature({ kind, size }: PixelCreatureProps) {
 
       if (cfg.mode === 'rooted') {
         drawAt(ctx, G / 2, G - 4, false, () => DRAW[k](ctx, t, act))
+      } else if (!wanderRef.current) {
+        // Static: draw at the wander centre without drift (rebirth screen).
+        const cy = k === 'insect' ? G / 2 + 3 : G / 2
+        drawAt(ctx, G / 2, cy, false, () => DRAW[k](ctx, t, act))
       } else {
         // wander: slow sin drift; mirror horizontally when moving left.
         const ax = 9

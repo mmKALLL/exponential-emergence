@@ -30,6 +30,7 @@ export function LevelInfoCard() {
   )
 
   const lifeColor = lifespanLeft < 12 ? 'var(--danger)' : lifespanLeft < 24 ? 'var(--warn)' : 'var(--accent-cyan)'
+  const dangerPulse = lifespanLeft > 0 && lifespanLeft < 5
 
   return (
     <Card className="flex flex-col gap-4 p-4 items-center w-108">
@@ -48,7 +49,7 @@ export function LevelInfoCard() {
         )}
       </div>
 
-      <ProgressItem value={lifespanLeft} max={MAX_LIFESPAN} className="w-full" indicatorColor={lifeColor}>
+      <ProgressItem value={lifespanLeft} max={MAX_LIFESPAN} className="w-full" indicatorColor={lifeColor} danger={dangerPulse}>
         <div className="flex justify-between w-28">
           <span>Lifespan: </span>
           <span>{lifespanLeft.toFixed(1)}s</span>

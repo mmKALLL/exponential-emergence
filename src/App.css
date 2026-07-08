@@ -232,3 +232,17 @@
   letter-spacing: 1px;
   text-transform: uppercase;
 }
+
+@keyframes rb-halo {
+  0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+  30% { opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+}
+.animate-rb-halo { animation: rb-halo 1.8s ease-out forwards; }
+
+/* Near-death: flash only the lifespan bar's empty track colour (not its opacity). */
+@keyframes lifespan-danger {
+  0%, 100% { background-color: rgba(239, 68, 68, 0.2); }
+  50% { background-color: rgba(239, 68, 68, 0.65); }
+}
+.animate-lifespan-danger { animation: lifespan-danger 0.9s ease-in-out infinite; }

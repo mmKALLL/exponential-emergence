@@ -4,9 +4,7 @@ import { toast } from 'sonner'
 import { subscribe } from '@/lib/animation/animation-bus'
 import type { AnimationEvent } from '@/lib/animation/events'
 import { getConfig, subscribeConfig } from '@/lib/config'
-import { Game } from '@/lib/gamestate-logic'
 import { formatNumber } from '@/lib/utils'
-import { useUpdate } from '@/hooks/use-update'
 import { rectFor } from './anchor-registry'
 import { FloatingNumber, type Floater, type FloaterPart } from './floating-number'
 
@@ -62,17 +60,9 @@ export function AnimationOverlay(): JSX.Element | null {
           onAnimationEnd={() => removeUnlockRing(ring.id)}
         />
       ))}
-      <RunEndTelegraph />
     </div>,
     document.body
   )
-}
-
-function RunEndTelegraph(): JSX.Element | null {
-  const lifespanLeft = useUpdate(() => Game.state.lifespanLeft)
-  const active = useUpdate(() => Game.state.currentScreen === 'in-game' && Game.state.runStarted)
-  if (!active || lifespanLeft > 5 || lifespanLeft <= 0) return null
-  return <div className="animate-pulse absolute inset-0 ring-4 ring-inset ring-red-500/30" />
 }
 
 function handleEvent(event: AnimationEvent, addFloater: (f: Omit<Floater, 'id'>) => void, addUnlockRing: (r: Omit<UnlockRing, 'id'>) => void): void {
