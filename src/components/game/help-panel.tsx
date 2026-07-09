@@ -1,5 +1,6 @@
 import { useState, type JSX } from 'react'
 import { createPortal } from 'react-dom'
+import { CircleHelp } from 'lucide-react'
 import { tutorialMessages } from '@/lib/data/tutorial-definitions'
 import { Game } from '@/lib/gamestate-logic'
 import { useUpdate } from '@/hooks/use-update'
@@ -23,7 +24,8 @@ export function HelpPanel(): JSX.Element | null {
         aria-label="Help"
         onClick={() => setOpen(true)}
       >
-        ? Help
+        Help
+        <CircleHelp />
       </Button>
       {open &&
         createPortal(
