@@ -65,7 +65,11 @@ export function AnimationOverlay(): JSX.Element | null {
   )
 }
 
-function handleEvent(event: AnimationEvent, addFloater: (f: Omit<Floater, 'id'>) => void, addUnlockRing: (r: Omit<UnlockRing, 'id'>) => void): void {
+function handleEvent(
+  event: AnimationEvent,
+  addFloater: (f: Omit<Floater, 'id'>) => void,
+  addUnlockRing: (r: Omit<UnlockRing, 'id'>) => void
+): void {
   switch (event.type) {
     case 'actionComplete': {
       const rect = rectFor(`action:${event.actionName}`)
@@ -89,7 +93,6 @@ function handleEvent(event: AnimationEvent, addFloater: (f: Omit<Floater, 'id'>)
       return
     }
     case 'levelUp':
-      toast.success(`Evolved: ${event.from} → ${event.to}!`)
       return
     case 'victory':
       toast.success('Victory!')

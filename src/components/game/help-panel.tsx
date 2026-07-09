@@ -19,12 +19,11 @@ export function HelpPanel(): JSX.Element | null {
     <>
       <Button
         variant="outline"
-        size="icon"
-        className="fixed bottom-2 left-2 z-[150] rounded-full"
+        className="fixed bottom-2 right-2 z-[150]"
         aria-label="Help"
         onClick={() => setOpen(true)}
       >
-        ?
+        ? Help
       </Button>
       {open &&
         createPortal(

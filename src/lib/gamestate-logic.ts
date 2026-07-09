@@ -17,10 +17,21 @@ let hotkeyMapping: Record<string, string> = {}
 let suspendedActionName: string | null = null
 // True while a tutorial popup is open; blocks hotkeys so input can't desync the stash.
 let tutorialSuspended = false
+// True while the "Complete level" button is shown; blocks hotkeys/space so input can't act.
+let levelCompleteOpen = false
 
 window.addEventListener('keydown', (event) => {
   if (gs.currentScreen !== 'in-game') return
   if (tutorialSuspended) return // input blocked while a tutorial popup is open
+  if (levelCompleteOpen) return // input blocked while the Complete-level button is up
+
+  // Space pauses: clear the active action so the tick loop stops advancing.
+  if (event.code === 'Space') {
+    event.preventDefault()
+    gs.currentActionName = null
+    invalidateActionCardCache()
+    return
+  }
 
   const actionName = hotkeyMapping[event.key]
   if (debugLogging) console.debug('[ee] keydown', event.key, '-> action:', actionName ?? '(none)', 'screen:', gs.currentScreen)
@@ -494,6 +505,19 @@ export const Game = {
   },
   hasSeenTutorial(id: string) {
     return gs.seenTutorials.includes(id)
+  },
+
+  markLevelCleared(level: LevelName) {
+    if (!gs.clearedLevels.includes(level)) {
+      gs.clearedLevels.push(level)
+      save(Game.state)
+    }
+  },
+  hasClearedLevel(level: LevelName) {
+    return gs.clearedLevels.includes(level)
+  },
+  setLevelCompleteOpen(open: boolean) {
+    levelCompleteOpen = open
   },
 
   resetRun: () => {

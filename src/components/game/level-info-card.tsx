@@ -30,7 +30,7 @@ export function LevelInfoCard() {
   )
 
   const lifeColor = lifespanLeft < 12 ? 'var(--danger)' : lifespanLeft < 24 ? 'var(--warn)' : 'var(--accent-cyan)'
-  const dangerPulse = lifespanLeft > 0 && lifespanLeft < 5
+  const dangerPulse = lifespanLeft > 0 && lifespanLeft < 6.5
 
   return (
     <Card className="flex flex-col gap-4 p-4 items-center w-108">

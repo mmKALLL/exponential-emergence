@@ -21,6 +21,7 @@ const baseInitialGameState: GameState = {
     synergyHelpTextAddition: false,
   },
   seenTutorials: [],
+  clearedLevels: [],
 }
 
 const debugInitialGameState: GameState = {
@@ -29,6 +30,7 @@ const debugInitialGameState: GameState = {
   currentScreen: 'rebirth',
   currentLevel: 'multicellular',
   seenTutorials: [],
+  clearedLevels: [],
   unlockedDisplaySections: {
     speeds: true,
     bestValue: true,

@@ -141,4 +141,5 @@ export type GameState = {
   }
   unlockedDisplaySections: UnlockedDisplaySections
   seenTutorials: string[] // ids of tutorial messages the player has already seen
+  clearedLevels: LevelName[] // levels whose goals the player has fully cleared at least once
 }
