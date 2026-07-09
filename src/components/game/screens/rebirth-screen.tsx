@@ -19,7 +19,7 @@ export function RebirthScreen(): JSX.Element {
   const [phase, setPhase] = useState<'dead' | 'reborn' | 'ready'>('dead')
   useEffect(() => {
     const t1 = setTimeout(() => setPhase('reborn'), 1200)
-    const t2 = setTimeout(() => setPhase('ready'), 3000)
+    const t2 = setTimeout(() => setPhase('ready'), 2800)
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)
@@ -56,6 +56,13 @@ export function RebirthScreen(): JSX.Element {
   }
 
   const creatureTransition = 'filter .35s ease-out, transform .35s ease-out, opacity .35s ease-out'
+
+  // Once we reach the "ready" phase, fade each vertical row in with a 100ms stagger.
+  // Row order: intro (0), one per level (1..N), export/import (N+1), synergy tip (N+2),
+  // so the trailing rows derive from the level count and adapt as levels are added.
+  const levelCount = Object.keys(lockedTexts).length
+  const revealClass = phase === 'ready' ? 'animate-rb-fade-in' : 'opacity-0'
+  const revealDelay = (i: number) => ({ animationDelay: `${i * 100}ms` })
 
   return (
     <div className="main-container flex flex-col items-center pt-16 p-4 gap-4">
@@ -107,29 +114,37 @@ export function RebirthScreen(): JSX.Element {
       </div>
 
 
-      <div
-        className={cn(
-          'flex flex-col items-center gap-4 transition-opacity duration-500',
-          phase === 'ready' ? 'opacity-100' : 'pointer-events-none opacity-0'
-        )}
-      >
-      <div className="text-lg mb-8 mt-7 text-center">
+      <div className={cn('flex flex-col items-center gap-4', phase !== 'ready' && 'pointer-events-none')}>
+      <div className={cn('text-lg mb-8 mt-7 text-center', revealClass)} style={revealDelay(0)}>
         Such is the cycle of life. However, don't fret!
         <br />
         Your actions provide permanent bonuses to all of your future lives.
       </div>
-        {typedObjectEntries(lockedTexts).map(([name, lockedText]) =>
+        {typedObjectEntries(lockedTexts).map(([name, lockedText], idx) =>
           unlockedLevels.includes(name) ? (
-            <Button key={name} variant="outline" className="w-80 select-none" onClick={() => Game.rebirth(name)}>
+            <Button
+              key={name}
+              variant="outline"
+              className={cn('w-80 select-none', revealClass)}
+              style={revealDelay(idx + 1)}
+              onClick={() => Game.rebirth(name)}
+            >
               Rebirth as {name}
             </Button>
           ) : (
-            <Button key={name} disabled variant="outline" className="w-80 select-none" onClick={() => {}}>
+            <Button
+              key={name}
+              disabled
+              variant="outline"
+              className={cn('w-80 select-none', revealClass)}
+              style={revealDelay(idx + 1)}
+              onClick={() => {}}
+            >
               {lockedText}
             </Button>
           )
         )}
-        <div className="mt-4 flex gap-4">
+        <div className={cn('mt-4 flex gap-4', revealClass)} style={revealDelay(levelCount + 1)}>
           <Button variant="outline" className="select-none" onClick={handleExport}>
             Export save
           </Button>
@@ -143,7 +158,7 @@ export function RebirthScreen(): JSX.Element {
           )}
         </div>
         {synergyTextUnlocked && (
-          <div className="text-lg mb-8 mt-7">
+          <div className={cn('text-lg mb-8 mt-7', revealClass)} style={revealDelay(levelCount + 2)}>
             You can now get synergy bonuses based on previous stages. <br />
             Check them in the resource display's Synergies tab!
             {additionalHelpTextUnlocked && (
