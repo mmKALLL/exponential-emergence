@@ -2,10 +2,10 @@
 
 How many generations will you need to reach the pinnacle of evolution?
 
-Genre: active incremental, with time loop and puzzle flavor
-Aesthetics: discovery, challenge
-Playtime: 10-20 minutes
-Tech stack: TypeScript / React / Tailwind / shadcn
+Genre: active incremental, with time loop and puzzle flavor  
+Aesthetics: discovery, challenge  
+Playtime: 10-20 minutes  
+Tech stack: TypeScript / React / Tailwind / shadcn  
 
 # How to play:
 
@@ -17,11 +17,11 @@ Although the game is very minimalistic, the core data is based on actual researc
 
 # Credits:
 
-mmKALLL - code, design, concept, coordination
-Hevipelle - code, design, amazing advice
-Eldazare - testing
-VsKatshuma - testing
-Joonamo - testing
-Muggshotter - testing
+mmKALLL - code, design, concept, coordination  
+Hevipelle - code, design, amazing advice  
+Eldazare - testing  
+VsKatshuma - testing  
+Joonamo - testing  
+Muggshotter - testing  
 
 Google DeepMind - logo asset (from Unsplash, not AI-generated AFAIK)
